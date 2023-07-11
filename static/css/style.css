@@ -1,0 +1,17 @@
+
+
+.anch{
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.anch i{
+    color: blue;
+}
+
+.anch span{
+    color: black;
+    font-weight: bold;
+    font-size: 20px;
+}
+
