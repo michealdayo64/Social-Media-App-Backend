@@ -1,6 +1,6 @@
 {% load static %}
 <nav class="navbar" style="background-color: blue;">
-    <div class="container d-flex flex-row justify-content-between">
+    <div class="container d-flex flex-row justify-content-between" id="myheader">
         <div>
             <form class="d-flex" role="search">
                 <img src="{% static 'img/fb.jpeg' %}" alt="" srcset="" style="width: 40px; height: 40px; padding-right: 10px; border-radius: 10px;">
@@ -9,16 +9,57 @@
               </form>
         </div>
       <div class="d-flex flex-row align-items-center">
-        <img class="me-1" src="{% static 'img/profile_image.png' %}" style="width: 40px; height: 40px; border-radius: 300%;" alt="">
-        <p class="me-4 mt-3 text-white">Welcome, Dave</p>
+        {% if request.user.is_authenticated %}
+        <a href="{% url 'profile-index' %}" class="anch">
+        <img class="me-1 profile-pic" src="{{ request.user.profile_image.url }}" alt="">
+      </a>
+        {% else %}
+        <img class="me-1 profile-pic" src="{% static 'img/profile_image.png' %}" alt="">
+        {% endif %}
+        <a href="{% url 'profile-index' %}" class="anch">
+        <p class="me-4 mt-3 text-white">Welcome, {{ request.user.username }}</p>
+      </a>
+      <a href="{% url 'index' %}" class="anch">
         <p class="me-4 mt-3 text-white">Home</p>
+      </a>
+      <a href="#" class="anch">
         <p class="me-4 mt-3 text-white">Find Friends</p>
+      </a>
+      <a href="#" class="anch">
         <i class="fa-solid fa-user-group me-4 text-white"></i>
+      </a>
+      <a href="#" class="anch">
         <i class="fa-brands fa-facebook-messenger me-4 text-white"></i>
+      </a>
+      <a href="#" class="anch">
         <i class="fa-solid fa-bell me-4 text-white"></i>
+      </a>
+      <a href="#" class="anch">
         <i class="fa-solid fa-circle-question me-4 text-white"></i>
+      </a>
+      <a href="#" id="logout">
         <i class="fa-solid fa-caret-down text-white"></i>
+      </a>
+      <div class="drop1" id="dropid">
+        <a href="#" class="btn btn-primay">
+        Logout
+      </a>
+      </div>
       </div>
 
     </div>
   </nav>
+
+  <script>
+    const dropId = document.getElementById("dropid")
+    const logoutBtn = document.getElementById("logout")
+    logoutBtn.addEventListener('click', (e) =>{
+      e.preventDefault()
+      if(dropId.style.display === "block"){
+        dropId.style.display = "none"
+      }else{
+        dropId.style.display = "block"
+      }
+      
+    })
+  </script>

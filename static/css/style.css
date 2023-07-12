@@ -15,3 +15,41 @@
     font-size: 20px;
 }
 
+.profile-pic{
+    width: 40px;
+    height: 40px;
+    border-radius: 100%;
+}
+
+#myheader{
+    position: relative;
+}
+
+.drop1{
+    width: 100px;
+    height: 100px;
+    position: absolute;
+    background-color: white;
+    top: 50px;
+    z-index: 100;
+    border-radius: 5px;
+    right: 0;
+    text-align: center;
+    padding: 10px;
+    display: none;
+}
+
+.drop1 a{
+    background-color: blue;
+    color: white;
+
+}
+
+.drop1 a:hover{
+    background-color: blue;
+    color: white;
+}
+
+
+
+ 
