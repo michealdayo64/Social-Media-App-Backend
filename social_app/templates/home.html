@@ -9,12 +9,7 @@
         {% include 'snippets/left-menu.html' %}
       </div>
       <div class="col-6">
-        <div class="card card-post">
-            <div class="d-flex flex-row align-items-left">
-              <img class="profile-pic" src="{{ request.user.profile_image.url }}" alt="" srcset="">
-              <input type="submit" value="What's on your mind {{ request.user.username }}">
-            </div>
-        </div>
+        {% include 'home_main_content.html' %}
       </div>
       <div class="col-3">
         <div class="card">

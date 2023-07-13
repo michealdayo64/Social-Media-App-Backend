@@ -1,4 +1,5 @@
 1. Registration done
 2. Login done
 3. Password Forgot done
+4. Logout done.
 4. Social media auth "still pending"

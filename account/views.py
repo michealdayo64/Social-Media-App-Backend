@@ -8,29 +8,32 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.urls import reverse
 from .utils import account_activation_token
 from django.contrib import messages
-#import threading
+from django.contrib.auth.decorators import login_required
+# import threading
 # import validate_email
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 
 # Create your views here.
 
 # User Register View
+
+
 def register_view(request):
     if request.user.is_authenticated:
         print("Your are already Logged In")
     context = {}
-   
+
     if request.POST:
-        
+
         form = RegisterForm(request.POST or None)
-       
+
         if form.is_valid():
             user_form = form.save()
-            #print(user_form)
+            # print(user_form)
             email = form.cleaned_data['email']
             password = form.cleaned_data['password1']
-            user = authenticate(email = email, password = password)
-            #print(user)
+            user = authenticate(email=email, password=password)
+            # print(user)
             if user:
                 if user.is_active:
                     login(request, user)
@@ -56,7 +59,7 @@ def login_view(request):
             email = login_form.cleaned_data['email']
             password = login_form.cleaned_data['password']
 
-            user = authenticate(email = email, password = password)
+            user = authenticate(email=email, password=password)
             if user:
                 if user.is_active:
                     login(request, user)
@@ -65,7 +68,7 @@ def login_view(request):
                         return redirect(destination)
                     return redirect("index")
         context["login_form"] = login_form
-                    
+
     return render(request, 'account/login.html', context)
 
 
@@ -78,19 +81,24 @@ def get_redirect_if_exist(request):
 
 
 # User logout View
+@login_required
 def logout_view(request):
-    return redirect('home')
+    if request.user.is_authenticated:
+        logout(request)
+        return redirect('login')
 
 
-# User Reset Password Form. 
+# User Reset Password Form.
 '''
 Here Pasword reset Link is being sent to a regestered email
 '''
+
+
 def forgot_password(request):
     context = {}
     if request.method == "POST":
         email = request.POST.get('email')
-        #print(email)
+        # print(email)
 
         context = {
             'values': request.POST
@@ -166,5 +174,3 @@ def user_profile(request):
 # Edit User
 def edit_user(request):
     pass
-
-
