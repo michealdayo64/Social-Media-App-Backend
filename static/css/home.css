@@ -1,0 +1,50 @@
+#public:hover{
+    background-color: grey;
+    width: 90px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#public i{
+    font-size: 13px;
+    font-weight: bold;
+}
+
+#public span{
+    font-size: 13px;
+    font-weight: bold;
+}
+
+#postform{
+    height: 100px;
+    overflow-y: scroll;
+}
+
+#postform textarea{
+    width: 100%;
+    border: none;
+}
+
+#postform textarea:focus{
+    border: none;
+}
+
+#inputpost:hover{
+    background-color: rgb(187, 187, 187);
+}
+
+#assets{
+    width: 100%;
+}
+
+#assets i{
+    margin-right: 10px;
+    font-size: 20px;
+}
+
+#assets p{
+    color: black;
+    margin-left: 10px;
+    margin-top: 10px;
+    font-weight: bold;
+}
