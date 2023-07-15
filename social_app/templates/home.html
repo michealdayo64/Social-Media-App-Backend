@@ -3,6 +3,7 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
+{% load static %}
 <br>
     <div class="row">
       <div class="col-3">
@@ -10,6 +11,67 @@
       </div>
       <div class="col-6">
         {% include 'home_main_content.html' %}
+        
+        {% for i in post_list %}
+        <br>
+        <div class="card p-3">
+          <div class="d-flex flex-row justify-content-between align-items-center">
+            <div class="d-flex flex-row">
+              <img class="pe-1 profile-pic" src="{{ i.user.profile_image.url }}" alt="" srcset="">
+              <div class="d-flex flex-column">
+                <span style="font-size: 14px; font-weight: bold;">{{ i.user.username }}</span>
+                <span style="font-size: 11px; color: gray;">{{ i.date_post }} Ago</span>
+              </div>
+            </div>
+            <div class="d-flex flex-row">
+              
+            </div>
+          </div>
+          <br>
+          <div class="w-100" id="post">
+            <p>{{ i.user_post }}</p>
+          </div>
+          <div id="postimage">
+            {% if i.image %}
+            <img class="w-100" src="{{ i.image.url }}" alt="" srcset="">
+            {% endif %}
+          </div>
+          <hr>
+          <div class="d-flex flex-row justify-content-between align-items-center">
+           <div class="d-flex flex-row align-items-center">
+            <a href="#">
+            <i class="fa-solid fa-thumbs-up text-white text-bg-primary p-1 rounded-pill"></i>
+            <span class="ps-1">17</span>
+          </a>
+           </div>
+           <div>
+            <a href="#">
+              <span class="text-secondary">5 comments</span>
+            </a>
+           </div>
+          </div>
+          <hr>
+            <div class="d-flex flex-row justify-content-between">
+              <div class="d-flex flex-row align-items-center justify-content-center w-50 likecommentshare" id="likeidBtn">
+                <i class="fa-solid fa-thumbs-up p-1"></i>
+                <span>Like</span>
+              </div>
+            <div class="d-flex flex-row align-items-center justify-content-center w-50 likecommentshare" id="commentidBtn">
+              <i class="fa-regular fa-comment p-1"></i>
+              <span>Comment</span>
+            </div>
+            <div class="d-flex flex-row align-items-center justify-content-center w-50 likecommentshare" id="shareidBtn">
+              <i class="fa-solid fa-share p-1"></i>
+              <span>Share</span>
+            </div>
+            </div>
+          <hr>
+          <div class="commentcontainer" id="commentcontainerid">
+            <img class="pe-1 profile-pic" src="{% static 'img/profile_image.png' %}" alt="" srcset="">
+            <textarea name="" placeholder="Write a comment..." id="commentinput"></textarea>
+          </div>
+        </div>
+        {% endfor %}
       </div>
       <div class="col-3">
         <div class="card">
@@ -17,5 +79,17 @@
         </div>
       </div>
     </div>
+
+    <!-- Script to display comment Input -->
+<script>
+  const commentidBtn = document.querySelector('#commentidBtn')
+  const commentcontainerId = document.querySelector('#commentcontainerid')
+
+  commentidBtn.addEventListener('click', (e) =>{
+      e.preventDefault()
+      commentcontainerId.classList.add('d-flex')
+      commentcontainerId.classList.add('flow-row')
+  })
+</script>
   
 {% endblock %}

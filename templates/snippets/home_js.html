@@ -1,0 +1,30 @@
+
+<!-- Script to add photo view Button-->
+<script>
+    const addPhotoBtn = document.querySelector('#addphotoBtn')
+    const photoBtn = document.querySelector('#photoBtn')
+    const photoid = document.querySelector('#photoid')
+
+    const photoViewButton = (e) =>{
+        e.preventDefault()
+        photoBtn.style.display = "block"
+    }
+    addPhotoBtn.addEventListener('click', photoViewButton)
+    photoid.addEventListener('click', photoViewButton)
+
+    
+</script>
+
+<!-- Script to remove photo view Button-->
+<script>
+    const cancelBtn = document.querySelector('#cancelBtn')
+    cancelBtn.addEventListener('click', (e) =>{
+        e.preventDefault()
+        photoBtn.style.display = "none"
+        //addPhotoBtn.removeEventListener(true)
+    })
+</script>
+
+
+
+

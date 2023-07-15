@@ -1,14 +1,16 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
+from .models import Post
 
 # Create your views here.
 
 
 # @login_required
 def index(request):
+    context = {}
     user = request.user
     if user.is_authenticated:
-        print("Home")
+        post_list = Post.objects.all().order_by('-date_post')
+        context['post_list'] = post_list
     else:
         return redirect('login')
-    return render(request, 'home.html')
+    return render(request, 'home.html', context)

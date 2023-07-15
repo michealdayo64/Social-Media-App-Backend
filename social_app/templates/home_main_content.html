@@ -1,4 +1,7 @@
-<div class="card p-3 card-post">
+
+<!----------------------------------------------------------------------------- HOME PAGE MAIN CONTENT ----------------------------------------------------------------------------------->
+
+<div class="card p-3">
     <div class="d-flex flex-row align-items-left">
       <img class="pe-1 profile-pic" src="{{ request.user.profile_image.url }}" alt="" srcset="">
       <input class="w-100 border border-0 rounded-pill text-start text-secondary" id="inputpost" data-bs-toggle="modal" data-bs-target="#exampleModal" type="submit" value="What's on your mind, {{ request.user.username }}">
@@ -6,68 +9,33 @@
     <hr>
     <div class="row text-center ps-4 p3-4">
         <div class="col-4">
-            <div class="d-flex flex-row align-items-center">
-                <i class="fa-solid fa-video"></i>
-                <span class="text-secondary ms-2">Live Video</span>
+            <div class="d-flex flex-row align-items-center" id="videoid" data-bs-toggle="modal" data-bs-target="#livevideo">
+                <div>
+                    <i class="fa-solid fa-video"></i>
+                    <span class="text-secondary ms-2">Live video</span>
+                </div>
             </div>
         </div>
         <div class="col-4">
-            <div class="d-flex flex-row align-items-center">
-                <i class="fa-solid fa-images"></i>
-                <span class="text-secondary ms-2">Photo/Video</span>
+            <div class="d-flex flex-row align-items-center" id="photoid" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                <div>
+                    <i class="fa-solid fa-images"></i>
+                <span class="text-secondary ms-2">Photo/video</span>
+                </div>
             </div>
         </div>
         <div class="col-4">
-            <div class="d-flex flex-row justify-content-center align-items-center">
-                <i class="fa-regular fa-face-smile"></i>
-                <span class="text-secondary ms-2">Feeling/Activity</span>
+            <div class="d-flex flex-row justify-content-center align-items-center" id="emojiid" data-bs-toggle="modal" data-bs-target="#emoji">
+                <div>
+                    <i class="fa-regular fa-face-smile"></i>
+                <span class="text-secondary ms-2">Feeling/activity</span>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title fs-5 ms-auto" id="exampleModalLabel">Create Post</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <div class="d-flex flex-row align-items-left">
-            <img class="pe-1 profile-pic" src="{{ request.user.profile_image.url }}" alt="" srcset="">
-            <div class="d-flex flex-column align-items-left" id="postview">
-              <span>{{ request.user.username }}</span>
-              <div class="d-flex flex-row align-items-center justify-content-start" id="public">
-                <i class="fa-solid fa-earth-americas ps-2"></i>
-                <span class="pe-1 ps-1">Public</span>
-                <i class="fa-solid fa-caret-down"></i>
-              </div>
-            </div>
-          </div>
-          <br>
-          <div id="postform">
-            <textarea name="" id="" cols="50" rows="0" placeholder="What on your mind, {{ request.user.username }}?"></textarea>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <div class="d-flex flex-row justify-content-between border border-black rounded" id="assets">
-            <div class="d-flex">
-              <p>Add to your post</p>
-            </div>
-            <div class="d-flex flex-row justify-content-between p-3">
-              <i class="fa-solid fa-images"></i>
-              <i class="fa-solid fa-user-tag"></i>
-              <i class="fa-regular fa-face-smile"></i>
-              <i class="fa-solid fa-location-dot"></i>
-              <i class="fa-solid fa-gif"></i>
-            </div>
-          </div>
-          <div class="d-grid gap-2 col-12 mx-auto">
-            <button class="btn btn-primary" type="button">Post</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+<!-- All Modals -->
+{% include 'snippets/modal.html' %}
+
+ 
