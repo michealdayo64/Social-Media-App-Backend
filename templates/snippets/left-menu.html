@@ -1,6 +1,6 @@
 <div class="card">
     <ul class="list-group">
-        <li class="list-group-item menuhover">
+        <li class="list-group-item menuhover active1">
             <a href="{% url 'index' %}" class="anch">
                 <i class="fa-solid fa-house me-3"></i>
           <span>Home</span>
@@ -40,6 +40,17 @@
         </li>
       </ul>
 </div>
+
+<script>
+    const menuHover = document.querySelectorAll('.menuhover')
+    menuHover.forEach(men=> men.addEventListener('click', (e) =>{
+        if(men.className === "active1"){
+            men.classList.remove('active1')
+        }else{
+            men.classList.add('active1')
+        }
+    }))
+</script>
 
 
 
