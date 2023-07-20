@@ -46,11 +46,33 @@ def like_post(request, id):
         post_id = Post.objects.get(id=id)
         if user in post_id.user_like_post.all():
             post_id.user_like_post.remove(user)
+            like_count = post_id.user_like_post.all().count()
             payload['response'] = 'Unlike User'
+            payload['like_count'] = like_count
         else:
             post_id.user_like_post.add(user)
+            like_count = post_id.user_like_post.all().count()
             payload['response'] = 'Like User'
+            payload['like_count'] = like_count
 
     else:
         payload['response'] = 'User Needs to be authenticated'
     return JsonResponse(payload, content_type="application/json", safe=False)
+
+
+def likeCount(request):
+    payload = {}
+    p_list = []
+    user = request.user
+    if user.is_authenticated:
+        
+        post_list = Post.objects.all().order_by('-date_post')
+        print(len(post_list))
+        for i in post_list:
+            #aa = i.user_post
+            payload['like_count'] = i.user_like_post.all().count()
+            p_list.append(payload)
+    else:
+        payload['response'] = "User not authenticated"
+    print(p_list)
+    return JsonResponse(p_list, content_type="application/json", safe=False)

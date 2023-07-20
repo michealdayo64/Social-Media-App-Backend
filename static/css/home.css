@@ -156,10 +156,13 @@
     padding: 10px;
 }
 
-
-
 .commentcontainer{
     display: none;
+}
+
+.likesstyle span{
+    text-decoration: none;
+    color: black;
 }
 
 
