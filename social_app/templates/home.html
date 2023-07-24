@@ -40,12 +40,12 @@
           <div class="d-flex flex-row justify-content-between align-items-center">
            <div class="d-flex flex-row align-items-center">
             <a href="#" class="likesstyle" id="likecountid" data-id="{{ i.id }}">
-            
+              
           </a>
            </div>
            <div>
-            <a href="#">
-              <span class="text-secondary">5 comments</span>
+            <a href="#" id="commentcountid" data-id="{{ i.id }}">
+              
             </a>
            </div>
           </div>
@@ -67,7 +67,7 @@
           <hr>
           <div class="commentcontainer" id="commentcontainerid">
             <img class="pe-1 profile-pic" src="{{ i.user.profile_image.url }}" alt="" srcset="">
-            <textarea name="" placeholder="Write a comment..." id="commentinput"></textarea>
+            <textarea name="" placeholder="Write a comment..." id="commentinput" data-pk="{{ i.pk }}"></textarea>
           </div>
         </div>
         {% endfor %}
@@ -89,58 +89,113 @@
   const commentcontainerId = [...document.querySelectorAll('#commentcontainerid')].reverse()
   const likecountId = [...document.querySelectorAll('#likecountid')].reverse() 
   const likeidBtn = [...document.querySelectorAll('#likeidBtn')]
-
-  UserlikeCount()
+  const commentInput = [...document.querySelectorAll('#commentinput')]
+  const commentcountId = [...document.querySelectorAll('#commentcountid')]
+  const commentcountIdReverse = [...document.querySelectorAll('#commentcountid')].reverse()
+  
 
 
 // <!-----------------  Script to get user like counts --------->
 
+  UserlikeCount()
   function UserlikeCount(){
-    fetch(`${url}/like-count/`, {
+    likecountId.forEach((likCount) =>{
+      var pkhdh = likCount.getAttribute('data-id')
+      fetch(`${url}/get-like-count/${pkhdh}/`, {
       body: null,
       method: "GET"
     }).then((res) => res.json()).then((data) =>{
-      console.log(data)
+      likCount.innerHTML += `
+              <i class="fa-solid fa-thumbs-up text-white text-bg-primary p-1 rounded-pill"></i>
+              <span class="ps-1" style="color: black; text-decoration-line: none;">${data['like_count']}</span>
+      ` 
     })
+    })
+    
   }
 
-// ---------------------------------------------------------------------- -->
+// --------------------------- END ------------------------------------------- -->
 
 
 
-// ---------------Script for user to like post -------------------------------->
+// ---------------Script for user to like a post -------------------------------->
   
     likeidBtn.forEach(likeBtn => likeBtn.addEventListener('click', (e) =>{
       var id = likeBtn.getAttribute('data-id')
       var elementId = id - 1
-      console.log(elementId)
       fetch(`${url}/like-post/${id}/`, {
         body: null,
         method: 'POST'
       }).then((res) => res.json()).then((data) =>{
-        console.log(data)
         likecountId[elementId].innerHTML = `
-        <i class="fa-solid fa-thumbs-up text-white text-bg-primary p-1 rounded-pill"></i>
-            <span class="ps-1" style="color: black; text-decoration-line: none;">${data.like_count}</span>
+              <i class="fa-solid fa-thumbs-up text-white text-bg-primary p-1 rounded-pill"></i>
+              <span class="ps-1" style="color: black; text-decoration-line: none;">${data['like_count']}</span>
         `
       })
+      
     }))
 
-//--------------------------------------------------------------------------- -->
+//----------------------------- END ---------------------------------------------- -->
 
 
 
 
-// ------------Script to display comment Input ---------------->
+// ------------Script to display comment Input textarea ---------------->
 
   commentidBtn.forEach(comBtn=> comBtn.addEventListener('click', (e) =>{
       e.preventDefault()
-      var id = (comBtn.getAttribute('data-id') - 1)
-      commentcontainerId[id].classList.add('d-flex')
-      commentcontainerId[id].classList.add('flow-row')
+      var idNum = (comBtn.getAttribute('data-id') - 1)
+      commentcontainerId[idNum].classList.add('d-flex')
+      commentcontainerId[idNum].classList.add('flow-row')
   }))
 
-//------------------------------------------------------------------ -->
+//--------------------------- END --------------------------------------- -->
+
+
+
+
+// --------------- User comment on a post ----------------------------- -->
+
+      commentInput.forEach(comInput=> comInput.addEventListener('keyup', (e)=>{
+        e.preventDefault()
+        var commentPk = comInput.getAttribute('data-pk')
+        var elementId = comInput.getAttribute('data-pk') - 1
+        var inputValue = e.target.value.trim()
+        if(e.key === 'Enter'){
+          fetch(`${url}/user-comment/${commentPk}/`, {
+            body: JSON.stringify({
+              inputValue: inputValue
+            }),
+            method: 'POST'
+          }).then((res) => res.json()).then((data) =>{
+            commentcountIdReverse[elementId].innerHTML = `<span class="text-secondary">${data['comment_count']} comments</span>`
+          })
+          comInput.value = ""
+        }
+      }))
+      
+
+// --------------------- END ------------------------------------------ -->
+
+
+
+
+  // <---------------------- Script to get user comments ------------------->
+  
+  commentCount()
+  function commentCount(){
+    commentcountId.forEach((countId) =>{
+      var getId = countId.getAttribute('data-id')
+      fetch(`${url}/comment-count/${getId}/`, {
+        body: null,
+        method: 'GET'
+    }).then((res) => res.json()).then((data) =>{
+        countId.innerHTML += `<span class="text-secondary">${data['response']} comments</span>`
+      })
+    }) 
+  }
+
+// <------------------------ END ------------------------------------------->
 
 
 </script>

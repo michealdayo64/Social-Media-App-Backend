@@ -1,4 +1,4 @@
-<!-- Modal For Full Posting -->
+<!-- Modal For creating a Post -->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
@@ -20,7 +20,7 @@
           </div>
           <br>
           <div id="postform">
-            <textarea name="" id="" cols="50" rows="0" placeholder="What on your mind, {{ request.user.username }}?"></textarea>
+            <textarea name="" id="postinputid" cols="50" rows="0" placeholder="What on your mind, {{ request.user.username }}?"></textarea>
           </div>
           <div id="photoBtn">
             <div class="d-flex flex-column justify-content-between align-items-center h-100 rounded" id="photoBtn1">
@@ -46,7 +46,7 @@
             </div>
           </div>
           <div class="d-grid gap-2 col-12 mx-auto">
-            <button class="btn btn-primary" type="button">Post</button>
+            <button class="btn btn-primary" type="button" id="postbtnid" disabled>Post</button>
           </div>
         </div>
       </div>
@@ -84,5 +84,6 @@
   </div>
 
 
-<!-- Script to add Photo View-->
+
+<!-- Script to creating a post-->
 {% include 'snippets/home_js.html' %}

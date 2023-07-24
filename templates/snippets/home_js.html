@@ -1,6 +1,9 @@
 
-<!-- Script to add photo view Button-->
+
 <script>
+
+// <!------------ Script to add post photo view Button --------------->
+
     const addPhotoBtn = document.querySelector('#addphotoBtn')
     const photoBtn = document.querySelector('#photoBtn')
     const photoid = document.querySelector('#photoid')
@@ -12,17 +15,49 @@
     addPhotoBtn.addEventListener('click', photoViewButton)
     photoid.addEventListener('click', photoViewButton)
 
+//<----------------- END ---------------------------------------->     
     
-</script>
 
-<!-- Script to remove photo view Button-->
-<script>
+// <!------------ Script to remove post photo view Button -------------->
+
     const cancelBtn = document.querySelector('#cancelBtn')
     cancelBtn.addEventListener('click', (e) =>{
         e.preventDefault()
         photoBtn.style.display = "none"
         //addPhotoBtn.removeEventListener(true)
     })
+
+// <----------------- END ---------------------------------------->
+
+
+
+// <-------------- Script to create a post ----------------------->
+
+
+const postBtn = document.querySelector('#postbtnid')
+const postInput = document.querySelector('#postinputid')
+
+postBtn.addEventListener('click', (e) =>{
+    e.preventDefault()
+    console.log(postInput.value)
+  
+})
+
+
+
+postInput.addEventListener('keyup', (e) =>{
+    e.preventDefault()
+    if(e.target.value.length > 0){
+        postBtn.removeAttribute('disabled')
+    }else{
+        postBtn.setAttribute('disabled', 'disabled')
+    }
+})
+
+
+// <------------------- END -------------------------------------->
+
+
 </script>
 
 
