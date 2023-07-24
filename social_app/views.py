@@ -45,6 +45,27 @@ def postList(request):
 
 
 '''
+Create a post with json
+'''
+
+
+def create_post(request):
+    payload = {}
+    user = request.user
+    if user.is_authenticated:
+        ns = json.loads(request.body)
+        inputPostValue = ns['inputPostValue']
+        if request.method == 'POST':
+            Post.objects.create(user=user, user_post=inputPostValue)
+            payload['response'] = 'Post created Successfully'
+        else:
+            payload['response'] = "It has to be a post method"
+    else:
+        payload['response'] = 'User has to be authenticated'
+    return JsonResponse(json.dumps(payload), content_type="application/json", safe=False)
+
+
+'''
 User like post with Json
 '''
 
@@ -71,7 +92,7 @@ def like_post(request, id):
 
 
 '''
-Get like count for each post
+Get like count for each post with json
 '''
 
 
