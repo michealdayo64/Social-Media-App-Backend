@@ -7,6 +7,48 @@
     const cancelBtn = document.querySelector('#cancelBtn')
     const postBtn = document.querySelector('#postbtnid')
     const postInput = document.querySelector('#postinputid')
+    const photoBtn1 = document.querySelector('#photoBtn1')
+    //const idProfileImage = document.querySelector('#id_profile_image')
+
+    var cropper;
+	var imageFile;
+	var base64ImageString;
+	var cropX;
+	var cropY;
+	var cropWidth;
+	var cropHeight;
+
+    function readURL(input){
+		if(input.files && input.files[0]){
+			var reader = new FileReader()
+
+			reader.onload = function(e){
+				//disableImageOverlay()
+				var image = e.target.result
+				var imageField = document.getElementById("id_profile_image_display")
+				imageField.src = image
+				cropper = new Cropper(imageField, {
+					aspectRatio: 1/1,
+					crop(event){
+						console.log("CROP START")
+						console.log("x: " + event.detail.x)
+						console.log("y: " + event.detail.y)
+						console.log("width: " + event.detail.width)
+						console.log("height: " + event.detail.height)
+						setImageCropProperties(
+							image,
+							event.detail.x,
+							event.detail.y,
+							event.detail.width,
+							event.detail.height
+						)
+					}
+				})
+			}
+
+			reader.readAsDataURL(input.files[0])
+		}
+	}
     
 
 
@@ -28,7 +70,6 @@
     cancelBtn.addEventListener('click', (e) =>{
         e.preventDefault()
         photoBtn.style.display = "none"
-        //addPhotoBtn.removeEventListener(true)
     })
 
 // <----------------- END ---------------------------------------->
@@ -37,44 +78,30 @@
 
 // <-------------- Script to create a post ----------------------->
 
-
-function getCookie(name){
-    if(!document.cookie){
-        return null
-    }
-    const xsrfCookies = document.cookie.split(';').map(c => c.trim()).filter(c => c.startsWith(name + '='));
-    if(xsrfCookies.length === 0){
-        return null
-    }
-    return decodeURIComponent(xsrfCookies[0].split('=')[1])
-}
-
 postBtn.addEventListener('click', (e) =>{
     e.preventDefault()
     var inputPostValue = postInput.value.trim()
-    const csrfToken = getCookie('CSRF-TOKEN')
-    console.log(csrfToken)
-    const headers = new Headers({
-        'Content-Type': 'x-www-form-urlencoded',
-        'X-CSRF-TOKEN': csrfToken
-    })
     fetch(`${url}/create-post/`, {
         body: JSON.stringify({
             inputPostValue: inputPostValue
         }),
-        headers,
         method: 'POST',
-        
+        headers:{
+            'X-CSRFToken': "{{csrf_token}}",
+            "Content-Type": "application/json"
+        }
     }).then((res) => res.json()).then((data) =>{
         console.log(data)
     })
-
-    //window.location.reload()
-  
+    window.location.reload()
 })
 
+// <------------------------- END --------------------------------------->
 
-// Enabling and disablng button
+
+
+// <-------------- Script Enabling and disablng button -------------------->
+
 postInput.addEventListener('keyup', (e) =>{
     e.preventDefault()
     
@@ -85,8 +112,15 @@ postInput.addEventListener('keyup', (e) =>{
     }
 })
 
+// <------------------------------- END -------------------------------------->
 
-// <------------------- END -------------------------------------->
+
+imageContainer.addEventListener("click", function(event){
+	document.getElementById("id_profile_image").click()
+})
+
+
+
 
 
 </script>
