@@ -8,5 +8,5 @@
 8. comment post done
 9. comment list "Still pending"
 10. post list substring "Still pending"
-11. CSRF_TOKEN for json "Still pending"
+11. CSRF_TOKEN for json done
 

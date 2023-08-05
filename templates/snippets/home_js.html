@@ -2,7 +2,8 @@
 
 <script>
      const addPhotoBtn = document.querySelector('#addphotoBtn')
-    const photoBtn = document.querySelector('#photoBtn')
+    const ImageContainer1 = document.querySelector('#ImageContainer1')
+    const ImageContainer2 = document.querySelector('#ImageContainer2')
     const photoid = document.querySelector('#photoid')
     const cancelBtn = document.querySelector('#cancelBtn')
     const postBtn = document.querySelector('#postbtnid')
@@ -15,20 +16,27 @@
 	
 
     function readURL(input){
+        ImageContainer1.style.display = "none"
 		if(input.files && input.files[0]){
 			var reader = new FileReader()
 
 			reader.onload = function(e){
 				//disableImageOverlay()
 				var image = e.target.result
-				var imageField = document.getElementById("id_profile_image_display")
+                console.log(image)
+				var imageField = document.getElementById("photoImageID")
+                ImageContainer2.style.display = "block"
+                console.log(imageField)
+                imageField.style.display = "d-flex"
 				imageField.src = image
+                //console.log(imageField.src)
+                //
 				setImageCropProperties(
 							image
 						)
 			}
-
 			reader.readAsDataURL(input.files[0])
+            
 		}
 	}
 
@@ -59,7 +67,7 @@
 
     const photoViewButton = (e) =>{
         e.preventDefault()
-        photoBtn.style.display = "block"
+        ImageContainer1.style.display = "block"
     }
     addPhotoBtn.addEventListener('click', photoViewButton)
     photoid.addEventListener('click', photoViewButton)
@@ -71,7 +79,8 @@
 
     cancelBtn.addEventListener('click', (e) =>{
         e.preventDefault()
-        photoBtn.style.display = "none"
+        ImageContainer1.style.display = "none"
+        
     })
 
 // <----------------- END ---------------------------------------->
@@ -117,11 +126,9 @@ postInput.addEventListener('keyup', (e) =>{
 // <------------------------------- END -------------------------------------->
 
 
-imageContainer.addEventListener("click", function(event){
+photoBtn1.addEventListener("click", function(event){
 	document.getElementById("id_profile_image").click()
 })
-
-
 
 
 

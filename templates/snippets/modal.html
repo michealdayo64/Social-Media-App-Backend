@@ -4,7 +4,7 @@
       <div class="modal-content">
         <div class="modal-header">
           <h1 class="modal-title fs-5 ms-auto" id="exampleModalLabel">Create Post</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="cancelBtn"></button>
         </div>
         <div class="modal-body">
           <div class="d-flex flex-row align-items-left">
@@ -23,24 +23,26 @@
             <textarea name="" id="postinputid" cols="50" rows="0" placeholder="What on your mind, {{ request.user.username }}?"></textarea>
           </div>
           <div class="d-none justify-content-between">
-            <i class="fa-solid fa-xmark" style="padding: 5px; border-radius: 50%; background-color: gray;" id="cancelBtn"></i>
-            <i class="fa-solid fa-xmark" style="padding: 5px; border-radius: 50%; background-color: gray;" id="cancelBtn"></i>
+            <i class="fa-solid fa-xmark" style="padding: 5px; border-radius: 50%; background-color: gray;" id="confirmImageBtn"></i>
+            <i class="fa-solid fa-xmark" style="padding: 5px; border-radius: 50%; background-color: gray;" id="cancelImageBtn"></i>
           </div>
-          <div id="photoBtn">
+          <div id="ImageContainer1">
             <div class="d-flex flex-column justify-content-between align-items-center h-100 rounded" id="photoBtn1">
               <input class="d-none" type="file" name="profile_image" id="id_profile_image" onchange="readURL(this)">
-                <i class="fa-solid fa-xmark" style="margin-left: 420px; padding: 5px; border-radius: 50%; background-color: gray;" id="cancelBtn"></i>
+              <div></div>
                 <div class="d-flex flex-column align-items-center">
                     <i class="fa-solid fa-file-circle-plus"></i>
                     <span>Add Photos</span>
                 </div>
                 <div></div>
             </div>
-            <div class=" d-none rounded" id="photoImageID">
-              <img class="w-100 h-100 rounded" src="https://static.actu.fr/uploads/2022/09/305718572-207626651620241-463997707880913521-n.jpg" alt="" srcset="">
-            </div>
-            
           </div>
+
+          <div id="ImageContainer2">
+            <img class="d-none w-100 h-100 rounded" src="" alt="" srcset="" id="photoImageID">
+          </div>
+              
+          
         </div>
         <div class="modal-footer">
           <div class="d-flex flex-row justify-content-between border border-black rounded" id="assets">
