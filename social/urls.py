@@ -27,7 +27,8 @@ urlpatterns = [
     path('friend/', include('friend_app.urls')),
     path('notification/', include('notification_app.urls')),
     path('profile/', include('profile_app.urls')),
-    path('message/', include('message_app.urls'))
+    path('message/', include('message_app.urls')),
+    path('group/', include('social_groups.urls'))
 ]
 
 if settings.DEBUG:
