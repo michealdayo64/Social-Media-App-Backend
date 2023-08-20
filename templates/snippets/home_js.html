@@ -4,11 +4,13 @@
      const addPhotoBtn = document.querySelector('#addphotoBtn')
     const ImageContainer1 = document.querySelector('#ImageContainer1')
     const ImageContainer2 = document.querySelector('#ImageContainer2')
+    var imageField = document.getElementById("photoImageID")
     const photoid = document.querySelector('#photoid')
     const cancelBtn = document.querySelector('#cancelBtn')
     const postBtn = document.querySelector('#postbtnid')
     const postInput = document.querySelector('#postinputid')
     const photoBtn1 = document.querySelector('#photoBtn1')
+   
     //const idProfileImage = document.querySelector('#id_profile_image')
 
 	var imageFile;
@@ -16,6 +18,7 @@
 	
 
     function readURL(input){
+        postBtn.removeAttribute('disabled')
         ImageContainer1.style.display = "none"
 		if(input.files && input.files[0]){
 			var reader = new FileReader()
@@ -24,16 +27,12 @@
 				//disableImageOverlay()
 				var image = e.target.result
                 console.log(image)
-				var imageField = document.getElementById("photoImageID")
                 ImageContainer2.style.display = "block"
                 console.log(imageField)
-                imageField.style.display = "d-flex"
+                //imageField.style.display = "d-flex"
 				imageField.src = image
-                //console.log(imageField.src)
-                //
-				setImageCropProperties(
-							image
-						)
+                imageFile =	image
+						
 			}
 			reader.readAsDataURL(input.files[0])
             
@@ -67,7 +66,12 @@
 
     const photoViewButton = (e) =>{
         e.preventDefault()
-        ImageContainer1.style.display = "block"
+        
+            ImageContainer1.style.display = "block"
+        
+
+        
+        
     }
     addPhotoBtn.addEventListener('click', photoViewButton)
     photoid.addEventListener('click', photoViewButton)
@@ -80,6 +84,8 @@
     cancelBtn.addEventListener('click', (e) =>{
         e.preventDefault()
         ImageContainer1.style.display = "none"
+        ImageContainer2.style.display = "none"
+        addPhotoBtn.style.pointerEvents = ""
         
     })
 
@@ -94,7 +100,8 @@ postBtn.addEventListener('click', (e) =>{
     var inputPostValue = postInput.value.trim()
     fetch(`${url}/create-post/`, {
         body: JSON.stringify({
-            inputPostValue: inputPostValue
+            inputPostValue: inputPostValue,
+            imgPostValue: imageFile 
         }),
         method: 'POST',
         headers:{
@@ -127,6 +134,7 @@ postInput.addEventListener('keyup', (e) =>{
 
 
 photoBtn1.addEventListener("click", function(event){
+    addPhotoBtn.style.pointerEvents = "none"
 	document.getElementById("id_profile_image").click()
 })
 

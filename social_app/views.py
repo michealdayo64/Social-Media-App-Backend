@@ -2,8 +2,16 @@ from django.shortcuts import render, redirect
 from .models import Post, Comment
 import json
 from django.http import JsonResponse
+import os
+from django.conf import settings
+from django.core.files.storage import FileSystemStorage
+import base64
+from django.core import files
 
 # Create your views here.
+
+
+TEMP_PROFILE_IMAGE_NAME = "temp_profile_image.png"
 
 
 '''
@@ -49,15 +57,51 @@ Create a post with json
 '''
 
 
+def save_temp_profile_image_from_base64String(imageString, user):
+    INCORRECT_PADDING_EXCEPTION = "incorrect padding"
+    try:
+        if not os.path.exists(settings.TEMP):
+            os.mkdir(settings.TEMP)
+        if not os.path.exists(f"{settings.TEMP}/{user.username}"):
+            os.mkdir(f"{settings.TEMP}/{user.username}")
+        url = os.path.join(
+            f"{settings.TEMP}/{user.username}", TEMP_PROFILE_IMAGE_NAME)
+        storage = FileSystemStorage(location=url)
+        img = base64.b64decode(imageString)
+        with storage.open("", "wb+") as destination:
+            destination.write(img)
+            destination.close()
+        return url
+    except Exception as e:
+        if str(e) == INCORRECT_PADDING_EXCEPTION:
+            imageString += "=" * ((4 - len(imageString) % 4) % 4)
+            return save_temp_profile_image_from_base64String(imageString, user)
+    return None
+
+
 def create_post(request):
     payload = {}
     user = request.user
     if user.is_authenticated:
         ns = json.loads(request.body)
         inputPostValue = ns['inputPostValue']
+        imgPostValue = ns['imgPostValue']
+        url = save_temp_profile_image_from_base64String(imgPostValue, user)
         if request.method == 'POST':
-            Post.objects.create(user=user, user_post=inputPostValue)
-            payload['response'] = 'Post created Successfully'
+            if inputPostValue:
+                Post.objects.create(user=user, user_post=inputPostValue)
+                payload['response'] = 'Post created Successfully'
+            if url:
+                Post.objects.create(
+                    user=user, image=files.File(open(url, "rb")))
+                os.remove(url)
+                payload['response'] = 'Post created Successfully'
+                
+            if inputPostValue and url:
+                Post.objects.create(
+                    user=user, user_post=inputPostValue, image=files.File(open(url, "rb")))
+                os.remove(url)
+                payload['response'] = 'Post created Successfully'
         else:
             payload['response'] = "It has to be a post method"
     else:
