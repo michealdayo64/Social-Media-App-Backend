@@ -32,6 +32,9 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    #Third Party Packages
+    'daphne',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -39,13 +42,15 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+
     # APPS
     'social_app',
     'account',
     'friend_app',
     'notification_app',
     'profile_app',
-    'message_app'
+    'message_app',
+    'social_groups',
 ]
 
 MIDDLEWARE = [
@@ -83,6 +88,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'social.wsgi.application'
+ASGI_APPLICATION = "social.asgi.application"
 
 
 # Database
