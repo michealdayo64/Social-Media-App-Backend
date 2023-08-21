@@ -19,5 +19,46 @@
         </div>
       </div>
     </div>
+
+    <script type="text/javascript">
+      console.log(window.location.host)
+      // Correctly decide between ws:// and wss://
+      var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
+      {% if debug_mode %}
+        var ws_path = ws_scheme + '://' + window.location.host + "/group_chat/{{room_id}}/"; // development
+      {% else %}
+        var ws_path = ws_scheme + '://' + window.location.host + ":8001/group_chat/{{room_id}}/"; // production
+      {% endif %}
+
+      var public_chat_socket = new WebSocket(ws_path);
+
+	// Handle incoming messages
+	public_chat_socket.onmessage = function(message) {
+
+  }
+
+  public_chat_socket.addEventListener('open', (e) =>{
+      console.log("Public Public ChatSocket OPEN")
+  })
+
+  public_chat_socket.onclose = function(e) {
+		//console.error('Public ChatSocket closed.');
+	};
+
+	public_chat_socket.onOpen = function(e){
+		//console.log("Public ChatSocket onOpen", e)
+	}
+
+	public_chat_socket.onerror = function(e){
+        //console.log('Public ChatSocket error', e)
+    }
+
+    if (public_chat_socket.readyState == WebSocket.OPEN) {
+    	console.log("Public ChatSocket OPEN")
+    } else if (public_chat_socket.readyState == WebSocket.CONNECTING){
+        console.log("Public ChatSocket connecting..")
+    }
+
+    </script>
   
 {% endblock %}
