@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}Home{% endblock %}
+{% block title %}Group Detail{% endblock %}
 
 {% block content %}
 <br>
@@ -9,9 +9,44 @@
         {% include 'snippets/left-menu.html' %}
       </div>
       <div class="col-6">
-        <div class="card">
-            <h1>Group Detail</h1>
+        <div class="card p-2">
+            <h2>Welcome to the Fashion Group Chat</h2><br>
+            <p>In This group, we will discuss everything that partains to Fashions.
+               Everybody will be allowed to have his/her opinoins. Click the button below to start discussions.
+              </p>
+              <button type="button" class="btn btn-primary w-25">Start</button>
         </div>
+        <br>
+        <br>
+        <br>
+        <div class="chat-panel">
+          <div class="card p-1" style="border-bottom-left-radius: 0px; border-top-right-radius: 0px; border-bottom: 1px solid black;">
+            <div class="d-flex justify-content-between align-items-center">
+              <h3>Chat Room</h3>
+              <div class="d-flex align-items-center">
+                <span class="pe-1 text-danger fw-bold">2</span>
+                <i class="fa-solid fa-user text-primary"></i>
+                
+              </div>
+            </div>
+          </div>
+          <div class="chat-log">
+            <h1>dsskkskksksss This group, we will discuss everything that partains to Fashions.
+              Everybody will This group, we will discuss everything that partains to Fashions.
+              Everybody will This group, we will discuss everything that partains to Fashions.
+              Everybody will This group, we will discuss everything that partains to Fashions.
+              Everybody will This group, we will discuss everything that partains to Fashions.
+              Everybody will This group, we will discuss everything that partains to Fashions.
+              Everybody will </h1>
+          </div>
+          <div class="card w-100">
+            <div class="d-flex align-items-center">
+              <textarea name="" id="" cols="10" rows="2" class="w-100"></textarea>
+              <input type="submit" class="btn btn-primary h-100" value="Send">
+            </div>
+          </div>
+        </div>
+        
       </div>
       <div class="col-3">
         <div class="card">
