@@ -31,18 +31,18 @@
             </div>
           </div>
           <div class="chat-log">
-            <h1>dsskkskksksss This group, we will discuss everything that partains to Fashions.
+            <p>dsskkskksksss This group, we will discuss everything that partains to Fashions.
               Everybody will This group, we will discuss everything that partains to Fashions.
               Everybody will This group, we will discuss everything that partains to Fashions.
               Everybody will This group, we will discuss everything that partains to Fashions.
               Everybody will This group, we will discuss everything that partains to Fashions.
               Everybody will This group, we will discuss everything that partains to Fashions.
-              Everybody will </h1>
+              Everybody will </p>
           </div>
           <div class="card w-100">
             <div class="d-flex align-items-center">
-              <textarea name="" id="" cols="10" rows="2" class="w-100"></textarea>
-              <input type="submit" class="btn btn-primary h-100" value="Send">
+              <textarea name="" id="msg-input" cols="10" rows="2" class="w-100"></textarea>
+              <input type="submit" class="btn btn-primary h-100" value="Send" id="send-btn">
             </div>
           </div>
         </div>
@@ -56,7 +56,8 @@
     </div>
 
     <script type="text/javascript">
-      console.log(window.location.host)
+      var sendBtn = document.getElementById("send-btn")
+      
       // Correctly decide between ws:// and wss://
       var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
       {% if debug_mode %}
@@ -65,33 +66,43 @@
         var ws_path = ws_scheme + '://' + window.location.host + ":8001/group_chat/{{room_id}}/"; // production
       {% endif %}
 
-      var public_chat_socket = new WebSocket(ws_path);
+      var group_chat_socket = new WebSocket(ws_path);
 
 	// Handle incoming messages
-	public_chat_socket.onmessage = function(message) {
-
+	group_chat_socket.onmessage = function(message) {
+      console.log(message.data)
   }
 
-  public_chat_socket.addEventListener('open', (e) =>{
+  group_chat_socket.addEventListener('open', (e) =>{
       console.log("Public Public ChatSocket OPEN")
   })
 
-  public_chat_socket.onclose = function(e) {
+  group_chat_socket.onclose = function(e) {
 		//console.error('Public ChatSocket closed.');
 	};
 
-	public_chat_socket.onOpen = function(e){
+	group_chat_socket.onOpen = function(e){
 		//console.log("Public ChatSocket onOpen", e)
 	}
 
-	public_chat_socket.onerror = function(e){
+	group_chat_socket.onerror = function(e){
         //console.log('Public ChatSocket error', e)
     }
 
-    if (public_chat_socket.readyState == WebSocket.OPEN) {
+    if (group_chat_socket.readyState == WebSocket.OPEN) {
     	console.log("Public ChatSocket OPEN")
-    } else if (public_chat_socket.readyState == WebSocket.CONNECTING){
+    } else if (group_chat_socket.readyState == WebSocket.CONNECTING){
         console.log("Public ChatSocket connecting..")
+    }
+
+    
+    sendBtn.onclick = function(e){
+      var msgInput = document.getElementById("msg-input")
+      var message = msgInput.value
+      group_chat_socket.send(JSON.stringify({
+        "command": "send",
+        "message": message
+      }))
     }
 
     </script>
