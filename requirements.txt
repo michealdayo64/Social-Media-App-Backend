@@ -1,7 +1,9 @@
 asgiref==3.7.2
+async-timeout==4.0.3
 attrs==23.1.0
-autobahn==23.6.2
+autobahn==23.1.2
 Automat==22.10.0
+backports.zoneinfo==0.2.1
 cffi==1.15.1
 channels==4.0.0
 channels-redis==4.1.0
@@ -23,7 +25,6 @@ service-identity==23.1.0
 six==1.16.0
 sqlparse==0.4.4
 Twisted==22.10.0
-twisted-iocpsupport==1.0.4
 txaio==23.1.1
 typing_extensions==4.7.1
 tzdata==2023.3

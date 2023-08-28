@@ -24,7 +24,7 @@
             <div class="d-flex justify-content-between align-items-center">
               <h3>Chat Room</h3>
               <div class="d-flex align-items-center">
-                <span class="pe-1 text-danger fw-bold">2</span>
+                <span class="pe-1 text-danger fw-bold" id="id_connected_users">2</span>
                 <i class="fa-solid fa-user text-primary"></i>
                 
               </div>
@@ -71,10 +71,22 @@
 	// Handle incoming messages
 	group_chat_socket.onmessage = function(message) {
       console.log(message.data)
+      var data = JSON.parse(message.data);
+
+      if (data.msg_type == 1) {
+        console.log(data['connected_user_count'])
+			setConnectedUsersCount(data['connected_user_count'])
+		}
   }
 
   group_chat_socket.addEventListener('open', (e) =>{
       console.log("Public Public ChatSocket OPEN")
+      if("{{request.user.is_authenticated}}"){
+			group_chat_socket.send(JSON.stringify({
+				"command": "join",
+				"room": "{{room_id}}"
+			}));
+		}
   })
 
   group_chat_socket.onclose = function(e) {
@@ -104,6 +116,11 @@
         "message": message
       }))
     }
+
+    function setConnectedUsersCount(count){
+		element = document.getElementById("id_connected_users")
+		element.innerHTML = count
+	}
 
     </script>
   

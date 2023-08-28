@@ -28,7 +28,10 @@
           </div>
           <div id="ImageContainer1">
             <div class="d-flex flex-column justify-content-between align-items-center h-100 rounded" id="photoBtn1">
-              <input class="d-none" type="file" name="profile_image" id="id_profile_image" onchange="readURL(this)">
+              <form class="form-signin" method="post" enctype="multipart/form-data">{% csrf_token %}
+                <input class="d-none" type="file" name="profile_image" id="id_profile_image" onchange="readURL(this)">
+              </form>
+              
               <div></div>
                 <div class="d-flex flex-column align-items-center">
                     <i class="fa-solid fa-file-circle-plus"></i>

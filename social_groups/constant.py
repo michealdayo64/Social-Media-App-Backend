@@ -1,0 +1,1 @@
+MSG_TYPE_CONNECTED_USER_COUNT = 1 # for sending the connectd user count

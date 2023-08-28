@@ -86,18 +86,22 @@ def create_post(request):
         ns = json.loads(request.body)
         inputPostValue = ns['inputPostValue']
         imgPostValue = ns['imgPostValue']
-        url = save_temp_profile_image_from_base64String(imgPostValue, user)
-        if request.method == 'POST':
+        print(imgPostValue)
+        if request.method == 'POST' or request.method == 'FILES':
             if inputPostValue:
                 Post.objects.create(user=user, user_post=inputPostValue)
                 payload['response'] = 'Post created Successfully'
-            if url:
+            if imgPostValue:
+                url = save_temp_profile_image_from_base64String(
+                    imgPostValue, user)
                 Post.objects.create(
                     user=user, image=files.File(open(url, "rb")))
                 os.remove(url)
                 payload['response'] = 'Post created Successfully'
-                
-            if inputPostValue and url:
+
+            if inputPostValue and imgPostValue:
+                url = save_temp_profile_image_from_base64String(
+                    imgPostValue, user)
                 Post.objects.create(
                     user=user, user_post=inputPostValue, image=files.File(open(url, "rb")))
                 os.remove(url)
