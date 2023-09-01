@@ -67,6 +67,7 @@ def save_temp_profile_image_from_base64String(imageString, user):
         url = os.path.join(
             f"{settings.TEMP}/{user.username}", TEMP_PROFILE_IMAGE_NAME)
         storage = FileSystemStorage(location=url)
+        print(storage)
         img = base64.b64decode(imageString)
         with storage.open("", "wb+") as destination:
             destination.write(img)
@@ -84,9 +85,9 @@ def create_post(request):
     user = request.user
     if user.is_authenticated:
         ns = json.loads(request.body)
-        inputPostValue = ns['inputPostValue']
-        imgPostValue = ns['imgPostValue']
-        print(imgPostValue)
+        inputPostValue = ns.get('inputPostValue')
+        imgPostValue = ns.get('imgPostValue')
+        print(inputPostValue)
         if request.method == 'POST' or request.method == 'FILES':
             if inputPostValue:
                 Post.objects.create(user=user, user_post=inputPostValue)
@@ -94,6 +95,7 @@ def create_post(request):
             if imgPostValue:
                 url = save_temp_profile_image_from_base64String(
                     imgPostValue, user)
+                print(url)
                 Post.objects.create(
                     user=user, image=files.File(open(url, "rb")))
                 os.remove(url)

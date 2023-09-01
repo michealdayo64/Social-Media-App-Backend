@@ -93,7 +93,42 @@
 postBtn.addEventListener('click', (e) =>{
     e.preventDefault()
     var inputPostValue = postInput.value.trim()
-    fetch(`${url}/create-post/`, {
+    if(inputPostValue){
+        fetch(`${url}/create-post/`, {
+        body: JSON.stringify({
+            inputPostValue: inputPostValue,
+            //imgPostValue: imageFile 
+        }),
+        method: 'POST',
+        headers:{
+            'X-CSRFToken': "{{csrf_token}}",
+            "Content-Type": "application/json"
+        }
+    }).then((res) => res.json()).then((data) =>{
+        console.log(data)
+    })
+    window.location.reload()
+    }
+
+    if(imageFile){
+        fetch(`${url}/create-post/`, {
+        body: JSON.stringify({
+            //inputPostValue: inputPostValue,
+            imgPostValue: imageFile 
+        }),
+        method: 'POST',
+        headers:{
+            'X-CSRFToken': "{{csrf_token}}",
+            "Content-Type": "application/json"
+        }
+    }).then((res) => res.json()).then((data) =>{
+        console.log(data)
+    })
+    window.location.reload()
+    }
+
+    if(inputPostValue && imageFile){
+        fetch(`${url}/create-post/`, {
         body: JSON.stringify({
             inputPostValue: inputPostValue,
             imgPostValue: imageFile 
@@ -107,6 +142,8 @@ postBtn.addEventListener('click', (e) =>{
         console.log(data)
     })
     window.location.reload()
+    }
+    
 })
 
 // <------------------------- END --------------------------------------->
