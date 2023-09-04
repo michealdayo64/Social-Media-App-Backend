@@ -103,34 +103,32 @@ def create_post(request):
         ns = json.loads(request.body)
         inputPostValue = ns.get('inputPostValue')
         imgPostValue = ns.get('imgPostValue')
-        print(inputPostValue)
 
-            if inputPostValue and imgPostValue:
+        if inputPostValue and imgPostValue:
+            post = Post.objects.create(
+                user=user, user_post=inputPostValue)
+            print(post)
+            file_name, file_data = save_post_image_form_base64String(
+                imgPostValue)
+            print(post.image.save(file_name, file_data))
+            post.image.save(file_name, file_data)
+            payload['response'] = 'Post created Successfully'
+        else:
+            if inputPostValue:
                 post = Post.objects.create(
                     user=user, user_post=inputPostValue)
                 print(post)
-                file_name, file_data = save_post_image_form_base64String(
-                    imgPostValue)
-                print(post.image.save(file_name, file_data))
-                post.image.save(file_name, file_data)
                 payload['response'] = 'Post created Successfully'
             else:
-                if inputPostValue:
-                    post = Post.objects.create(
-                        user=user, user_post=inputPostValue)
-                    print(post)
-                    payload['response'] = 'Post created Successfully'
-                else:
-                    post = Post.objects.create(
-                        user=user)
-                    print(post)
-                    file_name, file_data = save_post_image_form_base64String(
-                        imgPostValue)
-                    #print(post.image.save(file_name, file_data))
-                    post.image.save(file_name, file_data)
-                    payload['response'] = 'Post created Successfully'
-        else:
-            payload['response'] = "It has to be a post method"
+                post = Post.objects.create(
+                    user=user)
+                print(post)
+                file_name, file_data = save_post_image_form_base64String(
+                    imgPostValue)
+                #print(post.image.save(file_name, file_data))
+                post.image.save(file_name, file_data)
+                payload['response'] = 'Post created Successfully'
+       
     else:
         payload['response'] = 'User has to be authenticated'
     return JsonResponse(json.dumps(payload), content_type="application/json", safe=False)
