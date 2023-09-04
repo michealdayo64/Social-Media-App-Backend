@@ -29,7 +29,9 @@
           </div>
           <br>
           <div class="w-100" id="post">
-            <p>{{ i.user_post }}</p>
+            {% if i.user_post %}
+              <p>{{ i.user_post }}</p>
+            {% endif %}
           </div>
           <div id="postimage">
             {% if i.image %}

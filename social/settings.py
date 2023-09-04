@@ -32,7 +32,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    #Third Party Packages
+    # Third Party Packages
     'daphne',
 
     'django.contrib.admin',

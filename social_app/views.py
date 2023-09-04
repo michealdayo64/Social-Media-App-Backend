@@ -7,6 +7,7 @@ from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 import base64
 from django.core import files
+from django.core.files.base import ContentFile
 
 # Create your views here.
 
@@ -52,12 +53,10 @@ def postList(request):
     return JsonResponse(json.dumps(payload), content_type="application/json")
 
 
-'''
-Create a post with json
-'''
 
 
-def save_temp_profile_image_from_base64String(imageString, user):
+
+'''def save_temp_profile_image_from_base64String(imageString, user):
     INCORRECT_PADDING_EXCEPTION = "incorrect padding"
     try:
         if not os.path.exists(settings.TEMP):
@@ -67,6 +66,7 @@ def save_temp_profile_image_from_base64String(imageString, user):
         url = os.path.join(
             f"{settings.TEMP}/{user.username}", TEMP_PROFILE_IMAGE_NAME)
         storage = FileSystemStorage(location=url)
+        print(storage)
         img = base64.b64decode(imageString)
         with storage.open("", "wb+") as destination:
             destination.write(img)
@@ -76,36 +76,60 @@ def save_temp_profile_image_from_base64String(imageString, user):
         if str(e) == INCORRECT_PADDING_EXCEPTION:
             imageString += "=" * ((4 - len(imageString) % 4) % 4)
             return save_temp_profile_image_from_base64String(imageString, user)
-    return None
+    return None'''
 
+
+'''
+Image from base 64 Encoding
+'''
+
+
+def save_post_image_form_base64String(imageString):
+    format, imgstr = imageString.split(';base64,')
+    ext = format.split('/')[-1]
+    img = base64.b64decode(imgstr)
+    file_data = ContentFile(img)
+    file_name = "'myphoto." + ext
+    return file_name, file_data
+
+'''
+Create a post with json
+'''
 
 def create_post(request):
     payload = {}
     user = request.user
     if user.is_authenticated:
         ns = json.loads(request.body)
-        inputPostValue = ns['inputPostValue']
-        imgPostValue = ns['imgPostValue']
-        print(imgPostValue)
-        if request.method == 'POST' or request.method == 'FILES':
-            if inputPostValue:
-                Post.objects.create(user=user, user_post=inputPostValue)
-                payload['response'] = 'Post created Successfully'
-            if imgPostValue:
-                url = save_temp_profile_image_from_base64String(
-                    imgPostValue, user)
-                Post.objects.create(
-                    user=user, image=files.File(open(url, "rb")))
-                os.remove(url)
-                payload['response'] = 'Post created Successfully'
+        inputPostValue = ns.get('inputPostValue')
+        imgPostValue = ns.get('imgPostValue')
+        print(inputPostValue)
+        if request.method == 'POST':
 
             if inputPostValue and imgPostValue:
-                url = save_temp_profile_image_from_base64String(
-                    imgPostValue, user)
-                Post.objects.create(
-                    user=user, user_post=inputPostValue, image=files.File(open(url, "rb")))
-                os.remove(url)
+                post = Post.objects.create(
+                    user=user, user_post=inputPostValue)
+                print(post)
+                file_name, file_data = save_post_image_form_base64String(
+                    imgPostValue)
+                print(post.image.save(file_name, file_data))
+                post.image.save(file_name, file_data)
                 payload['response'] = 'Post created Successfully'
+            else:
+                if inputPostValue:
+                    post = Post.objects.create(
+                        user=user, user_post=inputPostValue)
+                    print(post)
+                    payload['response'] = 'Post created Successfully'
+                else:
+                    post = Post.objects.create(
+                        user=user)
+                    print(post)
+                    file_name, file_data = save_post_image_form_base64String(
+                        imgPostValue)
+                    #print(post.image.save(file_name, file_data))
+                    post.image.save(file_name, file_data)
+                    payload['response'] = 'Post created Successfully'
         else:
             payload['response'] = "It has to be a post method"
     else:
