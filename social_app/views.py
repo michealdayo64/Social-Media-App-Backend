@@ -104,22 +104,6 @@ def create_post(request):
         inputPostValue = ns.get('inputPostValue')
         imgPostValue = ns.get('imgPostValue')
         print(inputPostValue)
-<<<<<<< HEAD
-        if request.method == 'POST':
-=======
-        if request.method == 'POST' or request.method == 'FILES':
-            if inputPostValue:
-                Post.objects.create(user=user, user_post=inputPostValue)
-                payload['response'] = 'Post created Successfully'
-            if imgPostValue:
-                url = save_temp_profile_image_from_base64String(
-                    imgPostValue, user)
-                print(url)
-                Post.objects.create(
-                    user=user, image=files.File(open(url, "rb")))
-                os.remove(url)
-                payload['response'] = 'Post created Successfully'
->>>>>>> 95582c7df035a56a53c1d6fe1610d09c8727e348
 
             if inputPostValue and imgPostValue:
                 post = Post.objects.create(
