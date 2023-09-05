@@ -41,7 +41,7 @@
           <hr>
           <div class="d-flex flex-row justify-content-between align-items-center">
            <div class="d-flex flex-row align-items-center">
-            <a href="#" class="likesstyle" id="likecountid" data-id="{{ i.id }}">
+            <a href="#" class="likesstyle likecountclass_{{ i.id }}" id="likecountid" data-id="{{ i.id }}">
               
           </a>
            </div>
@@ -86,7 +86,6 @@
 <script>
 
   var url = window.location.origin
-  //var pk = 
   const commentidBtn = [...document.querySelectorAll('#commentidBtn')]
   const commentcontainerId = [...document.querySelectorAll('#commentcontainerid')].reverse()
   const likecountId = [...document.querySelectorAll('#likecountid')].reverse() 
@@ -124,12 +123,12 @@
   
     likeidBtn.forEach(likeBtn => likeBtn.addEventListener('click', (e) =>{
       var id = likeBtn.getAttribute('data-id')
-      var elementId = id - 1
+      var likeclass = document.querySelector(`.likecountclass_${id}`)
       fetch(`${url}/like-post/${id}/`, {
         body: null,
         method: 'POST'
       }).then((res) => res.json()).then((data) =>{
-        likecountId[elementId].innerHTML = `
+        likeclass.innerHTML = `
               <i class="fa-solid fa-thumbs-up text-white text-bg-primary p-1 rounded-pill"></i>
               <span class="ps-1" style="color: black; text-decoration-line: none;">${data['like_count']}</span>
         `
