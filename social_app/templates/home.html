@@ -46,7 +46,7 @@
           </a>
            </div>
            <div>
-            <a href="#" id="commentcountid" data-id="{{ i.id }}">
+            <a href="#" class="commentinputclass_{{ i.pk }}" id="commentcountid" data-id="{{ i.id }}">
               
             </a>
            </div>
@@ -55,7 +55,7 @@
             <div class="d-flex flex-row justify-content-between">
               <div class="d-flex flex-row align-items-center justify-content-center w-50 likecommentshare" id="likeidBtn" data-id="{{ i.pk }}">
                 <i class="fa-solid fa-thumbs-up p-1"></i>
-                <span>Like</span>
+                <span class="likeunlike_{{ i.id }}" id="likeunlikeid" data-id="{{ i.id }}">Like</span>
               </div>
             <div class="d-flex flex-row align-items-center justify-content-center w-50 likecommentshare" id="commentidBtn" data-id="{{ i.pk }}">
               <i class="fa-regular fa-comment p-1"></i>
@@ -67,9 +67,9 @@
             </div>
             </div>
           <hr>
-          <div class="commentcontainer" id="commentcontainerid">
+          <div class="commentcontainer" id="commentcontainerid_{{ i.pk }}">
             <img class="pe-1 profile-pic" src="{{ i.user.profile_image.url }}" alt="" srcset="">
-            <textarea name="" placeholder="Write a comment..." id="commentinput" data-pk="{{ i.pk }}"></textarea>
+            <textarea name="" placeholder="Write a comment..." class="" id="commentinput" data-pk="{{ i.pk }}"></textarea>
           </div>
         </div>
         {% endfor %}
@@ -87,12 +87,11 @@
 
   var url = window.location.origin
   const commentidBtn = [...document.querySelectorAll('#commentidBtn')]
-  const commentcontainerId = [...document.querySelectorAll('#commentcontainerid')].reverse()
   const likecountId = [...document.querySelectorAll('#likecountid')].reverse() 
   const likeidBtn = [...document.querySelectorAll('#likeidBtn')]
   const commentInput = [...document.querySelectorAll('#commentinput')]
   const commentcountId = [...document.querySelectorAll('#commentcountid')]
-  const commentcountIdReverse = [...document.querySelectorAll('#commentcountid')].reverse()
+  const likeunlikeid = [...document.querySelectorAll('#likeunlikeid')].reverse()
   
 
 
@@ -122,8 +121,10 @@
 // ---------------Script for user to like a post -------------------------------->
   
     likeidBtn.forEach(likeBtn => likeBtn.addEventListener('click', (e) =>{
+      e.preventDefault()
       var id = likeBtn.getAttribute('data-id')
       var likeclass = document.querySelector(`.likecountclass_${id}`)
+      var likeUnlike = document.querySelector(`.likeunlike_${id}`)
       fetch(`${url}/like-post/${id}/`, {
         body: null,
         method: 'POST'
@@ -132,6 +133,13 @@
               <i class="fa-solid fa-thumbs-up text-white text-bg-primary p-1 rounded-pill"></i>
               <span class="ps-1" style="color: black; text-decoration-line: none;">${data['like_count']}</span>
         `
+
+        // Like and Unlike Change UI
+        if(data['response'] === "Like User"){
+          likeUnlike.textContent = "Unlike"
+        }else{
+          likeUnlike.textContent = "Like"
+        }
       })
       
     }))
@@ -141,13 +149,42 @@
 
 
 
+// ----------------------------Script to display Like and Unlike UI --------------- -->
+/**likeunlikeMethod()
+function likeunlikeMethod(){
+  likeunlikeid.forEach((likUnlik) =>{
+    var pk = likUnlik.getAttribute('data-id')
+    var likeunlike = document.querySelector(`.likeunlike_${pk}`)
+    console.log(likeunlike)
+    fetch(`${url}/like-post/${pk}/`, {
+        body: null,
+        method: 'POST'
+      }).then((res) => res.json()).then((data) =>{
+        // Like and Unlike Change UI
+        if(data['response'] === "Like User"){
+          likeunlike.textContent = "Unlike"
+        }else{
+          likeunlike.textContent = "Like"
+        }
+      })
+})
+}**/
+
+
+// --------------------------- END --------------------------------------------- -->
+
+
+
+
 // ------------Script to display comment Input textarea ---------------->
 
   commentidBtn.forEach(comBtn=> comBtn.addEventListener('click', (e) =>{
       e.preventDefault()
-      var idNum = (comBtn.getAttribute('data-id') - 1)
-      commentcontainerId[idNum].classList.add('d-flex')
-      commentcontainerId[idNum].classList.add('flow-row')
+      var idNum = comBtn.getAttribute('data-id')
+      var commentcontainerId = document.querySelector(`#commentcontainerid_${idNum}`)
+      console.log(commentcontainerId)
+      commentcontainerId.classList.add('d-flex')
+      commentcontainerId.classList.add('flow-row')
   }))
 
 //--------------------------- END --------------------------------------- -->
@@ -157,10 +194,10 @@
 
 // --------------- User comment on a post ----------------------------- -->
 
-      commentInput.forEach(comInput=> comInput.addEventListener('keyup', (e)=>{
+commentInput.forEach(comInput=> comInput.addEventListener('keyup', (e)=>{
         e.preventDefault()
         var commentPk = comInput.getAttribute('data-pk')
-        var elementId = comInput.getAttribute('data-pk') - 1
+        var commentinputclass = document.querySelector(`.commentinputclass_${commentPk}`)
         var inputValue = e.target.value.trim()
         if(e.key === 'Enter'){
           fetch(`${url}/user-comment/${commentPk}/`, {
@@ -169,7 +206,7 @@
             }),
             method: 'POST'
           }).then((res) => res.json()).then((data) =>{
-            commentcountIdReverse[elementId].innerHTML = `<span class="text-secondary">${data['comment_count']} comments</span>`
+            commentinputclass.innerHTML = `<span class="text-secondary">${data['comment_count']} comments</span>`
           })
           comInput.value = ""
         }
