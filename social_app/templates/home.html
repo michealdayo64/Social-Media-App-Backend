@@ -123,14 +123,14 @@
             console.log(data["comment_list"].length)
             commentinputclass.innerHTML = `<span class="text-secondary">${data['comment_count']} comments</span>`
 
-            for(var i = 0; i < data["comment_list"].length; i++){
-              console.log(data)
-              cardcommentid.innerHTML += `<div class="mycardbg1">
+            
+            
+            var secCardElement = `<div class="mycardbg1">
                 <div class="d-flex p-2">
                   <img src="{% static 'img/profile_image.png' %}"  style="width: 30px; height: 30px; border-radius: 50%;" alt="" srcset="">
                   <div class="d-flex flex-column">
                     <div class="d-flex ps-2">
-                      <a id="namestyle">${data["comment_list"][i]["user"]}: </a><span class="ps-2 text-black">${data["comment_list"][i]["comment"]}</span>
+                      <a id="namestyle">${data["user"]}: </a><span class="ps-2 text-black">${data["comment"]}</span>
                     </div>
                     <div class="commentminute">
                       <span>5min Ago</span>
@@ -141,26 +141,8 @@
               </div>
               <br>
               `
-            }
 
-            /**var secCardElement = `<div class="mycardbg1">
-                <div class="d-flex p-2">
-                  <img src="{% static 'img/profile_image.png' %}"  style="width: 30px; height: 30px; border-radius: 50%;" alt="" srcset="">
-                  <div class="d-flex flex-column">
-                    <div class="d-flex ps-2">
-                      <a id="namestyle">${data["comment_list"][i]["user"]}: </a><span class="ps-2 text-black">${data["comment_list"][i]["comment"]}</span>
-                    </div>
-                    <div class="commentminute">
-                      <span>5min Ago</span>
-                    </div>
-                    
-                  </div>
-                </div>
-              </div>
-              <br>
-              `**/
-
-            //cardcommentid.insertBefore(secCardElement, cardcommentid.firstChild)
+            cardcommentid.appendChild(secCardElement)
             
             
 
