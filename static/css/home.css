@@ -180,6 +180,37 @@
     color: black;
 }
 
+.commentlist{
+    padding: 20px;
+    background-color: rgb(1, 28, 51);
+}
+
+.commentminute{
+    padding-left: 10px;
+}
+
+.commentminute span{
+    font-size: 12px;
+    color: rgb(112, 111, 111);
+}
+
+.mycardbg1{
+    background-color: rgb(210, 210, 210);
+    border-radius: 5px;
+}
+
+.mycardbg2{
+    background-color: rgb(210, 210, 210);
+    border-radius: 5px;
+    display: block;
+}
+
+#namestyle{
+    color: blue;
+    font-weight: bold;
+    cursor: pointer;
+}
+
 
 
 
