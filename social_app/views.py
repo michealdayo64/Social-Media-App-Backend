@@ -193,21 +193,24 @@ def user_comment(request, id):
         ns = json.loads(request.body)
         inputValue = ns['inputValue']
         if request.method == 'POST':
-            Comment.objects.create(
+            comment = Comment.objects.create(
                 user=user, post_id=post_id, comment=inputValue)
             payload['response'] = 'Comment Successful'
 
-        all_comment_list = Comment.objects.filter(post_id=post_id)
-        if all_comment_list:
-            for i in all_comment_list:
-                comment_list.append({
-                    'user': i.user.username,
-                    'comment': i.comment
-                })
-            payload['comment_list'] = comment_list
-            payload['comment_count'] = len(comment_list)
-        else:
-            payload['response'] = 'No Input value'
+            all_comment_list = Comment.objects.filter(post_id=post_id)
+            if all_comment_list:
+                for i in all_comment_list:
+                    comment_list.append({
+                        'user': i.user.username,
+                        'comment': i.comment
+                    })
+                payload['comment_list'] = comment_list
+                payload['comment_count'] = len(comment_list)
+                payload['user'] = user.username
+                payload['comment'] = comment.comment
+                
+            else:
+                payload['response'] = 'No Input value'
     else:
         payload['response'] = 'User has to be Authenticated'
 
