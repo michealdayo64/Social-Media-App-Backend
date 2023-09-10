@@ -123,14 +123,13 @@
             console.log(data["comment_list"].length)
             commentinputclass.innerHTML = `<span class="text-secondary">${data['comment_count']} comments</span>`
 
-            
-            
-            var secCardElement = `<div class="mycardbg1">
+            /*data['comment_list'].forEach((com) =>{
+             cardcommentid.innerHTML =  `<div class="mycardbg1">
                 <div class="d-flex p-2">
-                  <img src="{% static 'img/profile_image.png' %}"  style="width: 30px; height: 30px; border-radius: 50%;" alt="" srcset="">
+                  <img src="{% static 'img/profile_image.png' %}" class="imgstyle"  alt="" srcset="">
                   <div class="d-flex flex-column">
                     <div class="d-flex ps-2">
-                      <a id="namestyle">${data["user"]}: </a><span class="ps-2 text-black">${data["comment"]}</span>
+                      <a id="namestyle">${com["user"]}</a><span class="ps-2 text-black">${com['comment']}</span>
                     </div>
                     <div class="commentminute">
                       <span>5min Ago</span>
@@ -139,9 +138,44 @@
                   </div>
                 </div>
               </div>
-              <br>
-              `
-
+              <br>`
+            })*/
+            
+            var secCardElement = document.createElement('div')
+            secCardElement.classList.add("mycardbg1")
+            var thirdCardElement = document.createElement('div')
+            thirdCardElement.classList.add('d-flex')
+            thirdCardElement.classList.add('p-2')
+            var img = document.createElement('img')
+            img.classList.add('imgstyle')
+            img.src = "{% static 'img/profile_image.png' %}"
+            thirdCardElement.appendChild(img)
+            var fourthCardElement = document.createElement('div')
+            fourthCardElement.classList.add('d-flex')
+            fourthCardElement.classList.add('flex-column')
+            var fifthCardElement = document.createElement('div')
+            fifthCardElement.classList.add('d-flex')
+            fifthCardElement.classList.add('ps-2')
+            var anchoruser = document.createElement('a')
+            anchoruser.id = 'namestyle'
+            anchoruser.innerHTML = data['user']
+            var spancomment = document.createElement('span')
+            spancomment.classList.add('ps-2')
+            spancomment.classList.add('text-black')
+            spancomment.innerHTML = data['comment']
+            fifthCardElement.appendChild(anchoruser)
+            fifthCardElement.appendChild(spancomment)
+            var sixthCardElemet = document.createElement('div')
+            sixthCardElemet.classList.add('commentminute')
+            var spanminute = document.createElement('span')
+            spanminute.innerHTML = "5min Ago"
+            sixthCardElemet.appendChild(spanminute)
+            fourthCardElement.appendChild(fifthCardElement)
+            fourthCardElement.appendChild(sixthCardElemet)
+            thirdCardElement.appendChild(fourthCardElement)
+            secCardElement.appendChild(thirdCardElement)
+            var brkElement = document.createElement('br')
+            cardcommentid.appendChild(brkElement)
             cardcommentid.appendChild(secCardElement)
             
             
