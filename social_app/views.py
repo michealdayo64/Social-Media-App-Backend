@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.shortcuts import render, redirect
 from .models import Post, Comment
 import json
@@ -204,10 +205,13 @@ def user_comment(request, id):
                         'user': i.user.username,
                         'comment': i.comment
                     })
+                str_time = datetime.strftime(comment.date_comment, "%I:%M %p")
+                str_time = str_time.strip("0")
                 payload['comment_list'] = comment_list
                 payload['comment_count'] = len(comment_list)
                 payload['user'] = user.username
                 payload['comment'] = comment.comment
+                payload['date'] = str_time
                 
             else:
                 payload['response'] = 'No Input value'
