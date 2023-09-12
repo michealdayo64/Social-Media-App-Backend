@@ -222,7 +222,7 @@ def user_comment(request, id):
 
 
 '''
-    Comment Count for each post
+Comment Count for each post
 '''
 
 
@@ -237,18 +237,11 @@ def comment_count(request, id):
     return JsonResponse(payload, content_type="application/json", safe=False)
 
 
-'''def likeCount(request):
-    payload = {}
-    p_list = []
+''' 
+User Share Post
+'''
+def userSharePost(request, id):
     user = request.user
-    if user.is_authenticated:
-        post_list = Post.objects.all().order_by('-date_post')
-        print(len(post_list))
-        for i in post_list:
-            #aa = i.user_post
-            payload['like_count'] = i.user_like_post.all().count()
-            p_list.append(payload)
-    else:
-        payload['response'] = "User not authenticated"
-    print(p_list)
-    return JsonResponse(p_list, content_type="application/json", safe=False)'''
+    post_id = Post.objects.get(id = id)
+    share_post = Post.objects.create(user = user, post = post_id) 
+
