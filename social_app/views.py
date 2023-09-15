@@ -243,5 +243,9 @@ User Share Post
 def userSharePost(request, id):
     user = request.user
     post_id = Post.objects.get(id = id)
-    share_post = Post.objects.create(user = user, post = post_id) 
+    user_post = post_id.user_post
+    image = post_id.image
+    posted_by = post_id.user
+    Post.objects.create(user = user, user_post = user_post, image = image, posted_by = posted_by) 
+    return redirect('index')
 

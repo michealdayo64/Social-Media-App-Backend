@@ -2,22 +2,42 @@
 
 {% block title %}Friend{% endblock %}
 
+{% load static %}
+
 {% block content %}
 <br>
     <div class="row">
       <div class="col-3">
         {% include 'snippets/left-menu.html' %}
       </div>
-      <div class="col-6">
-        <div class="card">
-            <h1>Friend</h1>
+      <div class="col-9">
+        <div class="row">
+            <div class="d-flex justify-content-between">
+              <h2>Friends</h2>
+              <a href="#">See all</a>
+            </div>
+        </div>
+        <div class="row">
+          <div class="col-3">
+            <div class="card">
+              <div class="all-friend">
+                <img src="{% static 'img/profile_image.png' %}" alt="" srcset="">
+                <div class="user-detail">
+                  <h5>Micheal Omotosho</h5>
+                  <p>6 mutual friends</p>
+                  <Button class="btn btn-primary w-100 mb-2">Comfirm</Button>
+                  <br>
+                  <button class="btn btn-secondary w-100">Delete</button>
+                </div>
+              </div>
+            </div>
+            
+          </div>
+          <br>
+         
         </div>
       </div>
-      <div class="col-3">
-        <div class="card">
-            <h1>hello</h1>
-        </div>
-      </div>
+     
     </div>
   
 {% endblock %}

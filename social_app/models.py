@@ -17,16 +17,18 @@ class Post(models.Model):
     date_post = models.DateTimeField(auto_now_add=True)
     date_post_update = models.DateTimeField(auto_now=True)
     user_like_post = models.ManyToManyField(Account, blank=True)
+    posted_by = models.ForeignKey(
+        Account, on_delete=models.CASCADE, null=True, blank=True, related_name='posted_by')
 
     def __str__(self):
         return f"Post By {self.pk}"
     
-class sharedPost(models.Model):
+'''class sharedPost(models.Model):
     user = models.ForeignKey(
         Account, on_delete=models.CASCADE, null=True, blank=True, related_name='author_share')
     post = models.ForeignKey(Post, on_delete=models.SET_NULL, null=True, blank=True)
     date_post = models.DateTimeField(auto_now_add=True)
-    date_post_update = models.DateTimeField(auto_now=True)
+    date_post_update = models.DateTimeField(auto_now=True)'''
 
 
 class Comment(models.Model):

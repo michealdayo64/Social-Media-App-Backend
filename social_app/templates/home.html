@@ -62,8 +62,10 @@
               <span>Comment</span>
             </div>
             <div class="d-flex flex-row align-items-center justify-content-center w-50 likecommentshare" id="shareidBtn">
-              <i class="fa-solid fa-share p-1"></i>
+              <a href="{% url 'user-share-post' i.id %}">
+                <i class="fa-solid fa-share p-1"></i>
               <span>Share</span>
+              </a>
             </div>
             </div>
           <hr>
