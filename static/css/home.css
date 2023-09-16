@@ -162,6 +162,11 @@
     background-color: rgb(225, 222, 222);
 }
 
+.likecommentshare a{
+    text-decoration: none;
+    color: black;
+}
+
 #commentinput{
     width: 100%;
     border-radius: 5px;
