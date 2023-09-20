@@ -18,12 +18,13 @@
             </div>
         </div>
         <div class="row pb-2">
+          {% for i in all_user %}
           <div class="col-3">
             <div class="card">
               <div class="all-friend">
-                <img src="{% static 'img/profile_image.png' %}" alt="" srcset="">
+                <img src="{{ i.profile_image.url }}" alt="" srcset="">
                 <div class="user-detail">
-                  <h5>Micheal Omotosho</h5>
+                  <h5>{{ i.username }}</h5>
                   <p>6 mutual friends</p>
                   <Button class="btn btn-primary w-100 mb-2">Comfirm</Button>
                   <br>
@@ -33,6 +34,7 @@
             </div>
             
           </div>
+          {% endfor %}
           
          
         </div>

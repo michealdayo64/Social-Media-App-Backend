@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 
 
+
 """
 CLASS MANAGER
 """
@@ -45,7 +46,7 @@ def get_default_profile_image():
 '''
 ACCOUNT MODEL TABLE CLASS INHERITS AbstractBaseUser
 '''    
-class Account(AbstractBaseUser):
+class Accounts(AbstractBaseUser):
     email 					= models.EmailField(verbose_name="email", max_length=60, unique=True)
     username 				= models.CharField(max_length=30, unique=True)
     date_joined				= models.DateTimeField(verbose_name='date joined', auto_now_add=True)
@@ -75,3 +76,6 @@ class Account(AbstractBaseUser):
     # Does this user have permission to view this app? (ALWAYS YES FOR SIMPLICITY)
     def has_module_perms(self, app_label):
         return True
+    
+
+

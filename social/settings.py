@@ -65,7 +65,7 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'social.urls'
 
-AUTH_USER_MODEL = "account.Account"
+AUTH_USER_MODEL = "account.Accounts"
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.AllowAllUsersModelBackend',
     'account.backends.CaseInsensitiveModelBackend'

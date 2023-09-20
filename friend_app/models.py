@@ -1,13 +1,13 @@
 from django.db import models
-from account.models import Account
+from account.models import Accounts
 # Create your models here.
 
 
 class FriendsList(models.Model):
     user = models.ForeignKey(
-        Account, on_delete=models.CASCADE, null=True, blank=True, related_name="user")
+        Accounts, on_delete=models.CASCADE, null=True, blank=True, related_name="user")
     friends = models.ManyToManyField(
-        Account, null=True, blank=True, related_name="friends")
+        Accounts, blank=True, related_name="friends")
 
     def __str__(self):
         return self.user.username

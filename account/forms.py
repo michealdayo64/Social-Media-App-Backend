@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from .models import Account
+from .models import Accounts
 from django.contrib.auth import authenticate
 
 
@@ -11,14 +11,14 @@ class RegisterForm(UserCreationForm):
     email = forms.EmailField(max_length = 255, help_text = "Required. Add a valid email addrress")
     
     class Meta:
-        model = Account
+        model = Accounts
         fields = ('email', 'username', 'password1', 'password2',)
 
     
     def clean_username(self):
         username = self.cleaned_data["username"]
         try:
-            Account.objects.get(username = username)
+            Accounts.objects.get(username = username)
         except Exception as e:
             return username
         raise forms.ValidationError(f"This username {username} already in use")
@@ -26,7 +26,7 @@ class RegisterForm(UserCreationForm):
     def clean_email(self):
         email = self.cleaned_data["email"]
         try:
-            Account.objects.get(email = email)
+            Accounts.objects.get(email = email)
         except Exception as e:
             return email
         raise forms.ValidationError(f"This username {email} already in use")
@@ -44,7 +44,7 @@ User Login Form to authenticate user into the system
 """
 class LoginForm(forms.ModelForm):
     class Meta:
-        model = Account
+        model = Accounts
         fields = ('email', 'password',)
 
     def clean(self):

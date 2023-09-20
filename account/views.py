@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from .forms import RegisterForm, LoginForm
 from django.contrib.auth import login, logout, authenticate
-from .models import Account
+from .models import Accounts
 from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.contrib.sites.shortcuts import get_current_site
@@ -105,7 +105,7 @@ def forgot_password(request):
         }
 
         current_site = get_current_site(request)
-        user = Account.objects.filter(email=email)
+        user = Accounts.objects.filter(email=email)
         if user.exists():
             email_content = {
                 'user': user[0],
@@ -149,7 +149,7 @@ def resetPass(request, uidb64, token):
 
         try:
             user_id = force_str(urlsafe_base64_decode(uidb64))
-            user = Account.objects.get(pk=user_id)
+            user = Accounts.objects.get(pk=user_id)
             user.set_password(password1)
             user.save()
             if PasswordResetTokenGenerator().check_token(user, token):
