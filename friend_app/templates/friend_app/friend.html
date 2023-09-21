@@ -18,17 +18,21 @@
             </div>
         </div>
         <div class="row pb-2">
-          {% for i in all_user %}
+          {% for account in accounts %}
           <div class="col-3">
             <div class="card">
               <div class="all-friend">
-                <img src="{{ i.profile_image.url }}" alt="" srcset="">
+                <img src="{{ account.0.profile_image.url }}" alt="" srcset="">
                 <div class="user-detail">
-                  <h5>{{ i.username }}</h5>
+                  <h5>{{ account.0.username }}</h5>
+                  
+                  {% if account.1 %}
                   <p>6 mutual friends</p>
+                  {% else %}
                   <Button class="btn btn-primary w-100 mb-2">Comfirm</Button>
                   <br>
                   <button class="btn btn-secondary w-100">Delete</button>
+                  {% endif %}
                 </div>
               </div>
             </div>
