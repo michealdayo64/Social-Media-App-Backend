@@ -47,3 +47,62 @@ class FriendsList(models.Model):
         if friend in self.friends.all():
             return True
         return False
+
+    @property
+    def get_cname(self):
+        return "FriendsList"
+
+
+class FriendRequest(models.Model):
+    """
+    A friend request consist of two main parts:
+        1. SENDER:
+            - Person sending/initiating the friend request
+        2. RECIEVER:
+            - Person recieving the friend request
+    """
+    sender = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="sender")
+    reciever = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="reciever")
+    is_active = models.BooleanField(blank=True, null=False, default=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.sender.username
+
+    def accept(self):
+        """
+        Accept a friend request
+        Update both SENSER and RECIEVER friend lists
+        """
+        reciever_friend_list = FriendsList.objects.get(user=self.reciever)
+        if reciever_friend_list:
+            sender_friend_list = FriendsList.objects.get(user=self.sender)
+            if sender_friend_list:
+                sender_friend_list.add_friend(self.reciever)
+                self.is_active = False
+                self.save()
+
+    def decline(self):
+        """
+        Decline a friend request
+        It is "declined" by setting the 'is_active' field to false
+        """
+        self.is_active = False
+        self.save()
+
+    def cancel(self):
+        """
+        Cancel a friend request
+        It is "cancelled" byy setting the 'is_active' field to False.
+        This is only different with respect to "declining" through the notification that
+        is generated.
+        """
+
+        self.is_active = False
+        self.save()
+
+    @property
+    def get_cname(self):
+        return "FriendRequest"
