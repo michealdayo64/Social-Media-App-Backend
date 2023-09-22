@@ -27,11 +27,10 @@
                   <h5>{{ account.0.username }}</h5>
                   
                   {% if account.1 %}
-                  <p>6 mutual friends</p>
+                  <p>{{ account.2 }} mutual friends</p>
                   {% else %}
-                  <Button class="btn btn-primary w-100 mb-2">Comfirm</Button>
-                  <br>
-                  <button class="btn btn-secondary w-100">Delete</button>
+                  <p>{{ account.2 }} mutual friends</p>
+                  <Button class="btn btn-primary w-100 mb-2">Add Friend</Button>
                   {% endif %}
                 </div>
               </div>

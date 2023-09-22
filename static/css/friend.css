@@ -1,7 +1,6 @@
 .all-friend{
     width: 100%;
     border: 1px solid black;
-    height: 330px;
     border-radius: 5px;
     display: flex;
     flex-direction: column;

@@ -19,8 +19,9 @@ def friend_index(request):
         accounts = []
         auth_user_friend_list = FriendsList.objects.get(user=user)
         for account in all_user:
+            print(auth_user_friend_list.friends.all().count())
             accounts.append(
-                (account, auth_user_friend_list.is_mutual_friend(account)))
+                (account, auth_user_friend_list.is_mutual_friend(account), auth_user_friend_list.friends.all().count()))
         print(accounts)
         context = {
             'accounts': accounts
@@ -29,3 +30,5 @@ def friend_index(request):
     else:
         print("User not authenticated")
     return render(request, 'friend_app/friend.html', context)
+
+
