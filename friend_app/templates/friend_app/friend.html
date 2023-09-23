@@ -27,11 +27,19 @@
                   <h5>{{ account.0.username }}</h5>
                   
                   {% if account.1 %}
-                  <p>{{ account.2 }} mutual friends</p>
-                  <p>Friends</p>
+                    <p>{{ account.2 }} mutual friends</p>
+                    <p>Friends</p>
+                    <a href="#" class="btn btn-primary w-100 mb-2">Unfriend</a>
                   {% else %}
-                  <p>{{ account.2 }} mutual friends</p>
-                  <a href="{% url 'send-friend-request' account.0.id %}" class="btn btn-primary w-100 mb-2">Add Friend</a>
+                    <p>{{ account.2 }} mutual friends</p>
+                    {% if request_sent == 0 %}
+                      <a href="#" class="btn btn-primary w-100 mb-2">Comfirm</a>
+                      <a href="#" class="btn btn-secondary w-100 mb-2">Decline</a>
+                    {% elif request_sent == 1 %}
+                      <a href="#" class="btn btn-secondary w-100 mb-2">Cancel</a>
+                    {% else %}
+                      <a href="#" class="btn btn-primary w-100 mb-2">Add Friend</a>
+                    {% endif %}
                   {% endif %}
                 </div>
               </div>
