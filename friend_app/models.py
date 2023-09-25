@@ -4,8 +4,7 @@ from django.conf import settings
 
 
 class FriendsList(models.Model):
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True, related_name="user")
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="user", null=True)
     friends = models.ManyToManyField(
         settings.AUTH_USER_MODEL, blank=True, related_name="friends")
 
@@ -78,6 +77,7 @@ class FriendRequest(models.Model):
         """
         reciever_friend_list = FriendsList.objects.get(user=self.reciever)
         if reciever_friend_list:
+            reciever_friend_list.add_friend(self.sender)
             sender_friend_list = FriendsList.objects.get(user=self.sender)
             if sender_friend_list:
                 sender_friend_list.add_friend(self.reciever)

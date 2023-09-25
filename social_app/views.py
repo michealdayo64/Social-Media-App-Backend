@@ -55,31 +55,6 @@ def postList(request):
 
 
 
-
-
-'''def save_temp_profile_image_from_base64String(imageString, user):
-    INCORRECT_PADDING_EXCEPTION = "incorrect padding"
-    try:
-        if not os.path.exists(settings.TEMP):
-            os.mkdir(settings.TEMP)
-        if not os.path.exists(f"{settings.TEMP}/{user.username}"):
-            os.mkdir(f"{settings.TEMP}/{user.username}")
-        url = os.path.join(
-            f"{settings.TEMP}/{user.username}", TEMP_PROFILE_IMAGE_NAME)
-        storage = FileSystemStorage(location=url)
-        print(storage)
-        img = base64.b64decode(imageString)
-        with storage.open("", "wb+") as destination:
-            destination.write(img)
-            destination.close()
-        return url
-    except Exception as e:
-        if str(e) == INCORRECT_PADDING_EXCEPTION:
-            imageString += "=" * ((4 - len(imageString) % 4) % 4)
-            return save_temp_profile_image_from_base64String(imageString, user)
-    return None'''
-
-
 '''
 Image from base 64 Encoding
 '''
@@ -248,4 +223,6 @@ def userSharePost(request, id):
     posted_by = post_id.user
     Post.objects.create(user = user, user_post = user_post, image = image, posted_by = posted_by) 
     return redirect('index')
+
+
 
