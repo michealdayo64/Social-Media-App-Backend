@@ -1,6 +1,7 @@
 from datetime import datetime
 from django.shortcuts import render, redirect
 from .models import Post, Comment
+from friend_app.models import FriendsList
 import json
 from django.http import JsonResponse
 import os
@@ -25,11 +26,15 @@ def index(request):
     context = {}
     user = request.user
     if user.is_authenticated:
-        post_list = Post.objects.all().order_by('-date_post')
+        friend = FriendsList.objects.get(user = user)
+        friends_list = friend.friends.all()
+        post_list = Post.objects.filter(user__in = list(friends_list) + [user,]).order_by('-date_post')
         context['post_list'] = post_list
     else:
         return redirect('login')
     return render(request, 'home.html', context)
+
+
 
 
 '''
