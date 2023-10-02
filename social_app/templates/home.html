@@ -34,8 +34,14 @@
             {% endif %}
           </div>
           <div id="postimage">
-            {% if i.image %}
-            <img class="w-100" src="{{ i.image.url }}" alt="" srcset="">
+            {% if i.file %}
+              {% if i.file.url|slice:"-4:" == ".MP4" or i.file.url|slice:"-4:" == ".mp4" %}
+              <video id="movie" autoplay  class="w-100 h-100 rounded" controls>
+                <source src="{{ i.file.url }}" type="video/mp4">
+              </video>
+              {% else %}
+              <img class="w-100" src="{{ i.file.url }}" alt="" srcset="">
+              {% endif %}
             {% endif %}
           </div>
           <hr>
@@ -105,6 +111,10 @@
   const commentInput = [...document.querySelectorAll('#commentinput')]
   const commentcountId = [...document.querySelectorAll('#commentcountid')]
   const likeunlikeid = [...document.querySelectorAll('#likeunlikeid')].reverse()
+ //var wrapper = $("#postimage")
+ //console.log(wrapper)
+
+  
 
 
   commentInput.forEach(comInput=> comInput.addEventListener('keyup', (e)=>{

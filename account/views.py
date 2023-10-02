@@ -168,6 +168,7 @@ def resetPass(request, uidb64, token):
 
 # User Profile
 def user_profile(request):
+    
     pass
 
 

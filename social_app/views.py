@@ -91,8 +91,8 @@ def create_post(request):
             print(post)
             file_name, file_data = save_post_image_form_base64String(
                 imgPostValue)
-            print(post.image.save(file_name, file_data))
-            post.image.save(file_name, file_data)
+            print(post.file.save(file_name, file_data))
+            post.file.save(file_name, file_data)
             payload['response'] = 'Post created Successfully'
         else:
             if inputPostValue:
@@ -107,7 +107,7 @@ def create_post(request):
                 file_name, file_data = save_post_image_form_base64String(
                     imgPostValue)
                 #print(post.image.save(file_name, file_data))
-                post.image.save(file_name, file_data)
+                post.file.save(file_name, file_data)
                 payload['response'] = 'Post created Successfully'
        
     else:

@@ -22,7 +22,7 @@
           <div class="col-3">
             <div class="card">
               <div class="all-friend">
-                <img src="{{ account.0.profile_image.url }}" alt="" srcset="">
+                <a href="{% url 'friend-detail' account.0.pk %}"><img src="{{ account.0.profile_image.url }}" alt="" srcset=""></a>
                 <div class="user-detail">
                   <h5>{{ account.0.username }}</h5>
                   

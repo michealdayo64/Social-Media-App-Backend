@@ -1,5 +1,5 @@
 from django.http import HttpResponse
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 from friend_app.models import FriendsList, FriendRequest
 from account.models import Accounts
 from .friendRequestStatus import FriendRequestStatus
@@ -64,6 +64,47 @@ def friend_index(request):
     return render(request, 'friend_app/friend.html', context)
 
 
+"""
+Friends Details Page
+"""
+
+
+def friend_detail(request, *args, **kwargs):
+    user = request.user
+    if user.is_authenticated:
+        user_id = kwargs.get("user_id")
+        account = get_object_or_404(Accounts, pk=user_id)
+        friend_list = FriendsList.objects.get(user=account)
+        friends = friend_list.friends.all()
+        is_myfriend = friend_list.is_mutual_friend(user)
+        request_sent = FriendRequestStatus.NO_REQUEST_SENT.value
+        pending_friend_request_id = None
+        # CASE1: Request has been sent from THEM to YOU:
+        # FriendRequestStatus.THEM_SENT_TO_YOU
+        if get_friend_request_or_false(sender=account, reciever=user) != False:
+            request_sent = FriendRequestStatus.THEM_SENT_TO_YOU.value
+            pending_friend_request_id = get_friend_request_or_false(
+                sender=account, reciever=user
+            ).id
+
+        # CASE1: Request has been sent from YOU to THEM:
+        # FriendRequestStatus.YOU_SENT_TO_THEM
+        elif get_friend_request_or_false(sender=user, reciever=account) != False:
+            request_sent = FriendRequestStatus.YOU_SENT_TO_THEM.value
+
+        # CASE1: No Request has been sent. FriendRequestStatus.NO_REQUEST_SENT
+        else:
+            request_sent = FriendRequestStatus.NO_REQUEST_SENT.value
+        context = {
+            'account': account,
+            'friends': friends,
+            'is_myfriend': is_myfriend,
+            'request_sent': request_sent,
+            'pending_friend_request_id': pending_friend_request_id
+        }
+    return render(request, 'friend_app/friend_detail.html', context)
+
+
 '''
 Send Friend Request
 '''
@@ -88,14 +129,14 @@ def send_friend_request(request, *args, **kwargs):
                 # If none is active, then create a new friend request
                 friend_request = FriendRequest(sender=user, reciever=reciever)
                 friend_request.save()
-                return redirect("friend-index")
+                return redirect("friend-detail", user_id)
             except Exception as e:
                 return HttpResponse("You can't view someone elses friend requests")
         except FriendRequest.DoesNotExist:
             # If none is active, then create a new friend request
             friend_request = FriendRequest(sender=user, reciever=reciever)
             friend_request.save()
-            return redirect("friend-index")
+            return redirect("friend-detail", user_id)
     else:
         print("User not authenticated")
         return redirect("friend-index")
@@ -169,11 +210,11 @@ def cancel_friend_request(request, *args, **kwargs):
             if len(friend_requests) > 1:
                 for request in friend_requests:
                     request.cancel()
-                return redirect("friend-index")
+                return redirect("friend-detail", user_id)
             else:
                 # found the request. Now cancel it.
                 friend_requests.first().cancel()
-                return redirect("friend-index")
+                return redirect("friend-detail", user_id)
         else:
             print("Unble to cancel friend request")
     else:
