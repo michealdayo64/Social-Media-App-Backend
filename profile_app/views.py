@@ -5,9 +5,10 @@ from account.models import Accounts
 from friend_app.models import FriendsList
 from django.core import files
 import os
-from django.core.files.storage import FileSystemStorage
+# from django.core.files.storage import FileSystemStorage
 import json
 import base64
+from django.core.files.base import ContentFile
 
 
 # Create your views here.
@@ -52,27 +53,15 @@ def edit_profile(request, *args, **kwargs):
         print("User not authenticated")
     return render(request, 'profile_app/edit_profile.html', context)
 
-def save_temp_profile_image_from_base64String(imageString, user):
-    INCORRECT_PADDING_EXCEPTION = "incorrect padding"
-    try:
-        if not os.path.exists(settings.TEMP):
-            os.mkdir(settings.TEMP)
-        if not os.path.exists(f"{settings.TEMP}/{user.pk}"):
-            os.mkdir(f"{settings.TEMP}/{user.pk}")
-        url = os.path.join(f"{settings.TEMP}/{user.pk}",
-                           TEMP_PROFILE_IMAGE_NAME)
-        storage = FileSystemStorage(location=url)
-        print(storage)
-        img = base64.b64decode(imageString)
-        with storage.open("", "wb+") as destination:
-            destination.write(img)
-            destination.close()
-        return url
-    except Exception as e:
-        if str(e) == INCORRECT_PADDING_EXCEPTION:
-            imageString += "=" * ((4 - len(imageString) % 4) % 4)
-            return save_temp_profile_image_from_base64String(imageString, user)
-    return None
+
+def save_temp_profile_image_from_base64String(imageString):
+    format, imgstr = imageString.split(';base64,')
+    ext = format.split('/')[-1]
+    img = base64.b64decode(imgstr)
+    file_data = ContentFile(img)
+    file_name = "'myphoto." + ext
+    return file_name, file_data
+
 
 def edit_profile_image(request):
     payload = {}
@@ -81,14 +70,12 @@ def edit_profile_image(request):
         try:
             ns = json.loads(request.body)
             imageString = ns.get('image')
-            url = save_temp_profile_image_from_base64String(imageString, user)
-            user.profile_image.delete()
+            file_name, file_data = save_temp_profile_image_from_base64String(
+                imageString)
             user.profile_image.save(
-                    "profile_image.png", files.File(open(url, "rb")))
-            user.save()
+                file_name, file_data)
             payload['result'] = "success"
-            os.remove(url)
         except Exception as e:
             payload["result"] = "error"
             payload["exception"] = str(e)
-    return HttpResponse(json.dumps(payload), content_type="application/json", safe=False)
+    return HttpResponse(json.dumps(payload), content_type="application/json")

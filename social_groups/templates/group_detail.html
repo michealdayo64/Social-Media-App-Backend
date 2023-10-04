@@ -22,7 +22,7 @@
         <div class="chat-panel">
           <div class="card p-1" style="border-bottom-left-radius: 0px; border-top-right-radius: 0px; border-bottom: 1px solid black;">
             <div class="d-flex justify-content-between align-items-center">
-              <h3>Chat Room</h3>
+              <h3>{{ room_detail.title }} Chat Room</h3>
               <div class="d-flex align-items-center">
                 <span class="pe-1 text-danger fw-bold" id="id_connected_users">2</span>
                 <i class="fa-solid fa-user text-primary"></i>
@@ -77,6 +77,12 @@
         console.log(data['connected_user_count'])
 			setConnectedUsersCount(data['connected_user_count'])
 		}
+
+    // Handle getting a message
+		if (data.msg_type == 0) {
+      console.log(data.message)
+			//appendChatMessage(data, true, true)
+		}
   }
 
   group_chat_socket.addEventListener('open', (e) =>{
@@ -113,7 +119,8 @@
       var message = msgInput.value
       group_chat_socket.send(JSON.stringify({
         "command": "send",
-        "message": message
+        "message": message,
+        "room": "{{room_id}}"
       }))
     }
 

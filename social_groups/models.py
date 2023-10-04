@@ -42,4 +42,24 @@ class GroupChatRoom(models.Model):
         Returns the channel group name that sockets should subscribe to and get sent messages
         as they are generated
         """
-        return f"GroupChatRoom-{self.id}"
+        return f"{self.title}-{self.id}"
+
+
+class PublicRoomChatMessageManager(models.Manager):
+    def by_room(self, room):
+        qs = PublicRoomChatMessage.objects.filter(room=room).order_by("-timestamp")
+        return qs
+
+class PublicRoomChatMessage(models.Model):
+    """
+    Chat message created by a user inside a Public chat room (foreign key)
+    """
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    room = models.ForeignKey(GroupChatRoom, on_delete=models.CASCADE)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    content = models.TextField(unique = False, blank = False)
+
+    objects = PublicRoomChatMessageManager()
+
+    def __str__(self):
+        return self.content

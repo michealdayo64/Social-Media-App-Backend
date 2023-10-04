@@ -10,7 +10,9 @@
       </div>
       <div class="col-6">
         <div class="card">
-            <h1>Group List</h1>
+          {% for i in group_list %}
+            <a href="{% url 'group-detail' i.id %}">{{ i.title }}</a>
+          {% endfor %}
         </div>
       </div>
       <div class="col-3">
