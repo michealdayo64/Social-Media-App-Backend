@@ -5,6 +5,10 @@ from social_groups.utils import calculate_timestamp
 from .models import GroupChatRoom, PublicRoomChatMessage
 from .exception import ClientError
 from .constant import *
+from django.core.paginator import Paginator
+import json
+from django.core.serializers.python import Serializer
+
 
 
 class GroupConsumer(AsyncJsonWebsocketConsumer):
@@ -38,6 +42,12 @@ class GroupConsumer(AsyncJsonWebsocketConsumer):
                 await self.display_progress_bar(True)
                 room = await get_room_or_error(content['room_id'])
                 payload = await get_room_chat_messages(room, content['page_number'])
+                print("ok")
+                if payload != None:
+                    payload = json.loads(payload)
+                    await self.send_messages_payload(payload['messages'], payload['new_page_number'])
+                else:
+                    raise ClientError(204, "Something went wrong recieving chatroom messages")
         except:
             pass
 
@@ -216,6 +226,17 @@ class GroupConsumer(AsyncJsonWebsocketConsumer):
             "display_progress_bar": is_displayed
         })
 
+    async def send_messages_payload(self, messages, new_page_number):
+        """
+        Sends a payload of messages to the ui
+        """
+        print("PublicChatConsumer: send_messages_payload.")
+        await self.send_json({
+            "messages_payload": "messages_payload",
+            "messages": messages,
+            "new_page_number": new_page_number
+        })
+
 
 def is_authenticated(user):
     if user.is_authenticated:
@@ -254,3 +275,37 @@ def get_num_connected_users(room):
 @database_sync_to_async
 def create_public_room_chat_message(room, user, message):
     return PublicRoomChatMessage.objects.create(user = user, room = room, content = message)
+
+
+@database_sync_to_async
+def get_room_chat_messages(room, page_number):
+    try:
+        qs = PublicRoomChatMessage.objects.by_room(room)
+        p = Paginator(qs, DEFAULT_ROOM_CHAT_MESSAGE_PAGE_SIZE)
+
+        payload = {}
+        #messages_data = None
+        new_page_number = int(page_number)
+        if new_page_number <= p.num_pages:
+            new_page_number = new_page_number + 1
+            s = LazyRoomChatMessageEncoder()
+            payload['messages'] = s.serialize(p.page(page_number).object_list)
+        else:
+            payload['messages'] = "None"
+        payload['new_page_number'] = new_page_number
+        return json.dumps(payload)
+    except Exception as e:
+        print("EXCEPTION " + str(e))
+        return None
+
+class LazyRoomChatMessageEncoder(Serializer):
+    def get_dump_object(self, obj):
+        dump_object = {}
+        dump_object.update({'msg_type': MSG_TYPE_MESSAGE})
+        dump_object.update({'user_id': str(obj.user.id)})
+        dump_object.update({'msg_id': str(obj.id)})
+        dump_object.update({'username': str(obj.user.username)})
+        dump_object.update({'message': str(obj.content)})
+        dump_object.update({'profile_image': str(obj.user.profile_image.url)})
+        dump_object.update({'natural_timestamp': calculate_timestamp(obj.timestamp)})
+        return dump_object
