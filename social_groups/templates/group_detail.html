@@ -86,7 +86,7 @@
               <button type="button" class="btn btn-primary w-25">Start</button>
         </div>
         
-
+        <span class="{% if not debug %}d-none{% endif %} page-number" id="id_page_number">1</span>
         <div class="card mt-3">
           <div class="card-header">
             <div class="d-flex flex-row justify-content-between">
@@ -146,6 +146,15 @@
       console.log(message.data)
       var data = JSON.parse(message.data);
 
+      // display the progress bar?
+		displayChatroomLoadingSpinner(data.display_progress_bar)
+
+      // Handle joining (Client perspective)
+		if (data.join) {
+			//console.log("Joining public room " + data.join);
+			getRoomChatMessages()
+		}
+
       if (data.msg_type == 1) {
         console.log(data['connected_user_count'])
 			setConnectedUsersCount(data['connected_user_count'])
@@ -195,7 +204,22 @@
         "message": message,
         "room": "{{room_id}}"
       }))
+      msgInput.value = ""
     }
+
+    document.getElementById("msg-input").addEventListener('keyup', (e) =>{
+      var msg_input = e.target.value
+      if(e.code == "Enter"){
+        group_chat_socket.send(JSON.stringify({
+        "command": "send",
+        "message": msg_input,
+        "room": "{{room_id}}"
+      }))
+        e.target.value = ""
+      }
+      
+      
+    })
 
     function setConnectedUsersCount(count){
 		element = document.getElementById("id_connected_users")
@@ -291,6 +315,34 @@
 		var url = "{% url 'friend-detail' user_id=53252623623632623 %}".replace("53252623623632623", user_id)
 		var win = window.open(url, "_blank")
 		win.focus()
+	}
+
+  function setPageNumber(pageNumber){
+		document.getElementById("id_page_number").innerHTML = pageNumber
+	}
+
+
+  function getRoomChatMessages(){
+		var pageNumber = document.getElementById("id_page_number").innerHTML
+		if(pageNumber != "-1"){
+			setPageNumber("-1") // Do not allow any other queries while one is in progress
+			public_chat_socket.send(JSON.stringify({
+				"command": "get_room_chat_messages",
+				"room_id": "{{room_id}}",
+				"page_number": pageNumber,
+			}));
+		}
+	}
+
+
+  function displayChatroomLoadingSpinner(isDisplayed){
+		var spinner = document.getElementById("id_chatroom_loading_spinner")
+		if(isDisplayed){
+			spinner.style.display = "block"
+		}
+		else{
+			spinner.style.display = "none"
+		}
 	}
 
     </script>

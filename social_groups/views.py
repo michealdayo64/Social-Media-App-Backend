@@ -3,6 +3,7 @@ from django.conf import settings
 from .models import GroupChatRoom
 
 # Create your views here.
+DEBUG = False
 
 """
 Group Chat List
@@ -27,6 +28,7 @@ def group_detail(request, id):
     context = {
         'room_id': room_id.pk,
         'room_detail': room_id,
-        'debug_mode': settings.DEBUG
+        'debug_mode': settings.DEBUG,
+        'debug': DEBUG
     }
     return render(request, 'group_detail.html', context)
