@@ -165,6 +165,12 @@
       console.log(data["message"])
 			appendChatMessage(data, true, true)
 		}
+
+
+    // new payload of messages coming in from backend
+		if(data.messages_payload){
+			handleMessagesPayload(data.messages, data.new_page_number)
+		}
   }
 
   
@@ -312,9 +318,16 @@
   }
 
 
-  function selectUser(user_id){
+  function selectUser(user_id = null){
 		// Weird work-around for passing arg to url
-		var url = "{% url 'friend-detail' user_id=53252623623632623 %}".replace("53252623623632623", user_id)
+    var url
+    if(user_id == "{{user}}"){
+      url = "{% url 'profile-index' %}"
+      
+    }else{
+      url = "{% url 'friend-detail' user_id=53252623623632623 %}".replace("53252623623632623", user_id)
+    }
+		
 		var win = window.open(url, "_blank")
 		win.focus()
 	}
@@ -328,7 +341,7 @@
 		var pageNumber = document.getElementById("id_page_number").innerHTML
 		if(pageNumber != "-1"){
 			setPageNumber("-1") // Do not allow any other queries while one is in progress
-			public_chat_socket.send(JSON.stringify({
+			group_chat_socket.send(JSON.stringify({
 				"command": "get_room_chat_messages",
 				"room_id": "{{room_id}}",
 				"page_number": pageNumber,

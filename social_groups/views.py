@@ -24,11 +24,12 @@ Group Chat
 """
 def group_detail(request, id):
     room_id = GroupChatRoom.objects.get(id = id)
-    
+    user = request.user
     context = {
         'room_id': room_id.pk,
         'room_detail': room_id,
         'debug_mode': settings.DEBUG,
-        'debug': DEBUG
+        'debug': DEBUG,
+        'user': user
     }
     return render(request, 'group_detail.html', context)
