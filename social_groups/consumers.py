@@ -10,7 +10,6 @@ import json
 from django.core.serializers.python import Serializer
 
 
-
 class GroupConsumer(AsyncJsonWebsocketConsumer):
     async def connect(self):
         """
@@ -47,9 +46,12 @@ class GroupConsumer(AsyncJsonWebsocketConsumer):
                     payload = json.loads(payload)
                     await self.send_messages_payload(payload['messages'], payload['new_page_number'])
                 else:
-                    raise ClientError(204, "Something went wrong recieving chatroom messages")
-        except:
-            pass
+                    raise ClientError(
+                        204, "Something went wrong recieving chatroom messages")
+                await self.display_progress_bar(False)
+        except ClientError as e:
+            await self.display_progress_bar(False)
+            await self.handle_client_error(e)
 
     async def disconnect(self, code):
         """
@@ -61,7 +63,6 @@ class GroupConsumer(AsyncJsonWebsocketConsumer):
                 await self.leave_room(self.room_id)
         except Exception:
             pass
-        
 
     async def join_room(self, room_id):
         """
@@ -82,7 +83,7 @@ class GroupConsumer(AsyncJsonWebsocketConsumer):
 
         # Store that we're in the room
         self.room_id = room.id
-        
+
         # Add them to the group so they get room meaasges
         await self.channel_layer.group_add(
             room.group_name,
@@ -107,7 +108,6 @@ class GroupConsumer(AsyncJsonWebsocketConsumer):
             }
         )
 
-
     async def leave_room(self, room_id):
         """
         Called by receive_json when someone sent a leave command
@@ -121,14 +121,14 @@ class GroupConsumer(AsyncJsonWebsocketConsumer):
         except ClientError as e:
             await self.handle_client_error(e)
 
-        #Remove user from 'users' list
+        # Remove user from 'users' list
         if is_auth:
             await disconnect_user(room, self.scope['user'])
 
-        #Remove that we're in the room
+        # Remove that we're in the room
         self.room_id = None
 
-        #Remove them from the group so they no longer receive messages
+        # Remove them from the group so they no longer receive messages
         await self.channel_layer.group_discard(
             room.group_name,
             self.channel_name
@@ -143,7 +143,6 @@ class GroupConsumer(AsyncJsonWebsocketConsumer):
             }
         )
 
-    
     async def send_room(self, room_id, message):
         """
         Called by recieve_json when someone sends a message to a room
@@ -154,17 +153,18 @@ class GroupConsumer(AsyncJsonWebsocketConsumer):
             if str(room_id) != str(self.room_id):
                 raise ClientError("ROOM_ACCESS_DENIED", "Room access denied")
             if not is_authenticated(self.scope['user']):
-                raise ClientError("AUTH_ERROR", "You must be authenticated to chat.")
+                raise ClientError(
+                    "AUTH_ERROR", "You must be authenticated to chat.")
         else:
             raise ClientError("ROOM_ACCESS_DENIED", "Room access denied")
-        
+
         room = await get_room_or_error(room_id)
         await create_public_room_chat_message(room, self.scope['user'], message)
 
         await self.channel_layer.group_send(
             room.group_name,
             {
-                "type": "chat.message", # chat_message
+                "type": "chat.message",  # chat_message
                 "profile_image": self.scope['user'].profile_image.url,
                 "username": self.scope['user'].username,
                 "user_id": self.scope['user'].id,
@@ -172,13 +172,13 @@ class GroupConsumer(AsyncJsonWebsocketConsumer):
             }
         )
 
-    
     async def chat_message(self, event):
         """
         Called when someone has messaged our chat
         """
         # Send a message down to the client
-        print("PublicChatConsumer: chat_message from user #: " + str(event['user_id']))
+        print("PublicChatConsumer: chat_message from user #: " +
+              str(event['user_id']))
         timestamp = calculate_timestamp(timezone.now())
         await self.send_json({
             "msg_type": MSG_TYPE_MESSAGE,
@@ -212,7 +212,6 @@ class GroupConsumer(AsyncJsonWebsocketConsumer):
         if e.message:
             errorData['message'] = e.message
         return
-    
 
     async def display_progress_bar(self, is_displayed):
         '''
@@ -260,6 +259,7 @@ def get_room_or_error(room_id):
 def connect_user(room, user):
     return room.connect_user(user)
 
+
 @database_sync_to_async
 def disconnect_user(room, user):
     return room.disconnect_user(user)
@@ -274,7 +274,7 @@ def get_num_connected_users(room):
 
 @database_sync_to_async
 def create_public_room_chat_message(room, user, message):
-    return PublicRoomChatMessage.objects.create(user = user, room = room, content = message)
+    return PublicRoomChatMessage.objects.create(user=user, room=room, content=message)
 
 
 @database_sync_to_async
@@ -284,7 +284,7 @@ def get_room_chat_messages(room, page_number):
         p = Paginator(qs, DEFAULT_ROOM_CHAT_MESSAGE_PAGE_SIZE)
 
         payload = {}
-        #messages_data = None
+        # messages_data = None
         new_page_number = int(page_number)
         if new_page_number <= p.num_pages:
             new_page_number = new_page_number + 1
@@ -298,6 +298,7 @@ def get_room_chat_messages(room, page_number):
         print("EXCEPTION " + str(e))
         return None
 
+
 class LazyRoomChatMessageEncoder(Serializer):
     def get_dump_object(self, obj):
         dump_object = {}
@@ -307,5 +308,6 @@ class LazyRoomChatMessageEncoder(Serializer):
         dump_object.update({'username': str(obj.user.username)})
         dump_object.update({'message': str(obj.content)})
         dump_object.update({'profile_image': str(obj.user.profile_image.url)})
-        dump_object.update({'natural_timestamp': calculate_timestamp(obj.timestamp)})
+        dump_object.update(
+            {'natural_timestamp': calculate_timestamp(obj.timestamp)})
         return dump_object

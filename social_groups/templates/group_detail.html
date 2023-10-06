@@ -149,9 +149,16 @@
       // display the progress bar?
 		displayChatroomLoadingSpinner(data.display_progress_bar)
 
+
+    // Handle errors (ClientError)
+		if (data.error) {
+			console.error(data.error + ": " + data.message)
+			showClientErrorModal(data.message)
+			return;
+		}
+
       // Handle joining (Client perspective)
 		if (data.join) {
-			//console.log("Joining public room " + data.join);
 			getRoomChatMessages()
 		}
 
@@ -376,6 +383,35 @@
 		}
 	}
 
+  function showClientErrorModal(message){
+    console.log("hello")
+		document.getElementById("id_client_error_modal_body").innerHTML = message
+		document.getElementById("id_trigger_client_error_modal").click()
+	}
+
     </script>
+
+    <!-- Client Error MODAL -->
+<button type="button" id="id_trigger_client_error_modal" class="d-none btn btn-primary" data-toggle="modal" data-target="#id_client_error_modal">
+</button>
+<div class="modal fade" id="id_client_error_modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Socket Client Error</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p id="id_client_error_modal_body">Something went wrong.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" id="id_client_error_modal_close_btn">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Client Error MODAL -->
   
 {% endblock %}
