@@ -106,3 +106,13 @@ class FriendRequest(models.Model):
     @property
     def get_cname(self):
         return "FriendRequest"
+    
+
+'''from chat.utils import find_or_create_private_chat
+from friend.models import FriendsList
+friend_lists = FriendsList.objects.all()
+for f in friend_lists:
+    for friend in f.friends.all():
+        chat = find_or_create_private_chat(f.user, friend)
+        chat.is_active = True
+        chat.save()'''

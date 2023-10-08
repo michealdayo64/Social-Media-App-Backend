@@ -1,6 +1,6 @@
 from django.urls import path
-from .views import message_index
+from .views import private_chat_room_view
 
 urlpatterns = [
-    path('', message_index, name="message-index")
+    path('', private_chat_room_view, name="message-index")
 ]

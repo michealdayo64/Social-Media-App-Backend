@@ -356,6 +356,18 @@
 		}
 	}
 
+  /*
+		Get the next page of chat messages when scrolls to bottom
+	*/
+	document.getElementById("id_chat_log").addEventListener("scroll", function(e){
+		var chatLog = document.getElementById("id_chat_log")
+		chatLog.addEventListener("scroll", function(e){
+			if ((Math.abs(chatLog.scrollTop) + 2) >= (chatLog.scrollHeight - chatLog.offsetHeight)) {
+				getRoomChatMessages()
+			}
+		});
+	})
+
   function handleMessagesPayload(messages, new_page_number){
 		if(messages != null && messages != "undefined" && messages != "None"){
 			setPageNumber(new_page_number)
