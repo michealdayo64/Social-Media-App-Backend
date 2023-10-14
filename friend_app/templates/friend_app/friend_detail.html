@@ -34,7 +34,7 @@
           <h3>Omotosho Micheal<span style="font-size: 20px;"> ({{ account.username }})</span></h3>
           {% if is_myfriend %}
           <div class="d-flex flex-row justify-content-end align-items-center">
-            <a class="btn btn-primary me-2" href="#">Send Message</a>
+            <a class="btn btn-primary me-2" href="" onclick="createOrReturnPrivateChat('{{ account.id }}')">Send Message</a>
           <a class="btn btn-primary" href="{% url 'remove_friend' account.id %}">Unfriend</a>
           </div>
           {% else %}
@@ -67,5 +67,7 @@
       </div>
     <div class="col-3">hello</div>
       </div>
+
+      {% include 'message_app/create_or_return_private_chat.html' %}
 
 {% endblock %}

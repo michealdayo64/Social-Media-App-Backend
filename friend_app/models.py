@@ -1,5 +1,8 @@
 from django.db import models
 from django.conf import settings
+from message_app.utils import find_or_create_private_chat
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 # Create your models here.
 
 
@@ -18,6 +21,11 @@ class FriendsList(models.Model):
         if not account in self.friends.all():
             self.friends.add(account)
             self.save()
+            
+        for friend in self.friends.all():
+            chat = find_or_create_private_chat(self.user, friend)
+            chat.is_active = True
+            chat.save()
 
     def remove_friend(self, account):
         """
@@ -108,6 +116,8 @@ class FriendRequest(models.Model):
         return "FriendRequest"
     
 
+
+
 '''from chat.utils import find_or_create_private_chat
 from friend.models import FriendsList
 friend_lists = FriendsList.objects.all()
@@ -116,3 +126,5 @@ for f in friend_lists:
         chat = find_or_create_private_chat(f.user, friend)
         chat.is_active = True
         chat.save()'''
+
+

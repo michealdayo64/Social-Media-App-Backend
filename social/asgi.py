@@ -4,6 +4,7 @@ from django.core.asgi import get_asgi_application
 from channels.auth import AuthMiddlewareStack
 from channels.security.websocket import AllowedHostsOriginValidator
 from django.urls import path
+from message_app.consumers import ChatConsumer
 from social_groups.consumers import GroupConsumer
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'social.settings')
@@ -18,6 +19,7 @@ application = ProtocolTypeRouter({
         AuthMiddlewareStack(
             URLRouter([
                 path("group_chat/<room_id>/", GroupConsumer.as_asgi()),
+                path("chat/<room_id>/", ChatConsumer.as_asgi()),
             ])
         )
     ),

@@ -73,7 +73,9 @@ def friend_detail(request, *args, **kwargs):
     user = request.user
     if user.is_authenticated:
         user_id = kwargs.get("user_id")
+        #print(user_id)
         account = get_object_or_404(Accounts, pk=user_id)
+        
         friend_list = FriendsList.objects.get(user=account)
         friends = friend_list.friends.all()
         is_myfriend = friend_list.is_mutual_friend(user)

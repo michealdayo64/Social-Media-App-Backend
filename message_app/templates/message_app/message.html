@@ -157,7 +157,7 @@
             <div class="d-flex flex-column friends-list-container ">
               {% for x in m_and_f %}
               <div class="d-flex flex-row p-2 friend-container flex-grow-1" onclick="onSelectFriend('{{x.friend.id}}')" id="id_friend_container_{{x.friend.id}}">
-                <img class="profile-image rounded-circle img-fluid" id="id_friend_img_{{x.friend.id}}" src="{% static 'img/picture_image.png' %}" >
+                <img class="profile-image rounded-circle img-fluid" id="id_friend_img_{{x.friend.id}}" src="{{ x.friend.profile_image.url }}" >
                 <div class="d-flex flex-column">
                   <span class="username-span">{{x.friend.username}}</span>
                   <span class="friend-message-span">{{x.message|truncatechars:20}}</span>
@@ -169,5 +169,177 @@
         </div>
       </div>
     </div>
+
+    <!-- Client Error MODAL -->
+<button type="button" id="id_trigger_client_error_modal" class="d-none btn btn-primary" data-toggle="modal" data-target="#id_client_error_modal">
+</button>
+<div class="modal fade" id="id_client_error_modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Socket Client Error</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p id="id_client_error_modal_body">Something went wrong.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" id="id_client_error_modal_close_btn">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+  var url = window.location.origin
+  var chatSocket = null
+	var roomId = null
+
+  onstart()
+
+	function onstart(){
+    {% if room %}
+			if("{{room.user1}}" == "{{request.user}}"){
+				onSelectFriend("{{room.user2.id}}")
+			}
+			else{
+				onSelectFriend("{{room.user1.id}}")
+			}
+		{% else %}
+			{% if m_and_f %}
+				onSelectFriend("{{m_and_f.0.friend.id}}")
+			{% endif %}
+		{% endif %}
+
+		{% for x in m_and_f %}
+		preloadImage("{{ x.friend.profile_image.url|safe }}", "id_friend_img_{{x.friend.id}}")
+		{% endfor %}
+  }
+
+  function onSelectFriend(userid){
+		createOrReturnPrivateChat(userid)
+		//clearHighlightedFriend()
+		//highlightFriend(userid)
+	}
+
+  function closeWebsocket(){
+		if(chatSocket != null){
+			chatSocket.close()
+			chatSocket = null
+			//clearChatLog()
+			//setPageNumber("1")
+			//disableChatLogScrollListener()
+		}
+	}
+
+
+  function setupWebSocket(room_id){
+    //console.log("setupWebSocket: " + room_id)
+    roomId = room_id
+
+    // close previous socket if one is open
+		closeWebsocket()
+
+    var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
+		{% if debug_mode %}
+			var ws_path = ws_scheme + '://' + window.location.host + "/chat/" + roomId + "/"; // development
+		{% else %}
+			var ws_path = ws_scheme + '://' + window.location.host + ":8001/chat" + roomId + "/"; // production
+		{% endif %}
+		chatSocket = new WebSocket(ws_path);
+    //console.log(chatSocket)
+
+    // Handle incoming messages
+		chatSocket.onmessage = function(message) {
+      //console.log("Got chat websocket message " + message.data);
+      var data = JSON.parse(message.data);
+      console.log(data)
+
+      // display the progress bar?
+		  //displayChatroomLoadingSpinner(data.display_progress_bar)
+
+      if(data.leave){
+			console.log("Leaving public room " + data.leave)
+		}
+
+      // Handle getting a message
+		/*if (data.msg_type == 0 || data.msg_type == 1 || data.msg_type == 2) {
+				appendChatMessage(data, false, true)
+			}**/
+
+      if(data.msg_type == 1){
+        console.log(data.msg_type["username"])
+      }
+      
+
+    }
+
+    chatSocket.onclose = function(e) {
+		console.error('Private ChatSocket closed.');
+	  };
+
+    chatSocket.onOpen = function(e){
+      console.log("Private ChatSocket onOpen", e)
+    }
+
+    chatSocket.onerror = function(e){
+          console.log('Private ChatSocket error', e)
+      }
+
+    if (chatSocket.readyState == WebSocket.OPEN) {
+    	console.log("Private ChatSocket OPEN")
+    } else if (chatSocket.readyState == WebSocket.CONNECTING){
+        console.log("Private ChatSocket connecting..")
+    }
+
+    chatSocket.addEventListener("open", function(e){
+      console.log("Private ChatSocket OPEN")
+      // join chat room
+      if("{{request.user.is_authenticated}}"){
+        chatSocket.send(JSON.stringify({
+          "command": "join",
+          "room": roomId
+        }));
+      }
+	})
+
+  document.getElementById('id_chat_message_submit').onclick = function(e) {
+		const messageInputDom = document.getElementById('id_chat_message_input');
+		const message = messageInputDom.value;
+		chatSocket.send(JSON.stringify({
+			"command": "send",
+			"message": message,
+			"room": roomId
+		}));
+		messageInputDom.value = '';
+	};
+
+
+  }
+
+  function createOrReturnPrivateChat(id){
+		console.log(id)
+		fetch(`${url}/message/create-or-return-private-chat/${id}/`, {
+			body: null,
+			method: 'POST',
+			headers:{
+				'X-CSRFToken': "{{csrf_token}}",
+				"Content-Type": "application/json"
+			}
+		}).then((res) => res.json()).then((data) =>{
+			//console.log("SUCCESS", data)
+			if(data['response'] == "Successfully got the chat"){
+				var chatroomId = data['chatroom_id']
+				setupWebSocket(chatroomId)
+			}
+			else if(data['response'] != null){
+				alert(data['response'])
+			}
+		})
+
+	}
+</script>
   
 {% endblock %}
