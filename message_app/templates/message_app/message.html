@@ -253,25 +253,31 @@
 
     // Handle incoming messages
 		chatSocket.onmessage = function(message) {
-      //console.log("Got chat websocket message " + message.data);
       var data = JSON.parse(message.data);
       console.log(data)
 
       // display the progress bar?
-		  //displayChatroomLoadingSpinner(data.display_progress_bar)
+		  displayChatroomLoadingSpinner(data.display_progress_bar)
+
+      if(data.join){
+			console.log("Joining public room " + data.join)
+			//getUserInfo()
+			getRoomChatMessages()
+			//enableChatLogScrollListener()
+		}
 
       if(data.leave){
 			console.log("Leaving public room " + data.leave)
 		}
 
       // Handle getting a message
-		/*if (data.msg_type == 0 || data.msg_type == 1 || data.msg_type == 2) {
+		if (data.msg_type == 0 || data.msg_type == 1 || data.msg_type == 2) {
 				appendChatMessage(data, false, true)
-			}**/
+			}
 
-      if(data.msg_type == 1){
-        console.log(data.msg_type["username"])
-      }
+      /**if(data.msg_type == 1){
+        console.log(data["username"])
+      }**/
       
 
     }
@@ -304,6 +310,8 @@
         }));
       }
 	})
+  }
+
 
   document.getElementById('id_chat_message_submit').onclick = function(e) {
 		const messageInputDom = document.getElementById('id_chat_message_input');
@@ -317,7 +325,187 @@
 	};
 
 
+  function appendChatMessage(data, maintainPosition, isNewMessage){
+		messageType = data['msg_type']
+		msg_id = data['msg_id']
+		message = data['message']
+		uName = data['username']
+		user_id = data['user_id']
+		profile_image = data['profile_image']
+		timestamp = data['natural_timestamp']
+		console.log("append chat message: " + messageType)
+		
+		var msg = "";
+		var username = ""
+
+		// determine what type of msg it is
+		switch (messageType) {
+			case 0:
+				// new chatroom msg
+				username = uName + ": "
+				msg = message + '\n'
+				createChatMessageElement(msg, msg_id, username, profile_image, user_id, timestamp, maintainPosition, isNewMessage)
+				break;
+			case 1:
+				// User joined room
+				createConnectedDisconnectedElement(message, msg_id, profile_image, user_id)
+				break;
+			case 2:
+				// User left room
+				createConnectedDisconnectedElement(message, msg_id, profile_image, user_id)
+				break;
+			default:
+				console.log("Unsupported message type!");
+				return;
+		}
+
   }
+
+
+  /*
+		Build a new ChatMessage element and append to the list
+	*/
+	function createChatMessageElement(msg, msg_id, username, profile_image, user_id, timestamp, maintainPosition, isNewMessage){
+    var chatLog = document.getElementById("id_chat_log")
+
+		var newMessageDiv = document.createElement("div")
+		newMessageDiv.classList.add("d-flex")
+		newMessageDiv.classList.add("flex-row")
+		newMessageDiv.classList.add("message-container")
+
+    var profileImage = document.createElement("img")
+		profileImage.addEventListener("click", function(e){
+			selectUser(user_id)
+		})
+    profileImage.classList.add("profile-image")
+		profileImage.classList.add("rounded-circle")
+		profileImage.classList.add("img-fluid")
+		profileImage.src = "{% static 'img/profile_image.png' %}"
+		var profile_image_id = "id_profile_image_" + msg_id
+		profileImage.id = profile_image_id
+		newMessageDiv.appendChild(profileImage)
+
+    var div1 = document.createElement("div")
+		div1.classList.add("d-flex")
+		div1.classList.add("flex-column")
+
+		var div2 = document.createElement("div")
+		div2.classList.add("d-flex")
+		div2.classList.add("flex-row")
+
+		var usernameSpan = document.createElement("span")
+		usernameSpan.innerHTML = username
+		usernameSpan.classList.add("username-span")
+		usernameSpan.addEventListener("click", function(e){
+			selectUser(user_id)
+		})
+		div2.appendChild(usernameSpan)
+
+    var timestampSpan = document.createElement("span")
+		timestampSpan.innerHTML = timestamp
+		timestampSpan.classList.add("timestamp-span")
+		timestampSpan.classList.add("d-flex")
+		timestampSpan.classList.add("align-items-center")
+		timestampSpan.addEventListener("click", function(e){
+			selectUser(user_id)
+		})
+		div2.appendChild(timestampSpan)
+
+		div1.appendChild(div2)
+
+    var msgP = document.createElement("p")
+		msgP.innerHTML = validateText(msg)
+		msgP.classList.add("msg-p")
+		div1.appendChild(msgP)
+
+		newMessageDiv.appendChild(div1)
+
+		if(isNewMessage){
+			chatLog.insertBefore(newMessageDiv, chatLog.firstChild)
+		}
+		else{
+			chatLog.appendChild(newMessageDiv)
+		}
+		
+		if(!maintainPosition){
+			chatLog.scrollTop = chatLog.scrollHeight
+		}
+
+		preloadImage(profile_image, profile_image_id)
+
+  }
+
+  function createConnectedDisconnectedElement(msg, msd_id, profile_image, user_id){
+		var chatLog = document.getElementById("id_chat_log")
+
+		var newMessageDiv = document.createElement("div")
+		newMessageDiv.classList.add("d-flex")
+		newMessageDiv.classList.add("flex-row")
+		newMessageDiv.classList.add("message-container")
+
+		var profileImage = document.createElement("img")
+		profileImage.addEventListener("click", function(e){
+			selectUser(user_id)
+		})
+		profileImage.classList.add("profile-image")
+		profileImage.classList.add("rounded-circle")
+		profileImage.classList.add("img-fluid")
+		profileImage.src = "{% static 'img/profile_image.png' %}"
+		var profile_image_id = "id_profile_image_" + msg_id
+		profileImage.id = profile_image_id
+		newMessageDiv.appendChild(profileImage)
+
+		var usernameSpan = document.createElement("span")
+		usernameSpan.innerHTML = msg
+		usernameSpan.classList.add("username-span")
+		usernameSpan.addEventListener("click", function(e){
+			selectUser(user_id)
+		})
+		newMessageDiv.appendChild(usernameSpan)
+
+		chatLog.insertBefore(newMessageDiv, chatLog.firstChild)
+
+		preloadImage(profile_image, profile_image_id)
+ 	}
+
+  function selectUser(user_id){
+		// Weird work-around for passing arg to url
+		var url = "{% url 'friend-detail' user_id=53252623623632623 %}".replace("53252623623632623", user_id)
+		var win = window.open(url, "_blank")
+		win.focus()
+	}
+
+
+
+  function setPageNumber(pageNumber){
+		document.getElementById("id_page_number").innerHTML = pageNumber
+	}
+
+	/*
+		Retrieve the chat room messages given the page number.
+	*/
+	function getRoomChatMessages(){
+		var pageNumber = document.getElementById("id_page_number").innerHTML
+		if(pageNumber != "-1"){
+			setPageNumber("-1") // loading in progress
+			chatSocket.send(JSON.stringify({
+				"command": "get_room_chat_messages",
+				"room_id": roomId,
+				"page_number": pageNumber,
+			}));
+		}
+	}
+
+  function displayChatroomLoadingSpinner(isDisplayed){
+		console.log("displayChatroomLoadingSpinner: " + isDisplayed)
+		var spinner = document.getElementById("id_chatroom_loading_spinner")
+		if(isDisplayed){
+			spinner.style.display = "block"
+		}
+		else{
+			spinner.style.display = "none"
+		}
+	}
 
   function createOrReturnPrivateChat(id){
 		console.log(id)

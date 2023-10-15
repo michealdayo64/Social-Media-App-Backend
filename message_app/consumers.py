@@ -7,9 +7,10 @@ from .constant import *
 from .utils import calculate_timestamp
 from django.utils import timezone
 import asyncio
+from django.core.paginator import Paginator
 # from django.core.serializers import serialize
 # import json
-from .models import PrivateChatRoom
+from .models import PrivateChatRoom, RoomChatMessage
 
 
 class ChatConsumer(AsyncJsonWebsocketConsumer):
@@ -40,6 +41,10 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
                 if len(content["message"].lstrip()) != 0:
                     #raise ClientError(422,"You can't send an empty message.")
                     await self.send_room(content["room"], content["message"])
+            elif command == "get_room_chat_messages":
+                await self.display_progress_bar(True)
+                room = await get_room_or_error(content['room_id'], self.scope["user"])
+                payload = await get_room_chat_messages(room, content['page_number'])
         except:
             pass
 
@@ -169,6 +174,20 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
             
         })
 
+    async def display_progress_bar(self, is_displayed):
+        """
+        1. is_displayed = True
+        - Display the progress bar on UI
+        2. is_displayed = False
+        - Hide the progress bar on UI
+        """
+        print("DISPLAY PROGRESS BAR: " + str(is_displayed))
+        await self.send_json(
+			{
+				"display_progress_bar": is_displayed
+			}
+		)
+
     
     async def leave_room(self, room_id):
         """
@@ -270,3 +289,26 @@ def disconnect_user(room, user):
 @database_sync_to_async
 def create_room_chat_message(room, user, message):
     return RoomChatMessage.objects.create(room = room, user = user, content = message)
+
+
+@database_sync_to_async
+def get_room_chat_messages(room, page_number):
+    #time.sleep(1)
+    try:
+        qs = RoomChatMessage.objects.by_room(room)
+        p = Paginator(qs, DEFAULT_ROOM_CHAT_MESSAGE_PAGE_SIZE)
+
+        payload = {}
+        #messages_data = None
+        new_page_number = int(page_number)  
+        if new_page_number <= p.num_pages:
+            new_page_number = new_page_number + 1
+            s = LazyRoomChatMessageEncoder()
+            payload['messages'] = s.serialize(p.page(page_number).object_list)
+        else:
+            payload['messages'] = "None"
+        payload['new_page_number'] = new_page_number
+        return json.dumps(payload)
+    except Exception as e:
+        print("EXCEPTION: " + str(e))
+    return None
