@@ -275,9 +275,10 @@
 				appendChatMessage(data, false, true)
 			}
 
-      /**if(data.msg_type == 1){
-        console.log(data["username"])
-      }**/
+      // new payload of messages coming in from backend
+			if(data.messages_payload){
+				handleMessagesPayload(data.messages, data.new_page_number)
+			}
       
 
     }
@@ -481,6 +482,10 @@
 		document.getElementById("id_page_number").innerHTML = pageNumber
 	}
 
+  function setPaginationExhausted(){
+		setPageNumber("-1")
+	}
+
 	/*
 		Retrieve the chat room messages given the page number.
 	*/
@@ -506,6 +511,44 @@
 			spinner.style.display = "none"
 		}
 	}
+
+  function handleMessagesPayload(messages, new_page_number){
+		if(messages != null && messages != "undefined" && messages != "None"){
+			setPageNumber(new_page_number)
+			messages.forEach(function(message){
+				appendChatMessage(message, true, false)
+			})
+		}
+		else{
+			setPaginationExhausted() // no more messages
+		}
+	}
+
+  /*
+		Get the next page of chat messages when scrolls to bottom
+	*/
+	function chatLogScrollListener(e) {
+		var chatLog = document.getElementById("id_chat_log")
+		if ((Math.abs(chatLog.scrollTop) + 2) >= (chatLog.scrollHeight - chatLog.offsetHeight)) {
+			getRoomChatMessages()
+		}
+	}
+
+  /*
+		Enable the function "chatLogScrollListener"
+	*/
+	function enableChatLogScrollListener(){
+		document.getElementById("id_chat_log").addEventListener("scroll", chatLogScrollListener);
+	}
+	
+	/*
+		Disable the function "chatLogScrollListener"
+	*/
+	function disableChatLogScrollListener(){
+		document.getElementById("id_chat_log").removeEventListener("scroll", chatLogScrollListener)
+	}
+
+  
 
   function createOrReturnPrivateChat(id){
 		console.log(id)

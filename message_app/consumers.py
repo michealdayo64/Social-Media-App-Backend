@@ -4,12 +4,12 @@ from social_groups.exception import ClientError
 from friend_app.models import FriendsList
 from account.models import Accounts
 from .constant import *
-from .utils import calculate_timestamp
+from .utils import calculate_timestamp, LazyRoomChatMessageEncoder
 from django.utils import timezone
 import asyncio
 from django.core.paginator import Paginator
 # from django.core.serializers import serialize
-# import json
+import json
 from .models import PrivateChatRoom, RoomChatMessage
 
 
@@ -45,6 +45,12 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
                 await self.display_progress_bar(True)
                 room = await get_room_or_error(content['room_id'], self.scope["user"])
                 payload = await get_room_chat_messages(room, content['page_number'])
+                if payload != None:
+                    payload = json.loads(payload)
+                    await self.send_messages_payload(payload['messages'], payload['new_page_number'])
+                else:
+                    raise ClientError(204,"Something went wrong retrieving the chatroom messages.")
+                await self.display_progress_bar(False)
         except:
             pass
 
@@ -186,6 +192,19 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
 			{
 				"display_progress_bar": is_displayed
 			}
+		)
+
+    async def send_messages_payload(self, messages, new_page_number):
+        """
+        Send a payload of messages to the ui
+        """
+        print("ChatConsumer: send_messages_payload. ")
+        await self.send_json(
+			{
+				"messages_payload": "messages_payload",
+				"messages": messages,
+				"new_page_number": new_page_number,
+			},
 		)
 
     
