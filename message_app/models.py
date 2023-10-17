@@ -23,7 +23,7 @@ class PrivateChatRoom(models.Model):
     is_active = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"A Chat between {self.user1} and {self.user2}"
+        return f"{self.user1}"
 
     def connect_user(self, user):
         """

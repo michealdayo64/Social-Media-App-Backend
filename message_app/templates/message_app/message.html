@@ -107,6 +107,17 @@
       max-height: 500px;
       overflow-y: scroll;
     }
+	#id_user_info_container{
+		text-decoration: none;
+
+	}
+	#id_user_info_container #id_other_username{
+		margin-left: 10px;
+	}
+	
+	.chat-log-msg{
+		background-color: blue;
+	}
   </style>
 
 <br>
@@ -119,7 +130,7 @@
           <div class="d-flex flex-row align-items-center card-header" id="id_room_title">
             <a class="d-flex flex-row" target="_blank" id="id_user_info_container">
               <img class="profile-image rounded-circle img-fluid" id="id_other_user_profile_image" src="{% static 'img/profile_image.png' %}">
-              <h3 class="ml-2" id="id_other_username"></h3>
+              <h3 class="ml-4" id="id_other_username"></h3>
             </a>
             
             </div>
@@ -220,17 +231,17 @@
 
   function onSelectFriend(userid){
 		createOrReturnPrivateChat(userid)
-		//clearHighlightedFriend()
-		//highlightFriend(userid)
+		clearHighlightedFriend()
+		highlightFriend(userid)
 	}
 
   function closeWebsocket(){
 		if(chatSocket != null){
 			chatSocket.close()
 			chatSocket = null
-			//clearChatLog()
-			//setPageNumber("1")
-			//disableChatLogScrollListener()
+			clearChatLog()
+			setPageNumber("1")
+			disableChatLogScrollListener()
 		}
 	}
 
@@ -261,14 +272,19 @@
 
       if(data.join){
 			console.log("Joining public room " + data.join)
-			//getUserInfo()
+			getUserInfo()
 			getRoomChatMessages()
-			//enableChatLogScrollListener()
+			enableChatLogScrollListener()
 		}
 
       if(data.leave){
 			console.log("Leaving public room " + data.leave)
 		}
+
+		if(data.user_info){
+			handleUserInfoPayload(data.user_info)
+		}
+      
 
       // Handle getting a message
 		if (data.msg_type == 0 || data.msg_type == 1 || data.msg_type == 2) {
@@ -279,7 +295,8 @@
 			if(data.messages_payload){
 				handleMessagesPayload(data.messages, data.new_page_number)
 			}
-      
+
+		
 
     }
 
@@ -314,6 +331,30 @@
   }
 
 
+  function getUserInfo(){
+		chatSocket.send(JSON.stringify({
+			"command": "get_user_info",
+			"room_id": roomId
+		}))
+	}
+
+  function clearChatLog(){
+		document.getElementById("id_chat_log").innerHTML = ""
+		console.log("clear chat")
+	}
+
+
+	document.getElementById('id_chat_message_input').focus();
+	document.getElementById('id_chat_message_input').onkeyup = function(e) {
+		if (e.keyCode === 13 && e.shiftKey) {  // enter + return
+			// Handled automatically by textarea
+		}
+		else if(e.keyCode === 13 && !e.shiftKey){ // enter + !return
+			document.getElementById('id_chat_message_submit').click();
+		}
+	};
+
+
   document.getElementById('id_chat_message_submit').onclick = function(e) {
 		const messageInputDom = document.getElementById('id_chat_message_input');
 		const message = messageInputDom.value;
@@ -334,7 +375,8 @@
 		user_id = data['user_id']
 		profile_image = data['profile_image']
 		timestamp = data['natural_timestamp']
-		console.log("append chat message: " + messageType)
+		//user = data['user']
+		//console.log("append chat message: " + user)
 		
 		var msg = "";
 		var username = ""
@@ -373,6 +415,10 @@
 		newMessageDiv.classList.add("d-flex")
 		newMessageDiv.classList.add("flex-row")
 		newMessageDiv.classList.add("message-container")
+		//newMessageDiv.classList.add("w-50")
+		//newMessageDiv.classList.add("rounded")
+		//newMessageDiv.classList.add("p-1")
+		//newMessageDiv.classList.add("chat-log-msg")
 
     var profileImage = document.createElement("img")
 		profileImage.addEventListener("click", function(e){
@@ -546,6 +592,32 @@
 	*/
 	function disableChatLogScrollListener(){
 		document.getElementById("id_chat_log").removeEventListener("scroll", chatLogScrollListener)
+	}
+
+
+	function highlightFriend(userId){
+		// select new friend
+		document.getElementById("id_friend_container_" + userId).style.background = "#f2f2f2"
+	}
+
+	function clearHighlightedFriend(){
+		{% if m_and_f %}
+			{% for x in m_and_f %}
+				document.getElementById("id_friend_container_{{x.friend.id}}").style.background = ""
+			{% endfor %}
+		{% endif %}
+
+		// clear the profile image and username of current chat
+		document.getElementById("id_other_user_profile_image").classList.add("d-none")
+		document.getElementById("id_other_user_profile_image").src = "{% static 'img/profile_image.png' %}"
+		document.getElementById("id_other_username").innerHTML = ""
+	}
+
+	function handleUserInfoPayload(user_info){
+		document.getElementById("id_other_username").innerHTML = user_info.username
+		document.getElementById("id_other_user_profile_image").classList.remove("d-none")
+		document.getElementById("id_user_info_container").href = "{% url 'friend-detail' user_id=5454544333344 %}".replace("5454544333344", user_info.id)
+		preloadImage(user_info.profile_image, "id_other_user_profile_image")
 	}
 
   
