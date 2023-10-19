@@ -6,6 +6,8 @@ from django.contrib.contenttypes.models import ContentType
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 
+from notification_app.models import Notification
+
 
 class PrivateChatRoom(models.Model):
     """
@@ -74,3 +76,48 @@ class RoomChatMessage(models.Model):
 
     def __str__(self):
         return self.content
+    
+
+class UnreadChatRoomMessages(models.Model):
+    """
+    Keep track of the number of unread messages by a specific user in a specific private chat.
+    When the user connects the chat room, the messages will be considered "read" and 'count' will be set to 0.
+    """
+    room                = models.ForeignKey(PrivateChatRoom, on_delete=models.CASCADE, related_name="room")
+
+    user                = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+
+    count               = models.IntegerField(default=0)
+
+    most_recent_message = models.CharField(max_length=500, blank=True, null=True)
+
+    # last time msgs were read by the user
+    reset_timestamp     = models.DateTimeField()
+
+    notifications       = GenericRelation(Notification)
+
+    def __str__(self):
+        return f"Messages that {str(self.user.username)} has not read yet."
+
+
+    def save(self, *args, **kwargs):
+        if not self.id: # if just created, add a timestamp. Otherwise do not automatically change it ever.
+            self.reset_timestamp = timezone.now()
+        return super(UnreadChatRoomMessages, self).save(*args, **kwargs)
+    
+    @property
+    def get_cname(self):
+        """
+        For determining what kind of object is associated with a Notification
+        """
+        return "UnreadChatRoomMessages"
+    
+    @property
+    def get_other_user(self):
+        """
+        Get the other user in the chat room
+        """
+        if self.user == self.room.user1:
+            return self.room.user2
+        else:
+            return self.room.user1

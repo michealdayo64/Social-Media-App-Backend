@@ -31,9 +31,23 @@
       <a href="#" class="anch">
         <i class="fa-brands fa-facebook-messenger me-4 text-white"></i>
       </a>
-      <a href="#" class="anch">
+      
+      <a href="#" class="anch" id="btn-notifi">
+        <p class="mybadge">
+          99
+        </p>
         <i class="fa-solid fa-bell me-4 text-white"></i>
       </a>
+      <div class="notifi" id="id_general_notifications_container">
+        <p>hello</p>
+        <hr>
+        <p>hello</p>
+        <hr>
+        <p>hello</p>
+        <hr>
+        <p>hello</p>
+        <hr>
+        </div>
       <a href="#" class="anch">
         <i class="fa-solid fa-circle-question me-4 text-white"></i>
       </a>
@@ -53,6 +67,9 @@
   <script>
     const dropId = document.getElementById("dropid")
     const logoutBtn = document.getElementById("logout")
+    const btnNotifi = document.getElementById("btn-notifi")
+    const showNotifi = document.getElementById("id_general_notifications_container")
+
     logoutBtn.addEventListener('click', (e) =>{
       e.preventDefault()
       if(dropId.style.display === "block"){
@@ -62,4 +79,44 @@
       }
       
     })
+
+    btnNotifi.addEventListener('click', (e) =>{
+      e.preventDefault()
+      if(showNotifi.style.display === "block"){
+        showNotifi.style.display = "none"
+      }else{
+        showNotifi.style.display = "block"
+      }
+    })
+  </script>
+
+  <script>
+    // Correctly decide between ws:// and wss://
+	var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
+	var ws_path = ws_scheme + '://' + window.location.host + "/"; // development
+	//var ws_path = ws_scheme + '://' + window.location.host + ":8001/public_chat/{{room_id}}/"; // production
+	var notificationSocket = new WebSocket(ws_path);
+  
+
+  notificationSocket.onmessage = function(message){
+    var data = JSON.parse(message.data);
+  }
+  notificationSocket.onclose = function(e) {
+		console.log('Notification Socket closed unexpectedly');
+	};
+
+  notificationSocket.onopen = function(e){
+		console.log("Notification Socket on open: " + e)
+  }
+
+  notificationSocket.onerror = function(e){
+		console.log('Notification Socket error', e)
+	}
+
+	if (notificationSocket.readyState == WebSocket.OPEN) {
+		console.log("Notification Socket OPEN complete.")
+	} 
+	else if (notificationSocket.readyState == WebSocket.CONNECTING){
+		console.log("Notification Socket connecting..")
+	}
   </script>
