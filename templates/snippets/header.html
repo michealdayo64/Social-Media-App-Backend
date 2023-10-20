@@ -64,6 +64,8 @@
     </div>
   </nav>
 
+  {% include 'snippets/general_notifications.html' %}
+
   <script>
     const dropId = document.getElementById("dropid")
     const logoutBtn = document.getElementById("logout")
@@ -74,8 +76,10 @@
       e.preventDefault()
       if(dropId.style.display === "block"){
         dropId.style.display = "none"
+        showNotifi.style.display = "none"
       }else{
         dropId.style.display = "block"
+        showNotifi.style.display = "none"
       }
       
     })
@@ -84,8 +88,10 @@
       e.preventDefault()
       if(showNotifi.style.display === "block"){
         showNotifi.style.display = "none"
+        dropId.style.display = "none"
       }else{
         showNotifi.style.display = "block"
+        dropId.style.display = "none"
       }
     })
   </script>
@@ -107,6 +113,9 @@
 
   notificationSocket.onopen = function(e){
 		console.log("Notification Socket on open: " + e)
+    //setupGeneralNotificationsMenu()
+		getFirstGeneralNotificationsPage()
+		//getUnreadGeneralNotificationsCount()
   }
 
   notificationSocket.onerror = function(e){

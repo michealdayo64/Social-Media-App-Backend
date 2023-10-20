@@ -22,3 +22,15 @@
 		margin-top: 40px;
 	}
 </style>
+
+
+<script>
+	function getFirstGeneralNotificationsPage(){
+		if("{{request.user.is_authenticated}}"){
+			notificationSocket.send(JSON.stringify({
+				"command": "get_general_notifications",
+				"page_number": "1",
+			}));
+		}
+	}
+</script>
