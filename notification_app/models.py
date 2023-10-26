@@ -19,3 +19,6 @@ class Notification(models.Model):
 
     def __str__(self):
         return self.verb
+    
+    def get_content_object_type(self):
+        return str(self.content_object.get_cname)

@@ -342,6 +342,7 @@ def get_room_chat_messages(room, page_number):
             new_page_number = new_page_number + 1
             s = LazyRoomChatMessageEncoder()
             payload['messages'] = s.serialize(p.page(page_number).object_list)
+            #print(payload['messages'])
         else:
             payload['messages'] = "None"
         payload['new_page_number'] = new_page_number

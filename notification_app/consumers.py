@@ -111,13 +111,13 @@ def get_general_notifications(user, page_number):
     1. FriendRequest
     2. FriendList
     """
+    payload = {}
     if user.is_authenticated:
         friend_request_ct = ContentType.objects.get_for_model(FriendRequest)
         friend_list_ct = ContentType.objects.get_for_model(FriendsList)
         notifications = Notification.objects.filter(target=user, content_type__in=[friend_request_ct, friend_list_ct]).order_by('-timestamp')
         p = Paginator(notifications, DEFAULT_NOTIFICATION_PAGE_SIZE)
-
-        payload = {}
+        
         if len(notifications) > 0:
             if int(page_number) <= p.num_pages:
                 s = LazyNotificationEncoder()
@@ -129,7 +129,7 @@ def get_general_notifications(user, page_number):
             return None
     else:
         raise ClientError("AUTH_ERROR", "User must be authenticated to get notifications.")
-
+    
     return json.dumps(payload)
 
 

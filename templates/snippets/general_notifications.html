@@ -105,7 +105,6 @@
 
 	function submitGeneralNotificationToCache(notification){
 		var result = generalCachedNotifList.filter(function(n){ 
-			console.log(n['notification_id'] === notification['notification_id'])
 			return n['notification_id'] === notification['notification_id']
 		})
 		// This notification does not already exist in the list
@@ -497,5 +496,8 @@ preloadImage(notification['from']['image_url'], assignGeneralImgId(notification)
 	}
 	function assignGeneralTimestampId(notification){
 		return "id_timestamp_" + notification['notification_id']
+	}
+	function assignGeneralNegActionId(notification){
+		return "id_general_neg_action_" + notification['notification_id']
 	}
 </script>
