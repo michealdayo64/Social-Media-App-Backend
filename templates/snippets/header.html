@@ -116,6 +116,11 @@
 			handleGeneralNotificationsData(data['notifications'], data['new_page_number'])
 		}
 
+    // Refresh [newest_timestamp >= NOTIFICATIONS >= oldest_timestamp]
+		if(data.general_msg_type == 2){
+			refreshGeneralNotificationsData(data['notifications'])
+		}
+
     if(data.general_msg_type == 5){
 			updateGeneralNotificationDiv(data['notification'])
 		}

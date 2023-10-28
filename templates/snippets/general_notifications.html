@@ -29,7 +29,7 @@
 <p class="d-none" id="id_general_oldest_timestamp"></p>
 <p class="d-none" id="id_general_newest_timestamp"></p>
 <script>
-	
+	const GENERAL_NOTIFICATION_INTERVAL = 4000
 
 	// Keep track of what notifications are currently visible to the user.
 	var generalCachedNotifList = new List([])
@@ -118,6 +118,22 @@
 		else{
 			// find the div and update it.
 			refreshGeneralNotificationsList(notification)
+		}
+	}
+
+
+	/*
+		Refresh the notifications that are currently visible
+	*/
+	function refreshGeneralNotifications(){
+		oldestTimestamp = document.getElementById("id_general_oldest_timestamp").innerHTML
+		newestTimestamp = document.getElementById("id_general_newest_timestamp").innerHTML
+		if("{{request.user.is_authenticated}}"){
+			notificationSocket.send(JSON.stringify({
+				"command": "refresh_general_notifications",
+				"oldest_timestamp": oldestTimestamp,
+				"newest_timestamp": newestTimestamp,
+			}));
 		}
 	}
 
@@ -322,13 +338,31 @@ preloadImage(notification['from']['image_url'], assignGeneralImgId(notification)
 
 
 	/*
+		Received a payload from socket containing notifications currently in view.
+		Called every GENERAL_NOTIFICATION_INTERVAL
+	*/
+	function refreshGeneralNotificationsData(notifications){
+		if(notifications.length > 0){
+			clearNoGeneralNotificationsCard()
+			notifications.forEach(notification => {
+
+				submitGeneralNotificationToCache(notification)
+
+				setGeneralOldestTimestamp(notification['timestamp'])
+				setGeneralNewestTimestamp(notification['timestamp'])
+			})
+		}
+	}
+
+
+	/*
 		Keep track of the 'general' oldest notification in view. 
 		When 'refreshGeneralNotifications' is called, it refreshes all the notifications newer than this date but newer than 'id_general_newest_timestamp.
 	*/
 	function setGeneralOldestTimestamp(timestamp){
 		element = document.getElementById("id_general_oldest_timestamp")
 		current = element.innerHTML
-		console.log(Date.parse(current))
+		//console.log(Date.parse(current))
 		if(Date.parse(timestamp) < Date.parse(current)){
 			element.innerHTML = timestamp
 		}
@@ -460,6 +494,19 @@ preloadImage(notification['from']['image_url'], assignGeneralImgId(notification)
 			})
 		}
 	}
+
+	/*
+		Start the functions that will be executed constantly
+	*/
+	function startGeneralNotificationService(){
+		if("{{request.user.is_authenticated}}" == "True"){
+			setInterval(refreshGeneralNotifications, GENERAL_NOTIFICATION_INTERVAL)
+			//setInterval(getNewGeneralNotifications, GENERAL_NOTIFICATION_INTERVAL)
+			//setInterval(getUnreadGeneralNotificationsCount, GENERAL_NOTIFICATION_INTERVAL)
+		}
+	}
+
+	startGeneralNotificationService()
 
 	/*
 		Circular image icon that can be in a notification card
