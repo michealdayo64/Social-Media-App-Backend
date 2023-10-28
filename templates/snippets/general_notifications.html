@@ -328,6 +328,7 @@ preloadImage(notification['from']['image_url'], assignGeneralImgId(notification)
 	function setGeneralOldestTimestamp(timestamp){
 		element = document.getElementById("id_general_oldest_timestamp")
 		current = element.innerHTML
+		console.log(Date.parse(current))
 		if(Date.parse(timestamp) < Date.parse(current)){
 			element.innerHTML = timestamp
 		}
