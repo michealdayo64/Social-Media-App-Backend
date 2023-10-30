@@ -1,3 +1,4 @@
+from datetime import datetime
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from channels.db import database_sync_to_async
 from django.contrib.contenttypes.models import ContentType
@@ -63,6 +64,11 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
                 if payload != None:
                     payload = json.loads(payload)
                     await self.send_new_general_notifications_payload(payload['notifications'])
+            elif command == "get_unread_general_notifications_count":
+                payload = await get_unread_general_notification_count(self.scope["user"])
+                if payload != None:
+                    payload = json.loads(payload)
+                    await self.send_unread_general_notification_count(payload['count'])
         except: 
             pass
 
@@ -121,6 +127,28 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
             {
                 "general_msg_type": GENERAL_MSG_TYPE_NOTIFICATIONS_REFRESH_PAYLOAD,
                 "notifications": notifications,
+            },
+        )
+
+    async def send_new_general_notifications_payload(self, notifications):
+        """
+        Called by receive_json when ready to send a json array of the notifications
+        """
+        await self.send_json(
+            {
+                "general_msg_type": GENERAL_MSG_TYPE_GET_NEW_GENERAL_NOTIFICATIONS,
+                "notifications": notifications,
+            },
+        )
+
+    async def send_unread_general_notification_count(self, count):
+        """
+        Send the number of unread "general" notifications to the template
+        """
+        await self.send_json(
+            {
+                "general_msg_type": GENERAL_MSG_TYPE_GET_UNREAD_NOTIFICATIONS_COUNT,
+                "count": count,
             },
         )
 
@@ -226,3 +254,43 @@ def refresh_general_notifications(user, oldest_timestamp, newest_timestamp):
 		raise ClientError("AUTH_ERROR", "User must be authenticated to get notifications.")
 
 	return json.dumps(payload) 
+
+
+@database_sync_to_async
+def get_new_general_notifications(user, newest_timestamp):
+	"""
+	Retrieve any notifications newer than the newest_timestatmp on the screen.
+	"""
+	payload = {}
+	if user.is_authenticated:
+		timestamp = newest_timestamp[0:newest_timestamp.find("+")] # remove timezone because who cares
+		timestamp = datetime.strptime(timestamp, '%Y-%m-%d %H:%M:%S.%f')
+		friend_request_ct = ContentType.objects.get_for_model(FriendRequest)
+		friend_list_ct = ContentType.objects.get_for_model(FriendsList)
+		notifications = Notification.objects.filter(target=user, content_type__in=[friend_request_ct, friend_list_ct], timestamp__gt=timestamp, read=False).order_by('-timestamp')
+		s = LazyNotificationEncoder()
+		payload['notifications'] = s.serialize(notifications)
+	else:
+		raise ClientError("AUTH_ERROR", "User must be authenticated to get notifications.")
+
+	return json.dumps(payload) 
+
+
+@database_sync_to_async
+def get_unread_general_notification_count(user):
+	payload = {}
+	if user.is_authenticated:
+		friend_request_ct = ContentType.objects.get_for_model(FriendRequest)
+		friend_list_ct = ContentType.objects.get_for_model(FriendsList)
+		notifications = Notification.objects.filter(target=user, content_type__in=[friend_request_ct, friend_list_ct])
+
+		unread_count = 0
+		if notifications:
+			for notification in notifications.all():
+				if not notification.read:
+					unread_count = unread_count + 1
+		payload['count'] = unread_count
+		return json.dumps(payload)
+	else:
+		raise ClientError("AUTH_ERROR", "User must be authenticated to get notifications.")
+	return None

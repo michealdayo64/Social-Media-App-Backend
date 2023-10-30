@@ -64,7 +64,7 @@
     display: none;
 }
 
-.mybadge{
+#mybadge{
     background-color: red;
     position: absolute;
     border-radius: 100%;

@@ -123,17 +123,76 @@
 
 
 	/*
+		Received a payload from socket containing NEW notifications
+		Called every GENERAL_NOTIFICATION_INTERVAL
+	*/
+	function handleNewGeneralNotificationsData(notifications){
+    	if(notifications.length > 0){
+    		clearNoGeneralNotificationsCard()
+    		notifications.forEach(notification => {
+
+    			submitNewGeneralNotificationToCache(notification)
+
+				setGeneralOldestTimestamp(notification['timestamp'])
+				setGeneralNewestTimestamp(notification['timestamp'])
+			})
+	    }
+	}
+
+	/*
+		Set the number of unread notifications.
+	*/
+	function setUnreadGeneralNotificationsCount(count){
+		var countElement = document.getElementById("mybadge")
+		if(count > 0){
+			countElement.style.display = 'block'
+			countElement.innerHTML = count
+		}
+		else{
+			countElement.style.display = 'none'
+		}
+	}
+
+
+	/*
 		Refresh the notifications that are currently visible
 	*/
 	function refreshGeneralNotifications(){
 		oldestTimestamp = document.getElementById("id_general_oldest_timestamp").innerHTML
-		console.log()
+		console.log(oldestTimestamp)
 		newestTimestamp = document.getElementById("id_general_newest_timestamp").innerHTML
 		if("{{request.user.is_authenticated}}"){
 			notificationSocket.send(JSON.stringify({
 				"command": "refresh_general_notifications",
 				"oldest_timestamp": oldestTimestamp,
 				"newest_timestamp": newestTimestamp,
+			}));
+		}
+	}
+
+
+	/*
+		Retrieve any new notifications
+		Called every GENERAL_NOTIFICATION_INTERVAL seconds
+	*/
+	function getNewGeneralNotifications(){
+		newestTimestamp = document.getElementById("id_general_newest_timestamp").innerHTML
+		if("{{request.user.is_authenticated}}"){
+			notificationSocket.send(JSON.stringify({
+				"command": "get_new_general_notifications",
+				"newest_timestamp": newestTimestamp,
+			}));
+		}
+	}
+
+	/*
+		Retrieve the number of unread notifications. (This is the red dot in the notifications icon)
+		Called every GENERAL_NOTIFICATION_INTERVAL
+	*/
+	function getUnreadGeneralNotificationsCount(){
+		if("{{request.user.is_authenticated}}"){
+			notificationSocket.send(JSON.stringify({
+				"command": "get_unread_general_notifications_count",
 			}));
 		}
 	}
@@ -502,8 +561,8 @@ preloadImage(notification['from']['image_url'], assignGeneralImgId(notification)
 	function startGeneralNotificationService(){
 		if("{{request.user.is_authenticated}}" == "True"){ 
 			setInterval(refreshGeneralNotifications, GENERAL_NOTIFICATION_INTERVAL)
-			//setInterval(getNewGeneralNotifications, GENERAL_NOTIFICATION_INTERVAL)
-			//setInterval(getUnreadGeneralNotificationsCount, GENERAL_NOTIFICATION_INTERVAL)
+			setInterval(getNewGeneralNotifications, GENERAL_NOTIFICATION_INTERVAL)
+			setInterval(getUnreadGeneralNotificationsCount, GENERAL_NOTIFICATION_INTERVAL)
 		}
 	}
 

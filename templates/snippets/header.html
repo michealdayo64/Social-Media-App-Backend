@@ -33,7 +33,7 @@
       </a>
       
       <a href="#" class="anch" id="btn-notifi">
-        <p class="mybadge">
+        <p id="mybadge">
           99
         </p>
         <i class="fa-solid fa-bell me-4 text-white"></i>
@@ -119,6 +119,14 @@
     // Refresh [newest_timestamp >= NOTIFICATIONS >= oldest_timestamp]
 		if(data.general_msg_type == 2){
 			refreshGeneralNotificationsData(data['notifications'])
+		}
+
+    if(data.general_msg_type == 3){
+			handleNewGeneralNotificationsData(data['notifications'])
+		}
+
+    if(data.general_msg_type == 4){
+			setUnreadGeneralNotificationsCount(data['count'])
 		}
 
     if(data.general_msg_type == 5){
