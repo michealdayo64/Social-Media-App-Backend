@@ -12,7 +12,6 @@ class Notification(models.Model):
     verb = models.CharField(max_length=255, unique=False, blank=True, null=True)
     timestamp = models.DateTimeField(auto_now_add=True)
     read = models.BooleanField(default=False)
-
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveBigIntegerField()
     content_object = GenericForeignKey()
