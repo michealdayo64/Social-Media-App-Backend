@@ -93,7 +93,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         # Store that we're in the room
         self.room_id = room.id
 
-        # await on_user_connected(room, self.scope["user"])
+        await on_user_connected(room, self.scope["user"])
 
         await self.channel_layer.group_add(
             room.group_name,
@@ -150,10 +150,12 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
             raise ClientError("ROOM_ACCESS_DENIED", "Room access denied")
         room = await get_room_or_error(room_id, self.scope['user'])
 
+        connected_users = room.connected_users.all()
+
         # Execute these functions asychronously
         await asyncio.gather(*[
-            # append_unread_msg_if_not_connected(room, room.user1, connected_users, message),
-            # append_unread_msg_if_not_connected(room, room.user2, connected_users, message),
+            append_unread_msg_if_not_connected(room, room.user1, connected_users, message),
+            append_unread_msg_if_not_connected(room, room.user2, connected_users, message),
             create_room_chat_message(room, self.scope["user"], message)
         ])
 
