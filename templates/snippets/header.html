@@ -28,11 +28,14 @@
       <a href="#" class="anch">
         <i class="fa-solid fa-user-group me-4 text-white"></i>
       </a>
-      <a href="#" class="anch">
+      <a href="#" class="anch" id="btn-chat-notifi">
         <i class="fa-brands fa-facebook-messenger me-4 text-white"></i>
       </a>
+      <div class="overflow-auto notifi" id="id_chat_notifications_container">
+       
+      </div>
       
-      <a href="#" class="anch" id="btn-notifi">
+      <a class="anch" id="btn-notifi" onclick="setGeneralNotificationsAsRead()">
         <p id="mybadge">
           99
         </p>
@@ -58,12 +61,26 @@
   </nav>
 
   {% include 'snippets/general_notifications.html' %}
+  {% include 'snippets/chat_notifications.html' %}
 
   <script>
     const dropId = document.getElementById("dropid")
     const logoutBtn = document.getElementById("logout")
     const btnNotifi = document.getElementById("btn-notifi")
+    const btnChatNotifi = document.getElementById("btn-chat-notifi")
+    const showChatNotifi = document.getElementById("id_chat_notifications_container")
     const showNotifi = document.getElementById("id_general_notifications_container")
+
+    btnChatNotifi.addEventListener('click', (e) =>{
+      e.preventDefault()
+      if(showChatNotifi.style.display === "block"){
+        showChatNotifi.style.display = "none"
+      }else{
+        showChatNotifi.style.display = "block"
+        showNotifi.style.display = "none"
+        dropId.style.display = "none"
+      }
+    })
 
     logoutBtn.addEventListener('click', (e) =>{
       e.preventDefault()
@@ -73,6 +90,7 @@
       }else{
         dropId.style.display = "block"
         showNotifi.style.display = "none"
+        showChatNotifi.style.display = "none"
       }
       
     })
@@ -85,11 +103,15 @@
       }else{
         showNotifi.style.display = "block"
         dropId.style.display = "none"
+        showChatNotifi.style.display = "none"
       }
     })
+
+    //
   </script>
 
   <script>
+    //setupChatDropdownHeader()
     // Correctly decide between ws:// and wss://
 	var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
 	var ws_path = ws_scheme + '://' + window.location.host + "/"; // development
@@ -100,7 +122,7 @@
 
   notificationSocket.onmessage = function(message){
     var data = JSON.parse(message.data);
-		console.log("Got notification websocket message. " + data.general_msg_type);
+		//console.log("Got notification websocket message. " + data.general_msg_type);
 
     // "General" Pagination exhausted. No more results.
 		if(data.general_msg_type == 1){
@@ -132,6 +154,11 @@
     if(data.general_msg_type == 5){
 			updateGeneralNotificationDiv(data['notification'])
 		}
+
+    // new 'chat' notifications data payload
+		if(data.chat_msg_type == 10){
+			handleChatNotificationsData(data['notifications'], data['new_page_number'])
+		}
   }
 
 
@@ -140,9 +167,11 @@
 	};
 
   notificationSocket.onopen = function(e){
-		console.log("Notification Socket on open: " + e)
+		//console.log("Notification Socket on open: " + e)
     setupGeneralNotificationsMenu()
 	  getFirstGeneralNotificationsPage()
+    setupChatNotificationsMenu()
+    getFirstChatNotificationsPage()
 		//getUnreadGeneralNotificationsCount()
   }
 
@@ -156,6 +185,9 @@
 	else if (notificationSocket.readyState == WebSocket.CONNECTING){
 		console.log("Notification Socket connecting..")
 	}
+
+
+  //setupChatDropdownHeader()
 
 
   

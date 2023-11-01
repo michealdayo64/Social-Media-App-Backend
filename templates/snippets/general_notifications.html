@@ -35,7 +35,7 @@
 	var generalCachedNotifList = new List([])
 
 	function getFirstGeneralNotificationsPage(){
-		console.log("hello")
+		//console.log("hello")
 		if("{{request.user.is_authenticated}}"){
 			notificationSocket.send(JSON.stringify({
 				"command": "get_general_notifications",
@@ -159,7 +159,6 @@
 	*/
 	function refreshGeneralNotifications(){
 		oldestTimestamp = document.getElementById("id_general_oldest_timestamp").innerHTML
-		console.log(oldestTimestamp)
 		newestTimestamp = document.getElementById("id_general_newest_timestamp").innerHTML
 		if("{{request.user.is_authenticated}}"){
 			notificationSocket.send(JSON.stringify({
@@ -411,6 +410,20 @@ preloadImage(notification['from']['image_url'], assignGeneralImgId(notification)
 				setGeneralOldestTimestamp(notification['timestamp'])
 				setGeneralNewestTimestamp(notification['timestamp'])
 			})
+		}
+	}
+
+
+/*
+		Sets all the notifications currently visible as "read"
+	*/
+	function setGeneralNotificationsAsRead(){
+		if("{{request.user.is_authenticated}}"){
+			oldestTimestamp = document.getElementById("id_general_oldest_timestamp").innerHTML
+			notificationSocket.send(JSON.stringify({
+				"command": "mark_notifications_read",
+			}));
+			getUnreadGeneralNotificationsCount()
 		}
 	}
 
