@@ -71,15 +71,19 @@ Friends Details Page
 
 def friend_detail(request, *args, **kwargs):
     user = request.user
+    context = {}
     if user.is_authenticated:
         user_id = kwargs.get("user_id")
         #print(user_id)
         account = get_object_or_404(Accounts, pk=user_id)
-        
+        context['account'] = account
         friend_list = FriendsList.objects.get(user=account)
         friends = friend_list.friends.all()
+        context['friends'] = friends
         is_myfriend = friend_list.is_mutual_friend(user)
+        context['is_myfriend'] = is_myfriend
         request_sent = FriendRequestStatus.NO_REQUEST_SENT.value
+        context['request_sent'] = request_sent
         pending_friend_request_id = None
         # CASE1: Request has been sent from THEM to YOU:
         # FriendRequestStatus.THEM_SENT_TO_YOU
@@ -88,6 +92,7 @@ def friend_detail(request, *args, **kwargs):
             pending_friend_request_id = get_friend_request_or_false(
                 sender=account, reciever=user
             ).id
+            context['pending_friend_request_id'] = pending_friend_request_id
 
         # CASE1: Request has been sent from YOU to THEM:
         # FriendRequestStatus.YOU_SENT_TO_THEM
@@ -97,13 +102,6 @@ def friend_detail(request, *args, **kwargs):
         # CASE1: No Request has been sent. FriendRequestStatus.NO_REQUEST_SENT
         else:
             request_sent = FriendRequestStatus.NO_REQUEST_SENT.value
-        context = {
-            'account': account,
-            'friends': friends,
-            'is_myfriend': is_myfriend,
-            'request_sent': request_sent,
-            'pending_friend_request_id': pending_friend_request_id
-        }
     return render(request, 'friend_app/friend_detail.html', context)
 
 
