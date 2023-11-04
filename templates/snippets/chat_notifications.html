@@ -38,6 +38,11 @@
 
 <script type="text/javascript">
 
+setOnChatNotificationScrollListener()
+	onChatNotificationsPaginationTriggerListener()
+
+	const CHAT_NOTIFICATION_INTERVAL = 4000
+
 	// Keep track of what notifications are currently visible to the user.
 	var chatCachedNotifList = new List([])
 
@@ -98,6 +103,32 @@
 		}
 	}
 
+	function onChatNotificationsPaginationTriggerListener(){
+		window.onscroll = function(ev) {
+			// because of rounding we need to add 2. 1 might be OK but I'm using 2.
+			if ((window.innerHeight + window.scrollY + 2) >= document.body.scrollHeight) {
+				getNextChatNotificationsPage()
+			}
+		};
+	}
+
+	/*
+		Sets the scroll listener for when user scrolls to bottom of notification menu.
+		It will retrieve the next page of results.
+	*/
+	function setOnChatNotificationScrollListener(){
+		var menu = document.getElementById("id_chat_notifications_container")
+		if(menu != null ){
+			menu.addEventListener("scroll", function(e){
+
+				if ((menu.scrollTop) >= (menu.scrollHeight - menu.offsetHeight)) {
+					getNextChatNotificationsPage()
+				}
+			});
+		}
+		
+	}
+
     /*
 		The card that each notification sits in
 	*/
@@ -151,6 +182,21 @@
 	*/
 	function setChatPageNumber(pageNumber){
 		document.getElementById("id_chat_page_number").innerHTML = pageNumber
+	}
+
+	/*
+		Retrieve the next page of chat notifications
+		Called when the user scrolls to the bottom of the popup menu.
+	*/
+	function getNextChatNotificationsPage(){
+		var pageNumber = document.getElementById("id_chat_page_number").innerHTML
+		// -1 means exhausted or a query is currently in progress
+		if("{{request.user.is_authenticated}}" && pageNumber != "-1"){
+			notificationSocket.send(JSON.stringify({
+				"command": "get_chat_notifications",
+				"page_number": pageNumber,
+			}));
+		}
 	}
 
 	/*
@@ -268,6 +314,73 @@ card.childNodes.forEach(function(element){
 })
 }
 
+
+/*
+		Received a payload from socket containing NEW chat notifications
+		Called every CHAT_NOTIFICATION_INTERVAL
+	*/
+	function handleNewChatNotificationsData(notifications){
+		if(notifications.length > 0){
+			clearNoChatNotificationsCard()
+			notifications.forEach(notification => {
+
+				submitNewChatNotificationToCache(notification)
+
+				setChatNewestTimestamp(notification['timestamp'])
+			})
+		}
+	}
+
+	/*
+		Append to top OR update a div that already exists.
+		Called by 'handleNewChatNotificationsData'
+	*/
+	function submitNewChatNotificationToCache(notification){
+		var result = chatCachedNotifList.filter(function(n){ 
+			return n['notification_id'] === notification['notification_id']
+		})
+		// This notification does not already exist in the list
+		if(result.length == 0){
+			chatCachedNotifList.push(notification)
+
+			// append to top of list
+			appendTopChatNotification(notification)
+		}
+		// This notification already exists in the list
+		else{
+			// find the div and update it.
+			refreshChatNotificationsList(notification)
+		}
+	}
+
+
+	/*
+		Append a chat notification to the TOP of the list.
+	*/
+	function appendTopChatNotification(notification){
+		switch(notification['notification_type']) {
+
+			case "UnreadChatRoomMessages":
+				chatNotificationContainer = document.getElementById("id_chat_notifications_container")
+				card = createUnreadChatRoomMessagesElement(notification)
+
+				if(chatNotificationContainer.childNodes.length > 2){
+					// Append as the SECOND child. First child is the "go to chatroom" button
+					// var index = chatNotificationContainer.childNodes.length - 1
+					var index = 2
+					chatNotificationContainer.insertBefore(card, chatNotificationContainer.childNodes[index]);
+				}
+				else {
+					chatNotificationContainer.appendChild(card)
+				}
+				
+				break;
+
+			default:
+				// code block
+		}
+	}
+
 	/*
 		Append a chat notification to the BOTTOM of the list.
 	*/
@@ -365,6 +478,34 @@ switch(notification['notification_type']) {
 		card.classList.add("d-flex", "flex-column", "align-items-start", "chat-card","p-4")
 		return card
 	}
+
+
+	/*
+		Retrieve any new chat notifications
+		Called every CHAT_NOTIFICATION_INTERVAL seconds
+	*/
+	function getNewChatNotifications(){
+		newestTimestamp = document.getElementById("id_chat_newest_timestamp").innerHTML
+		console.log("NEWEST TS: " + newestTimestamp)
+		if("{{request.user.is_authenticated}}"){
+			notificationSocket.send(JSON.stringify({
+				"command": "get_new_chat_notifications",
+				"newest_timestamp": newestTimestamp,
+			}));
+		}
+	}
+
+	/*
+		Start the functions that will be executed constantly
+	*/
+	function startChatNotificationService(){
+		if("{{request.user.is_authenticated}}" == "True"){
+			setInterval(getNewChatNotifications, CHAT_NOTIFICATION_INTERVAL)
+			//setInterval(getUnreadChatNotificationsCount, CHAT_NOTIFICATION_INTERVAL)
+		}
+	}
+
+	startChatNotificationService()
 
 
 
