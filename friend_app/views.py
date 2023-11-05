@@ -89,6 +89,7 @@ def friend_detail(request, *args, **kwargs):
         # FriendRequestStatus.THEM_SENT_TO_YOU
         if get_friend_request_or_false(sender=account, reciever=user) != False:
             request_sent = FriendRequestStatus.THEM_SENT_TO_YOU.value
+            context['request_sent'] = request_sent
             pending_friend_request_id = get_friend_request_or_false(
                 sender=account, reciever=user
             ).id
@@ -98,10 +99,11 @@ def friend_detail(request, *args, **kwargs):
         # FriendRequestStatus.YOU_SENT_TO_THEM
         elif get_friend_request_or_false(sender=user, reciever=account) != False:
             request_sent = FriendRequestStatus.YOU_SENT_TO_THEM.value
-
+            context['request_sent'] = request_sent
         # CASE1: No Request has been sent. FriendRequestStatus.NO_REQUEST_SENT
         else:
             request_sent = FriendRequestStatus.NO_REQUEST_SENT.value
+            context['request_sent'] = request_sent
     return render(request, 'friend_app/friend_detail.html', context)
 
 
