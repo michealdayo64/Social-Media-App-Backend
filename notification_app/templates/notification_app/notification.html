@@ -2,6 +2,8 @@
 
 {% block title %}Notification{% endblock %}
 
+{% load static %}
+
 {% block content %}
 <br>
     <div class="row">
@@ -9,9 +11,17 @@
         {% include 'snippets/left-menu.html' %}
       </div>
       <div class="col-6">
-        <div class="card">
-            <h1>Notifications</h1>
+        {% for i in notifications %}
+        <div class="card p-2">
+            <div class="d-flex align-items-center">
+              <img class="rounded" style="width: 40px; height: 40px;" src="{{ i.from_user.profile_image.url }}" alt="" srcset="">
+              <p class="ms-4">{{ i.verb }}</p>
+            </div>
+            <span class="font-weight-bold">{{ i.timestamp }}</span>
         </div>
+        <br>
+        {% endfor %}
+        
       </div>
       <div class="col-3">
         <div class="card">
