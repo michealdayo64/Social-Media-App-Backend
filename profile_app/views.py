@@ -12,7 +12,7 @@ from django.core.files.base import ContentFile
 
 
 # Create your views here.
-TEMP_PROFILE_IMAGE_NAME = "temp_profile_image.png"
+#TEMP_PROFILE_IMAGE_NAME = "temp_profile_image.png"
 
 
 def profile_index(request):

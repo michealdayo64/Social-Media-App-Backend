@@ -4,9 +4,9 @@ from .models import Post, Comment
 from friend_app.models import FriendsList
 import json
 from django.http import JsonResponse
-import os
+#import os
 from django.conf import settings
-from django.core.files.storage import FileSystemStorage
+#from django.core.files.storage import FileSystemStorage
 import base64
 from django.core import files
 from django.core.files.base import ContentFile
@@ -14,7 +14,7 @@ from django.core.files.base import ContentFile
 # Create your views here.
 
 
-TEMP_PROFILE_IMAGE_NAME = "temp_profile_image.png"
+#TEMP_PROFILE_IMAGE_NAME = "temp_profile_image.png"
 
 
 '''
@@ -28,6 +28,10 @@ def index(request):
     if user.is_authenticated:
         friend = FriendsList.objects.get(user = user)
         friends_list = friend.friends.all()
+
+        '''
+        List of post according to User friend
+        '''
         post_list = Post.objects.filter(user__in = list(friends_list) + [user,]).order_by('-date_post')
         context['post_list'] = post_list
     else:
@@ -91,7 +95,7 @@ def create_post(request):
             print(post)
             file_name, file_data = save_post_image_form_base64String(
                 imgPostValue)
-            print(post.file.save(file_name, file_data))
+            #print(post.file.save(file_name, file_data))
             post.file.save(file_name, file_data)
             payload['response'] = 'Post created Successfully'
         else:
@@ -224,9 +228,9 @@ def userSharePost(request, id):
     user = request.user
     post_id = Post.objects.get(id = id)
     user_post = post_id.user_post
-    image = post_id.image
+    image = post_id.file
     posted_by = post_id.user
-    Post.objects.create(user = user, user_post = user_post, image = image, posted_by = posted_by) 
+    Post.objects.create(user = user, user_post = user_post, file = image, posted_by = posted_by) 
     return redirect('index')
 
 

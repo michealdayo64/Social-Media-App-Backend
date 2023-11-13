@@ -15,6 +15,8 @@ from django.contrib.auth.tokens import PasswordResetTokenGenerator
 
 # Create your views here.
 
+
+
 # User Register View
 
 
@@ -165,13 +167,3 @@ def resetPass(request, uidb64, token):
         print("Enter something")
     return render(request, "account/password_reset_form.html")
 
-
-# User Profile
-def user_profile(request):
-    
-    pass
-
-
-# Edit User
-def edit_user(request):
-    pass

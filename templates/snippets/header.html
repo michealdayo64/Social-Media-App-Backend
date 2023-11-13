@@ -1,5 +1,5 @@
 {% load static %}
-<nav class="navbar fixed-top" style="background-color: blue;">
+<nav class="navbar fixed-top" style="background-color: rgb(1, 1, 41);">
     <div class="container d-flex flex-row justify-content-between" id="myheader">
         <div>
             <form class="d-flex" role="search">
@@ -22,7 +22,7 @@
       <a href="{% url 'index' %}" class="anch">
         <p class="me-4 mt-3 text-white">Home</p>
       </a>
-      <a href="#" class="anch">
+      <a href="{% url 'friend-index' %}" class="anch">
         <p class="me-4 mt-3 text-white">Find Friends</p>
       </a>
       <a href="#" class="anch">
