@@ -36,7 +36,7 @@
           <div id="postimage">
             {% if i.file %}
               {% if i.file.url|slice:"-4:" == ".MP4" or i.file.url|slice:"-4:" == ".mp4" %}
-              <video id="movie" autoplay  class="w-100 h-100 rounded" controls>
+              <video id="movie" class="w-100 h-100 rounded" controls>
                 <source src="{{ i.file.url }}" type="video/mp4">
               </video>
               {% else %}
@@ -94,9 +94,7 @@
         {% endfor %}
       </div>
       <div class="col-3">
-        <div class="card">
-            <h1>hello</h1>
-        </div>
+        {% include 'snippets/right-data.html' %}
       </div>
     </div>
 
@@ -134,24 +132,6 @@
           }).then((res) => res.json()).then((data) =>{
             console.log(data["comment_list"].length)
             commentinputclass.innerHTML = `<span class="text-secondary">${data['comment_count']} comments</span>`
-
-            /*data['comment_list'].forEach((com) =>{
-             cardcommentid.innerHTML =  `<div class="mycardbg1">
-                <div class="d-flex p-2">
-                  <img src="{% static 'img/profile_image.png' %}" class="imgstyle"  alt="" srcset="">
-                  <div class="d-flex flex-column">
-                    <div class="d-flex ps-2">
-                      <a id="namestyle">${com["user"]}</a><span class="ps-2 text-black">${com['comment']}</span>
-                    </div>
-                    <div class="commentminute">
-                      <span>5min Ago</span>
-                    </div>
-                    
-                  </div>
-                </div>
-              </div>
-              <br>`
-            })*/
             
             var secCardElement = document.createElement('div')
             secCardElement.classList.add("mycardbg1")

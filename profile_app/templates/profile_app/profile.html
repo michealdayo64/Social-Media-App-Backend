@@ -10,6 +10,7 @@
         {% include 'snippets/left-menu.html' %}
       </div>
       <div class="col-6">
+        <h1>My Profile</h1>
         <div class="friend-main-image-containter">
           <img src="{{ account.profile_image.url }}" class="" alt="" srcset="">
           <div class="friend-image-container">
@@ -34,7 +35,7 @@
       </div>
       <div class="col-3">
         <div class="card">
-            <h1>hello</h1>
+          {% include 'snippets/right-data.html' %}
         </div>
       </div>
     </div>
