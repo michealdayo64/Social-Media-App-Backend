@@ -15,6 +15,10 @@
   * Fetch API
   * Websocket
 
-Work Flow of the System
+## System workflow with visuals.
+1. User Authentication System.
+   * User can register on the system
+     
+![register page](https://github.com/michealdayo64/Facebook-Clone/assets/55289122/4e6299c2-e055-4b63-8a1d-a1704f74edd5)
 
 
