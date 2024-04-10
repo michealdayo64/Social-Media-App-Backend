@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import group_list, group_detail, getToken, roomCall, createMember
+from .views import group_list, group_detail, getToken, roomCall, createMember, getMember
 
 
 urlpatterns = [
@@ -7,5 +7,6 @@ urlpatterns = [
     path('group-detail/<id>/', group_detail, name='group-detail'),
     path('get-token/', getToken, name="get-token"),
     path('room/', roomCall, name='room-call'),
-    path('create-member/', createMember, name='create-member')
+    path('create-member/', createMember, name='create-member'),
+    path('get-member/', getMember, name='get-member')
 ]

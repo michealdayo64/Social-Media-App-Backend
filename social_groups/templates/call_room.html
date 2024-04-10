@@ -54,6 +54,9 @@
             </div>
         </section>
     </main>
+    <script>
+        let csrftoken = "{{ csrf_token }}"
+    </script>
     <script src="{% static 'js/AgoraRTC_N-4.20.0.js' %}"></script>
     <script src="{% static 'js/call_room.js' %}"></script>
 </body>

@@ -64,7 +64,6 @@ def getToken(request):
     return JsonResponse({"token": token, "uid": uid, "appid": appId}, safe=False)
 
 
-@csrf_exempt
 def createMember(request):
     data = {}
     getData = json.loads(request.body)
@@ -84,4 +83,13 @@ def createMember(request):
 
 
 def getMember(request):
-    pass
+    data = {}
+    uid = request.GET.get('UID')
+    room_name = request.GET.get('room_name')
+    member = Accounts.objects.get(uid=uid)
+    name = member.username
+    data = {
+        'name': name,
+        'room_name': room_name
+    }
+    return JsonResponse(data=data, safe=False)

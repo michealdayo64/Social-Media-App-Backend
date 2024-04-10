@@ -22,11 +22,11 @@ let joinAndDisplayLocalStream = async () => {
     window.open("/", "_self");
   }
 
-  //let member = await createMember();
+  let member = await createMember();
 
   localTracks = await AgoraRTC.createMicrophoneAndCameraTracks();
   let player = `<div  class="video-container" id="user-container-${UID}">
-                     <div class="video-player" id="user-${UID}"></div>
+                     <div class="video-player" id="user-${UID}">${member.name}</div>
                      <div class="username-wrapper"><span class="user-name">name:</span></div>
                   </div>`;
 
@@ -49,9 +49,9 @@ let handleUserJoin = async (user, mediaType) => {
       player.remove();
     }
 
-    //let member = await getMember(user);
+    let member = await getMember(user);
     player = `<div  class="video-container" id="user-container-${user.uid}">
-                       <div class="video-player" id="user-${user.uid}"></div>
+                       <div class="video-player" id="user-${user.uid}">${member.name}</div>
                        <div class="username-wrapper"><span class="user-name">name:</span></div>
                     </div>`;
 
@@ -112,6 +112,7 @@ let createMember = async () => {
   let response = await fetch(`${host}/group/create-member/`, {
     method: "POST",
     headers: {
+      "X-CSRFToken": csrftoken,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ username: NAME, UID: UID, room_name: CHANNEL }),
@@ -120,8 +121,13 @@ let createMember = async () => {
   return member;
 };
 
-let getMember = async () => {
-    
+let getMember = async (user) => {
+  let host = window.location.origin;
+  let response = await fetch(
+    `${host}/group/get-member/?UID=${user.uid}&room_name=${CHANNEL}`
+  );
+  let member = response.json();
+  return member;
 };
 
 joinAndDisplayLocalStream();
