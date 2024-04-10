@@ -65,6 +65,7 @@ class Accounts(AbstractBaseUser):
     profile_image = models.ImageField(max_length=255, upload_to=get_profile_image_filepath,
                                       null=True, blank=True, default=get_default_profile_image)
     hide_email = models.BooleanField(default=True)
+    uid = models.CharField(max_length=225, blank=True, null=True)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']

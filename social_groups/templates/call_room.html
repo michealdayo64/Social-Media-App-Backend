@@ -1,0 +1,61 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/call_room.css' %}">
+    <title>Call Room</title>
+</head>
+
+<body>
+    <main>
+        <section id="room-name-wrapper">
+            <p id="room-name">Room Name: TESTROOM</p>
+        </section>
+
+        <div id="video-streams">
+
+
+
+            <!--<div class="video-container" id="user-container-2">
+                        <div class="video-player" id="user-2"></div> 
+                        <div class="username-wrapper"><span class="user-name">Sam</span></div>
+                    </div>
+
+                    <div class="video-container" id="user-container-3">
+                        <div class="video-player" id="user-3"></div> 
+                        <div class="username-wrapper"><span class="user-name">Peter</span></div>
+                    </div>
+
+                    <div class="video-container" id="user-container-4">
+                        <div class="video-player" id="user-4"></div> 
+                        <div class="username-wrapper"><span class="user-name">Erik</span></div>
+                    </div>
+
+                    <div class="video-container" id="user-container-4">
+                        <div class="video-player" id="user-5"></div> 
+                        <div class="username-wrapper"><span class="user-name">Paul</span></div>
+                    </div>  -->
+        </div>
+
+        <section id="controls-wrapper">
+            <div class="icon-wrapper">
+                <img class="control-icon" id="mic-btn" src="{% static 'img/microphone.svg' %}" />
+            </div>
+
+            <div class="icon-wrapper">
+                <img class="control-icon" id="camera-btn" src="{% static 'img/video.svg' %}" />
+            </div>
+
+            <div class="icon-wrapper">
+                <img class="control-icon" id="leave-btn" src="{% static 'img/leave.svg' %}" />
+            </div>
+        </section>
+    </main>
+    <script src="{% static 'js/AgoraRTC_N-4.20.0.js' %}"></script>
+    <script src="{% static 'js/call_room.js' %}"></script>
+</body>
+
+</html>

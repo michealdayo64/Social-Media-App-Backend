@@ -47,17 +47,20 @@ class GroupChatRoom(models.Model):
 
 class PublicRoomChatMessageManager(models.Manager):
     def by_room(self, room):
-        qs = PublicRoomChatMessage.objects.filter(room=room).order_by("-timestamp")
+        qs = PublicRoomChatMessage.objects.filter(
+            room=room).order_by("-timestamp")
         return qs
+
 
 class PublicRoomChatMessage(models.Model):
     """
     Chat message created by a user inside a Public chat room (foreign key)
     """
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,
+                             on_delete=models.CASCADE)
     room = models.ForeignKey(GroupChatRoom, on_delete=models.CASCADE)
     timestamp = models.DateTimeField(auto_now_add=True)
-    content = models.TextField(unique = False, blank = False)
+    content = models.TextField(unique=False, blank=False)
 
     objects = PublicRoomChatMessageManager()
 

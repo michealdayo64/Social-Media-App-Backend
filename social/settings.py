@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 import os
 from pathlib import Path
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,7 +22,7 @@ print(BASE_DIR)
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-8!em(6zmrv+hx1(j8#@+wr2%xz6*$^4hc!1yb+ryttj90+w%ts'
+SECRET_KEY = config("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -96,6 +97,9 @@ CHANNEL_LAYERS = {
     }
 }
 
+APP_ID = config("APP_ID")
+APP_CERTIFICATE = config("APP_CERTIFICATE")
+
 WSGI_APPLICATION = 'social.wsgi.application'
 ASGI_APPLICATION = "social.asgi.application"
 
@@ -151,7 +155,7 @@ STATICFILES_DIRS = [
 ]
 
 MEDIA_URL = '/media/'
-#BASE_URL = "http://54.227.214.78"
+# BASE_URL = "http://54.227.214.78"
 BASE_URL = "http://127.0.0.1:8000"
 
 TEMP = os.path.join(BASE_DIR, 'media/temp')
