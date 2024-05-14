@@ -203,10 +203,12 @@ class RegisterApi(APIView):
 
 def get_tokens_for_user(user):
     refresh = RefreshToken.for_user(user)
-
     return {
-        'refresh': str(refresh),
-        'access': str(refresh.access_token),
+        'token': {
+            'refresh': str(refresh),
+            'access': str(refresh.access_token),
+        },
+        'msg': 'Login Successfully'
     }
 
 # LOGIN USER API
@@ -217,15 +219,18 @@ class LoginApi(APIView):
 
     def post(self, request,):
         email = request.data.get("email")
+        print(email)
         password = request.data.get("password")
-        user = authenticate(username=email, password=password)
+        print(password)
+        user = authenticate(email=email, password=password)
+        print(user)
         if user:
             if user.is_active:
                 login(request, user)
                 data = get_tokens_for_user(user)
                 return Response(data=data, status=status.HTTP_200_OK)
         else:
-            return Response({"error": "Wrong Credentials"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"msg": "Wrong Credentials"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class VerifyEmail(APIView):
