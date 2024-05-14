@@ -1,3 +1,10 @@
+import json
+from rest_framework.permissions import IsAuthenticated, AllowAny  # type: ignore
+from rest_framework_simplejwt.tokens import RefreshToken  # type: ignore
+from rest_framework.response import Response  # type: ignore
+from rest_framework import status  # type: ignore
+from rest_framework.views import APIView  # type: ignore
+from account.serializers import UserSerializer
 from django.shortcuts import render, redirect
 from .forms import RegisterForm, LoginForm
 from django.contrib.auth import login, logout, authenticate
@@ -12,9 +19,11 @@ from django.contrib.auth.decorators import login_required
 # import threading
 # import validate_email
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from validate_email import validate_email  # type: ignore
 
 # Create your views here.
 
+# You will find the API's View below.
 
 
 # User Register View
@@ -167,3 +176,73 @@ def resetPass(request, uidb64, token):
         print("Enter something")
     return render(request, "account/password_reset_form.html")
 
+
+# --------------------------------------- API VIEWS ----------------------------------------------
+
+# REGISTER USER API
+
+class RegisterApi(APIView):
+    permission_classes = (AllowAny, )
+
+    def post(self, request):
+        user_register = UserSerializer(data=request.data or None)
+        # print(user_register)
+        if user_register.is_valid():
+            user_register.save()
+            data = {
+                "msg": "Registration Successful"
+            }
+            return Response(data=data, status=status.HTTP_200_OK)
+        data = {
+            "msg": "Error Registration"
+        }
+        return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
+
+# GET MANUAL TOKEN FOR USER
+
+
+def get_tokens_for_user(user):
+    refresh = RefreshToken.for_user(user)
+
+    return {
+        'refresh': str(refresh),
+        'access': str(refresh.access_token),
+    }
+
+# LOGIN USER API
+
+
+class LoginApi(APIView):
+    permission_classes = (AllowAny, )
+
+    def post(self, request,):
+        email = request.data.get("email")
+        password = request.data.get("password")
+        user = authenticate(username=email, password=password)
+        if user:
+            if user.is_active:
+                login(request, user)
+                data = get_tokens_for_user(user)
+                return Response(data=data, status=status.HTTP_200_OK)
+        else:
+            return Response({"error": "Wrong Credentials"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class VerifyEmail(APIView):
+    permission_classes = (AllowAny, )
+
+    def post(self, request):
+        data = {}
+        data_json = json.loads(request.body)
+        email = data_json.get("email")
+        get_email = Accounts.objects.filter(email=email)
+        is_email = validate_email(email)
+        if get_email.exists():
+            data["msg"] = "Email Already Exist"
+            return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
+        elif is_email:
+            data["msg"] = "Email Valid"
+            return Response(data=data, status=status.HTTP_200_OK)
+        else:
+            data['msg'] = "Invalid Email"
+            return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
