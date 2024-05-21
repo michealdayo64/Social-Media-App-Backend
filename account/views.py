@@ -207,11 +207,14 @@ def get_tokens_for_user(user):
         'token': {
             'refresh': str(refresh),
             'access': str(refresh.access_token),
+            "username": user.username
         },
         'msg': 'Login Successfully'
     }
 
 # LOGIN USER API
+
+
 
 
 class LoginApi(APIView):
