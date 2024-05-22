@@ -254,3 +254,17 @@ class VerifyEmail(APIView):
         else:
             data['msg'] = "Invalid Email"
             return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
+        
+
+
+class LogoutApi(APIView):
+    permission_classes = (IsAuthenticated, )
+
+# User logout View
+    def post(self, request):
+        if request.user.is_authenticated:
+            logout(request)
+            data = {
+                "msg": "Logout Successfully"
+            }
+            return Response(data = data, status = status.HTTP_200_OK)
