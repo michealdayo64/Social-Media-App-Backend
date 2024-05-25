@@ -4,6 +4,7 @@ from rest_framework_simplejwt.tokens import RefreshToken  # type: ignore
 from rest_framework.response import Response  # type: ignore
 from rest_framework import status  # type: ignore
 from rest_framework.views import APIView  # type: ignore
+from rest_framework.decorators import api_view, permission_classes  # type: ignore
 from account.serializers import UserSerializer
 from django.shortcuts import render, redirect
 from .forms import RegisterForm, LoginForm
@@ -180,15 +181,15 @@ def resetPass(request, uidb64, token):
 # --------------------------------------- API VIEWS ----------------------------------------------
 
 # REGISTER USER API
-
 class RegisterApi(APIView):
     permission_classes = (AllowAny, )
 
     def post(self, request):
         user_register = UserSerializer(data=request.data or None)
-        # print(user_register)
         if user_register.is_valid():
-            user_register.save()
+            user = user_register.save()
+            user.set_password(user.password)
+            user.save()
             data = {
                 "msg": "Registration Successful"
             }
@@ -198,7 +199,8 @@ class RegisterApi(APIView):
         }
         return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
 
-# GET MANUAL TOKEN FOR USER
+
+# GET MANUAL JWT FOR USER
 
 
 def get_tokens_for_user(user):
@@ -212,28 +214,24 @@ def get_tokens_for_user(user):
         'msg': 'Login Successfully'
     }
 
-# LOGIN USER API
+# LOGIN USER API VIEW
 
 
+@api_view(['POST',])
+@permission_classes((AllowAny,))
+def login_api(request,):
+    email = request.data["email"]
+    password = request.data["password"]
+    user = authenticate(email=email, password=password)
+    if user:
+        if user.is_active:
+            login(request, user)
+            data = get_tokens_for_user(user)
+            return Response(data=data, status=status.HTTP_200_OK)
+    else:
+        return Response({"msg": "Wrong Credentials"}, status=status.HTTP_400_BAD_REQUEST)
 
-
-class LoginApi(APIView):
-    permission_classes = (AllowAny, )
-
-    def post(self, request,):
-        email = request.data.get("email")
-        print(email)
-        password = request.data.get("password")
-        print(password)
-        user = authenticate(email=email, password=password)
-        print(user)
-        if user:
-            if user.is_active:
-                login(request, user)
-                data = get_tokens_for_user(user)
-                return Response(data=data, status=status.HTTP_200_OK)
-        else:
-            return Response({"msg": "Wrong Credentials"}, status=status.HTTP_400_BAD_REQUEST)
+# VERIFY EMAIL API VIEW
 
 
 class VerifyEmail(APIView):
@@ -254,17 +252,17 @@ class VerifyEmail(APIView):
         else:
             data['msg'] = "Invalid Email"
             return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
-        
+
+# LOGOUT API VIEW
 
 
 class LogoutApi(APIView):
     permission_classes = (IsAuthenticated, )
 
-# User logout View
     def post(self, request):
         if request.user.is_authenticated:
             logout(request)
             data = {
                 "msg": "Logout Successfully"
             }
-            return Response(data = data, status = status.HTTP_200_OK)
+            return Response(data=data, status=status.HTTP_200_OK)
