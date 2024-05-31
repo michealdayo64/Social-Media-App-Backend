@@ -149,9 +149,7 @@ def forgot_password(request):
 def resetPass(request, uidb64, token):
     if request.method == "POST":
         password1 = request.POST.get('password1')
-        print(password1)
         password2 = request.POST.get('password2')
-        (password2)
         if password1 != password2:
             messages.info(request, "Password deos not match")
             return render(request, "account/password_reset_form.html")
@@ -209,7 +207,8 @@ def get_tokens_for_user(user):
         'token': {
             'refresh': str(refresh),
             'access': str(refresh.access_token),
-            "username": user.username
+            "username": user.username,
+            "name": f'{user.first_name} {user.last_name}'
         },
         'msg': 'Login Successfully'
     }
@@ -266,3 +265,23 @@ class LogoutApi(APIView):
                 "msg": "Logout Successfully"
             }
             return Response(data=data, status=status.HTTP_200_OK)
+
+
+class UserApi(APIView):
+    permission_classes = (IsAuthenticated, )
+
+    def get(self, request):
+        data = {}
+        if request.user.is_authenticated:
+            user_id = request.user.id
+            user = Accounts.objects.get(pk=user_id)
+            user_serializer = UserSerializer(user)
+            data = {
+                'msg': user_serializer.data
+            }
+            return Response(data=data, status=status.HTTP_200_OK)
+        else:
+            data = {
+                'msg': "Error User Data"
+            }
+            return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
