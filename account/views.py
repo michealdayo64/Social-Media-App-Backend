@@ -1,6 +1,6 @@
 import json
 from rest_framework.permissions import IsAuthenticated, AllowAny  # type: ignore
-from rest_framework_simplejwt.tokens import RefreshToken  # type: ignore
+from rest_framework_simplejwt.tokens import RefreshToken, AccessToken  # type: ignore
 from rest_framework.response import Response  # type: ignore
 from rest_framework import status  # type: ignore
 from rest_framework.views import APIView  # type: ignore
@@ -21,6 +21,8 @@ from django.contrib.auth.decorators import login_required
 # import validate_email
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from validate_email import validate_email  # type: ignore
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer  # type: ignore
+from rest_framework_simplejwt.views import TokenObtainPairView  # type: ignore
 
 # Create your views here.
 
@@ -207,7 +209,10 @@ def get_tokens_for_user(user):
         'token': {
             'refresh': str(refresh),
             'access': str(refresh.access_token),
-            "username": user.username,
+            "user": {
+                'username': user.username,
+                'name': f'{user.first_name} {user.last_name}'
+            },
             "name": f'{user.first_name} {user.last_name}'
         },
         'msg': 'Login Successfully'
@@ -231,6 +236,22 @@ def login_api(request,):
         return Response({"msg": "Wrong Credentials"}, status=status.HTTP_400_BAD_REQUEST)
 
 # VERIFY EMAIL API VIEW
+
+
+@api_view(['POST',])
+@permission_classes((AllowAny,))
+def rehh(request):
+    user = request.user
+    ref = request.data.get('refresh')
+    ref_response = RefreshToken(ref)
+    # print(ref_response.access_token)
+    print(user.username)
+    data = {
+        'refresh': str(ref_response.access_token),
+        'username': user.username,
+        # 'name': f'{user.first_name} {user.last_name}'
+    }
+    return Response(data=data, status=status.HTTP_200_OK)
 
 
 class VerifyEmail(APIView):
@@ -285,3 +306,16 @@ class UserApi(APIView):
                 'msg': "Error User Data"
             }
             return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
+
+
+class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+        token['username'] = user.username
+        token["name"] = f'{user.first_name} {user.last_name}'
+        return token
+
+
+class MyTokenObatinPairView(TokenObtainPairView):
+    serializer_class = MyTokenObtainPairSerializer
