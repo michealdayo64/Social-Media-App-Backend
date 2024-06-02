@@ -238,7 +238,7 @@ def login_api(request,):
 # VERIFY EMAIL API VIEW
 
 
-@api_view(['POST',])
+'''@api_view(['POST',])
 @permission_classes((AllowAny,))
 def rehh(request):
     user = request.user
@@ -251,7 +251,7 @@ def rehh(request):
         'username': user.username,
         # 'name': f'{user.first_name} {user.last_name}'
     }
-    return Response(data=data, status=status.HTTP_200_OK)
+    return Response(data=data, status=status.HTTP_200_OK)'''
 
 
 class VerifyEmail(APIView):
@@ -314,6 +314,7 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         token = super().get_token(user)
         token['username'] = user.username
         token["name"] = f'{user.first_name} {user.last_name}'
+        token['profile_pic'] = str(user.profile_image)
         return token
 
 

@@ -3,6 +3,7 @@ from django.dispatch import receiver
 from django.db.models.signals import post_save
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.conf import settings
 
 
 """
@@ -79,6 +80,11 @@ class Accounts(AbstractBaseUser):
 
     def get_profile_image_filename(self):
         return str(self.profile_image)[str(self.profile_image).index('profile_images/' + str(self.pk) + "/"):]
+
+    @property
+    def get_image_url(self) -> str:
+        if self.profile_image and hasattr(self.profile_image, 'url'):
+            return f'{settings.BASE_URL}/{self.profile_image.url}'
 
     # For checking permissions. to keep it simple all admin have ALL permissons
     def has_perm(self, perm, obj=None):
