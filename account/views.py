@@ -17,6 +17,7 @@ from django.urls import reverse
 from .utils import account_activation_token
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.conf import settings
 # import threading
 # import validate_email
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
@@ -238,22 +239,6 @@ def login_api(request,):
 # VERIFY EMAIL API VIEW
 
 
-'''@api_view(['POST',])
-@permission_classes((AllowAny,))
-def rehh(request):
-    user = request.user
-    ref = request.data.get('refresh')
-    ref_response = RefreshToken(ref)
-    # print(ref_response.access_token)
-    print(user.username)
-    data = {
-        'refresh': str(ref_response.access_token),
-        'username': user.username,
-        # 'name': f'{user.first_name} {user.last_name}'
-    }
-    return Response(data=data, status=status.HTTP_200_OK)'''
-
-
 class VerifyEmail(APIView):
     permission_classes = (AllowAny, )
 
@@ -314,7 +299,7 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         token = super().get_token(user)
         token['username'] = user.username
         token["name"] = f'{user.first_name} {user.last_name}'
-        token['profile_pic'] = str(user.profile_image)
+        token['profile_pic'] = f'{settings.BASE_URL}{user.profile_image.url}'
         return token
 
 
