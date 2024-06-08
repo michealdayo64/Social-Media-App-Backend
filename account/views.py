@@ -1,6 +1,6 @@
 import json
 from rest_framework.permissions import IsAuthenticated, AllowAny  # type: ignore
-from rest_framework_simplejwt.tokens import RefreshToken, AccessToken  # type: ignore
+from rest_framework_simplejwt.tokens import RefreshToken # type: ignore
 from rest_framework.response import Response  # type: ignore
 from rest_framework import status  # type: ignore
 from rest_framework.views import APIView  # type: ignore

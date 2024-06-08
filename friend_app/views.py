@@ -3,7 +3,12 @@ from django.shortcuts import redirect, render, get_object_or_404
 from friend_app.models import FriendsList, FriendRequest
 from account.models import Accounts
 from .friendRequestStatus import FriendRequestStatus
+from account.serializers import UserSerializer
 from .utils import get_friend_request_or_false
+from rest_framework.decorators import api_view, permission_classes  # type: ignore
+from rest_framework.permissions import IsAuthenticated  # type: ignore
+from rest_framework.response import Response  # type: ignore
+from rest_framework import status  # type: ignore
 
 # Create your views here.
 
@@ -74,7 +79,7 @@ def friend_detail(request, *args, **kwargs):
     context = {}
     if user.is_authenticated:
         user_id = kwargs.get("user_id")
-        #print(user_id)
+        # print(user_id)
         account = get_object_or_404(Accounts, pk=user_id)
         context['account'] = account
         friend_list = FriendsList.objects.get(user=account)
@@ -244,3 +249,47 @@ def remove_friend(request, *args, **kwargs):
             print("There was an error. Unable to remove that friend")
     else:
         print("You must be authenticated to remove a friend")
+
+
+'''---------------------------------- FRIENDS APIS--------------------------------'''
+
+
+# TOTAL NUMBER OF FRIENDS
+@api_view(['GET',])
+@permission_classes((IsAuthenticated,))
+def total_num_friends(request):
+    data = {}
+    user_id = request.user
+    user_friend = FriendsList.objects.get(user=user_id)
+    friend_count = user_friend.friends.count()
+    data = {
+        'msg': int(friend_count)
+    }
+    return Response(data=data, status=status.HTTP_200_OK)
+
+
+# TOTAL NUMBER OF FRIEND REQUESTS
+@api_view(['GET',])
+@permission_classes((IsAuthenticated,))
+def total_num_friend_request(request):
+    data = {}
+    user = request.user
+    num_request = FriendRequest.objects.filter(reciever=user, is_active=True)
+    data = {
+        'msg': int(num_request.count())
+    }
+    return Response(data=data, status=status.HTTP_200_OK)
+
+
+# GET ALL USERS
+@api_view(['GET',])
+@permission_classes((IsAuthenticated,))
+def get_all_user(request):
+    data = {}
+    user_id = request.user.id
+    all_user = Accounts.objects.exclude(id=user_id)
+    user_serializer = UserSerializer(all_user, many=True, context={'request': request})
+    data = {
+        'msg': user_serializer.data
+    }
+    return Response(data=data, status=status.HTTP_200_OK)
