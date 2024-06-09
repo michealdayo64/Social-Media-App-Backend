@@ -251,7 +251,7 @@ def remove_friend(request, *args, **kwargs):
         print("You must be authenticated to remove a friend")
 
 
-'''---------------------------------- FRIENDS APIS--------------------------------'''
+'''---------------------------------- FRIENDS APIS --------------------------------'''
 
 
 # TOTAL NUMBER OF FRIENDS
