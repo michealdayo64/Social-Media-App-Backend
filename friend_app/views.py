@@ -289,7 +289,11 @@ def get_all_user(request):
     user_id = request.user.id
     all_user = Accounts.objects.exclude(id=user_id)
     user_serializer = UserSerializer(all_user, many=True, context={'request': request})
-    data = {
-        'msg': user_serializer.data
-    }
-    return Response(data=data, status=status.HTTP_200_OK)
+    if user_serializer:
+        data = {
+            'msg': user_serializer.data
+        }
+        return Response(data=data, status=status.HTTP_200_OK)
+    else:
+        return Response(data=data, status=status.HTTP_401_UNAUTHOrIZED)
+    
