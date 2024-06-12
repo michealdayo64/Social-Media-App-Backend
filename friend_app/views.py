@@ -286,8 +286,11 @@ def total_num_friend_request(request):
 @permission_classes((IsAuthenticated,))
 def get_all_user(request):
     data = {}
-    user_id = request.user.id
-    all_user = Accounts.objects.exclude(id=user_id)
+    user = request.user
+    all_user = Accounts.objects.exclude(username=user)
+    user_friend = FriendsList.objects.get(user = user)
+    all_friends = user_friend.friends.objects.exclude(friends__in=self.friends.all())
+    print(all_friends)
     user_serializer = UserSerializer(all_user, many=True, context={'request': request})
     if user_serializer:
         data = {
