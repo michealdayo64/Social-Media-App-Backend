@@ -358,13 +358,14 @@ Send Friend Request API
 @api_view(['POST',])
 @permission_classes((IsAuthenticated,))
 def send_friend_request_api(request, *args, **kwargs):
-    payload = {}
     user = request.user
+    payload = {}
     if user.is_authenticated:
+        all_user = Accounts.objects.exclude(username=user)
+    # print(all_user)
+        accounts = []
         user_id = kwargs.get("user_id")
         reciever = Accounts.objects.get(id=user_id)
-        all_user = Accounts.objects.exclude(username=user)
-        accounts = []
         try:
             # Get any friend requests (active and not-active)
             friend_requests = FriendRequest.objects.filter(
@@ -391,8 +392,8 @@ def send_friend_request_api(request, *args, **kwargs):
                         is_friend = True
                     else:
                         is_friend = False
-                    #request_sent = FriendRequestStatus.NO_REQUEST_SENT.value
-                    #pending_friend_request_id = None
+                    request_sent = FriendRequestStatus.NO_REQUEST_SENT.value
+                    pending_friend_request_id = None
 
                     # CASE1: Request has been sent from THEM to YOU:
                     # FriendRequestStatus.THEM_SENT_TO_YOU
@@ -401,7 +402,6 @@ def send_friend_request_api(request, *args, **kwargs):
                         pending_friend_request_id = get_friend_request_or_false(
                             sender=account, reciever=user
                         ).id
-                        print(pending_friend_request_id)
 
                     # CASE1: Request has been sent from YOU to THEM:
                     # FriendRequestStatus.YOU_SENT_TO_THEM
@@ -411,7 +411,8 @@ def send_friend_request_api(request, *args, **kwargs):
                     # CASE1: No Request has been sent. FriendRequestStatus.NO_REQUEST_SENT
                     else:
                         request_sent = FriendRequestStatus.NO_REQUEST_SENT.value
-                    data = {
+
+                    payload = {
                         'pk': account.id,
                         'username': account.username,
                         'name': f'{account.first_name} {account.last_name}',
@@ -421,12 +422,13 @@ def send_friend_request_api(request, *args, **kwargs):
                         'pending_friend_request_id': pending_friend_request_id
                     }
 
-                    accounts.append(data
+                    accounts.append(payload
                                     )
-
                 payload = {
                     'msg': 'Success',
-                    'data': accounts
+                    'data': accounts,
+                    'pending_request_id': friend_request.id
+
                 }
                 return Response(data=payload, status=status.HTTP_200_OK)
             except Exception as e:
@@ -434,13 +436,17 @@ def send_friend_request_api(request, *args, **kwargs):
         except FriendRequest.DoesNotExist:
             # If none is active, then create a new friend request
             friend_request = FriendRequest(sender=user, reciever=reciever)
+            friend_request.save()
             payload = {
-                'msg': 'Success'
+                'msg': 'Success',
+                'data': accounts,
+                'pending_request_id': friend_request.id
+
             }
             return Response(data=payload, status=status.HTTP_200_OK)
     else:
         payload = {
-            'msg': 'User Not Authenticated'
+            'msg': 'Not Authenticated',
         }
         return Response(data=payload, status=status.HTTP_401_UNAUTHORIZED)
 
@@ -640,6 +646,7 @@ def cancel_friend_request_api(request, *args, **kwargs):
             if len(friend_requests) > 1:
                 for request in friend_requests:
                     request.cancel()
+                    request.delete()
                     for account in all_user:
                         try:
                             auth_user_friend_list = FriendsList.objects.get(
@@ -692,48 +699,48 @@ def cancel_friend_request_api(request, *args, **kwargs):
                 # found the request. Now cancel it.
                 friend_requests.first().cancel()
                 for account in all_user:
-                        try:
-                            auth_user_friend_list = FriendsList.objects.get(
-                                user=account)
-                            friends = auth_user_friend_list.friends.all()
-                        except FriendsList.DoesNotExist:
-                            auth_user_friend_list = FriendsList(user=account)
-                            auth_user_friend_list.save()
+                    try:
+                        auth_user_friend_list = FriendsList.objects.get(
+                            user=account)
+                        friends = auth_user_friend_list.friends.all()
+                    except FriendsList.DoesNotExist:
+                        auth_user_friend_list = FriendsList(user=account)
+                        auth_user_friend_list.save()
 
-                        if friends.filter(pk=user.id):
-                            is_friend = True
-                        else:
-                            is_friend = False
+                    if friends.filter(pk=user.id):
+                        is_friend = True
+                    else:
+                        is_friend = False
+                    request_sent = FriendRequestStatus.NO_REQUEST_SENT.value
+                    pending_friend_request_id = None
+
+                    # CASE1: Request has been sent from THEM to YOU:
+                    # FriendRequestStatus.THEM_SENT_TO_YOU
+                    if get_friend_request_or_false(sender=account, reciever=user) != False:
+                        request_sent = FriendRequestStatus.THEM_SENT_TO_YOU.value
+                        pending_friend_request_id = get_friend_request_or_false(
+                            sender=account, reciever=user
+                        ).id
+
+                    # CASE1: Request has been sent from YOU to THEM:
+                    # FriendRequestStatus.YOU_SENT_TO_THEM
+                    elif get_friend_request_or_false(sender=user, reciever=account) != False:
+                        request_sent = FriendRequestStatus.YOU_SENT_TO_THEM.value
+
+                    # CASE1: No Request has been sent. FriendRequestStatus.NO_REQUEST_SENT
+                    else:
                         request_sent = FriendRequestStatus.NO_REQUEST_SENT.value
-                        pending_friend_request_id = None
-
-                        # CASE1: Request has been sent from THEM to YOU:
-                        # FriendRequestStatus.THEM_SENT_TO_YOU
-                        if get_friend_request_or_false(sender=account, reciever=user) != False:
-                            request_sent = FriendRequestStatus.THEM_SENT_TO_YOU.value
-                            pending_friend_request_id = get_friend_request_or_false(
-                                sender=account, reciever=user
-                            ).id
-
-                        # CASE1: Request has been sent from YOU to THEM:
-                        # FriendRequestStatus.YOU_SENT_TO_THEM
-                        elif get_friend_request_or_false(sender=user, reciever=account) != False:
-                            request_sent = FriendRequestStatus.YOU_SENT_TO_THEM.value
-
-                        # CASE1: No Request has been sent. FriendRequestStatus.NO_REQUEST_SENT
-                        else:
-                            request_sent = FriendRequestStatus.NO_REQUEST_SENT.value
-                            data = {
-                                'pk': account.id,
-                                'username': account.username,
-                                'name': f'{account.first_name} {account.last_name}',
-                                'pic': f'{settings.BASE_URL}{account.profile_image.url}',
-                                'is_friend': is_friend,
-                                'request_sent': request_sent,
-                                'pending_friend_request_id': pending_friend_request_id
-                            }
-                            accounts.append(data
-                                            )
+                        data = {
+                            'pk': account.id,
+                            'username': account.username,
+                            'name': f'{account.first_name} {account.last_name}',
+                            'pic': f'{settings.BASE_URL}{account.profile_image.url}',
+                            'is_friend': is_friend,
+                            'request_sent': request_sent,
+                            'pending_friend_request_id': pending_friend_request_id
+                        }
+                        accounts.append(data
+                                        )
                 payload = {
                     'msg': 'Success',
                     'data': accounts
@@ -755,6 +762,7 @@ def cancel_friend_request_api(request, *args, **kwargs):
 remove Friend API
 '''
 
+
 @api_view(['POST',])
 @permission_classes((IsAuthenticated,))
 def remove_friend_api(request, *args, **kwargs):
@@ -769,48 +777,48 @@ def remove_friend_api(request, *args, **kwargs):
                 friend_list = FriendsList.objects.get(user=user)
                 friend_list.unfriend(removee)
                 for account in all_user:
-                        try:
-                            auth_user_friend_list = FriendsList.objects.get(
-                                user=account)
-                            friends = auth_user_friend_list.friends.all()
-                        except FriendsList.DoesNotExist:
-                            auth_user_friend_list = FriendsList(user=account)
-                            auth_user_friend_list.save()
+                    try:
+                        auth_user_friend_list = FriendsList.objects.get(
+                            user=account)
+                        friends = auth_user_friend_list.friends.all()
+                    except FriendsList.DoesNotExist:
+                        auth_user_friend_list = FriendsList(user=account)
+                        auth_user_friend_list.save()
 
-                        if friends.filter(pk=user.id):
-                            is_friend = True
-                        else:
-                            is_friend = False
+                    if friends.filter(pk=user.id):
+                        is_friend = True
+                    else:
+                        is_friend = False
+                    request_sent = FriendRequestStatus.NO_REQUEST_SENT.value
+                    pending_friend_request_id = None
+
+                    # CASE1: Request has been sent from THEM to YOU:
+                    # FriendRequestStatus.THEM_SENT_TO_YOU
+                    if get_friend_request_or_false(sender=account, reciever=user) != False:
+                        request_sent = FriendRequestStatus.THEM_SENT_TO_YOU.value
+                        pending_friend_request_id = get_friend_request_or_false(
+                            sender=account, reciever=user
+                        ).id
+
+                    # CASE1: Request has been sent from YOU to THEM:
+                    # FriendRequestStatus.YOU_SENT_TO_THEM
+                    elif get_friend_request_or_false(sender=user, reciever=account) != False:
+                        request_sent = FriendRequestStatus.YOU_SENT_TO_THEM.value
+
+                    # CASE1: No Request has been sent. FriendRequestStatus.NO_REQUEST_SENT
+                    else:
                         request_sent = FriendRequestStatus.NO_REQUEST_SENT.value
-                        pending_friend_request_id = None
-
-                        # CASE1: Request has been sent from THEM to YOU:
-                        # FriendRequestStatus.THEM_SENT_TO_YOU
-                        if get_friend_request_or_false(sender=account, reciever=user) != False:
-                            request_sent = FriendRequestStatus.THEM_SENT_TO_YOU.value
-                            pending_friend_request_id = get_friend_request_or_false(
-                                sender=account, reciever=user
-                            ).id
-
-                        # CASE1: Request has been sent from YOU to THEM:
-                        # FriendRequestStatus.YOU_SENT_TO_THEM
-                        elif get_friend_request_or_false(sender=user, reciever=account) != False:
-                            request_sent = FriendRequestStatus.YOU_SENT_TO_THEM.value
-
-                        # CASE1: No Request has been sent. FriendRequestStatus.NO_REQUEST_SENT
-                        else:
-                            request_sent = FriendRequestStatus.NO_REQUEST_SENT.value
-                            data = {
-                                'pk': account.id,
-                                'username': account.username,
-                                'name': f'{account.first_name} {account.last_name}',
-                                'pic': f'{settings.BASE_URL}{account.profile_image.url}',
-                                'is_friend': is_friend,
-                                'request_sent': request_sent,
-                                'pending_friend_request_id': pending_friend_request_id
-                            }
-                            accounts.append(data
-                                            )
+                        data = {
+                            'pk': account.id,
+                            'username': account.username,
+                            'name': f'{account.first_name} {account.last_name}',
+                            'pic': f'{settings.BASE_URL}{account.profile_image.url}',
+                            'is_friend': is_friend,
+                            'request_sent': request_sent,
+                            'pending_friend_request_id': pending_friend_request_id
+                        }
+                        accounts.append(data
+                                        )
                 payload = {
                     'msg': 'Success'
                 }
