@@ -646,7 +646,6 @@ def cancel_friend_request_api(request, *args, **kwargs):
             if len(friend_requests) > 1:
                 for request in friend_requests:
                     request.cancel()
-                    request.delete()
                     for account in all_user:
                         try:
                             auth_user_friend_list = FriendsList.objects.get(
