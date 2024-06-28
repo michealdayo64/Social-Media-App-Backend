@@ -14,6 +14,7 @@ class FriendsList(models.Model):
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="user", null=True)
     friends = models.ManyToManyField(
+
         settings.AUTH_USER_MODEL, blank=True, related_name="friends")
     notifications = GenericRelation(Notification)
 
@@ -209,7 +210,7 @@ class FriendRequest(models.Model):
         notification.read = False
         notification.save()
 
-        #self.delete()
+        # self.delete()
 
     @property
     def get_cname(self):
