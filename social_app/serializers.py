@@ -7,15 +7,15 @@ from account.serializers import UserSerializer
 class PostSerializer(serializers.ModelSerializer):
     user = UserSerializer(many=False)
     user_like_post = UserSerializer(many=True)
-    posted_by = serializers.StringRelatedField(many=False)
+    comments = serializers.StringRelatedField(many=True)
 
     class Meta:
         model = Post
-        fields = ('pk', 'user', 'user_post', 'file', 'date_post',
+        fields = ('pk', 'user', 'user_post', 'comments', 'file', 'date_post',
                   'date_post_update', 'user_like_post', 'posted_by', )
 
 
-class CountSerializer(serializers.ModelSerializer):
+class CommentSerializer(serializers.ModelSerializer):
     user = UserSerializer(many=False)
     post_id = PostSerializer(many=False)
 

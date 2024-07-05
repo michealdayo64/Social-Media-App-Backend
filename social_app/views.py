@@ -4,7 +4,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny  # type: ignore
 from rest_framework import status  # type: ignore
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response  # type: ignore
-from .serializers import PostSerializer, CountSerializer
+from .serializers import PostSerializer, CommentSerializer
 from datetime import datetime
 from django.shortcuts import render, redirect
 from .models import Post, Comment
@@ -258,6 +258,7 @@ def index_api(request):
         '''
         post_list = Post.objects.filter(user__in=list(
             friends_list) + [user,]).order_by('-date_post')
+
         serializer = PostSerializer(
             post_list, many=True, context={'request': request})
         payload = {
@@ -280,14 +281,16 @@ def comment_api(request, id):
     if user.is_authenticated:
         post_id = Post.objects.get(id=id)
         comment_list = Comment.objects.filter(post_id=post_id)
-        serializer = CountSerializer(comment_list, many=True)
-
+        serializer = CommentSerializer(comment_list, many=True)
+        print(serializer.data)
+        aa = []
         payload = {
             'msg': 'Success',
             'comment_list': serializer.data
         }
+        aa.append(payload)
 
-        return Response(data=payload, status=status.HTTP_200_OK)
+        return Response(data=aa, status=status.HTTP_200_OK)
     else:
         payload = {
             'msg': "User not Authorized"

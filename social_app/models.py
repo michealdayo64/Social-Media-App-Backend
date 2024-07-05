@@ -33,7 +33,7 @@ class Comment(models.Model):
     user = user = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True, related_name='commenter')
     post_id = models.ForeignKey(
-        Post, on_delete=models.CASCADE, blank=True, null=True, related_name='post')
+        Post, on_delete=models.CASCADE, blank=True, null=True, related_name='comments')
     comment = models.TextField(null=True, blank=True)
     date_comment = models.DateTimeField(auto_now_add=True)
     date_comment_update = models.DateTimeField(auto_now=True)
