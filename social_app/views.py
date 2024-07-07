@@ -296,3 +296,31 @@ def comment_api(request, id):
             'msg': "User not Authorized"
         }
         return Response(data=payload, status=status.HTTP_401_UNAUTHORIZED)
+
+
+
+@api_view(['POST',])
+@permission_classes((IsAuthenticated,))
+def user_like_post_api(request, id):
+    payload = {}
+    user = request.user
+    if user.is_authenticated:
+        post_id = Post.objects.get(id=id)
+        if user in post_id.user_like_post.all():
+            post_id.user_like_post.remove(user)
+            #like_count = post_id.user_like_post.all().count()
+            serializer = PostSerializer(instance=post_id, many = False)
+            payload['msg'] = 'Success'
+            payload['like_count'] = serializer.data
+            return Response(data=payload, status=status.HTTP_200_OK)
+        else:
+            post_id.user_like_post.add(user)
+            #like_count = post_id.user_like_post.all().count()
+            serializer = PostSerializer(instance=post_id, many = False)
+            payload['msg'] = 'Success'
+            payload['like_count'] = serializer.data
+            return Response(data=payload, status=status.HTTP_200_OK)
+
+    else:
+        payload['response'] = 'User Needs to be authenticated'
+        return Response(data=payload, status=status.HTTP_401_UNAUTHORIZED)
