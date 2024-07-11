@@ -8,6 +8,8 @@ from .serializers import PostSerializer, CommentSerializer
 from datetime import datetime
 from django.shortcuts import render, redirect
 from .models import Post, Comment
+from account.models import Accounts
+from account.serializers import UserSerializer
 from friend_app.models import FriendsList
 import json
 from django.http import JsonResponse
@@ -253,17 +255,23 @@ def index_api(request):
         friend = FriendsList.objects.get(user=user)
         friends_list = friend.friends.all()
 
+        me = Accounts.objects.get(pk=user.id)
         '''
         List of post according to User friend
         '''
         post_list = Post.objects.filter(user__in=list(
             friends_list) + [user,]).order_by('-date_post')
 
+        user_serializer = UserSerializer(me, many=False)
+        print(user_serializer.data)
+
         serializer = PostSerializer(
             post_list, many=True, context={'request': request})
         payload = {
+            'user': user_serializer.data,
             'msg': 'Success',
-            'post_list': serializer.data
+            'post_list': serializer.data,
+
         }
         return Response(data=payload, status=status.HTTP_200_OK)
     else:
@@ -298,7 +306,6 @@ def comment_api(request, id):
         return Response(data=payload, status=status.HTTP_401_UNAUTHORIZED)
 
 
-
 @api_view(['POST',])
 @permission_classes((IsAuthenticated,))
 def user_like_post_api(request, id):
@@ -308,15 +315,15 @@ def user_like_post_api(request, id):
         post_id = Post.objects.get(id=id)
         if user in post_id.user_like_post.all():
             post_id.user_like_post.remove(user)
-            #like_count = post_id.user_like_post.all().count()
-            serializer = PostSerializer(instance=post_id, many = False)
+            # like_count = post_id.user_like_post.all().count()
+            serializer = PostSerializer(instance=post_id, many=False)
             payload['msg'] = 'Success'
             payload['like_count'] = serializer.data
             return Response(data=payload, status=status.HTTP_200_OK)
         else:
             post_id.user_like_post.add(user)
-            #like_count = post_id.user_like_post.all().count()
-            serializer = PostSerializer(instance=post_id, many = False)
+            # like_count = post_id.user_like_post.all().count()
+            serializer = PostSerializer(instance=post_id, many=False)
             payload['msg'] = 'Success'
             payload['like_count'] = serializer.data
             return Response(data=payload, status=status.HTTP_200_OK)
@@ -324,3 +331,51 @@ def user_like_post_api(request, id):
     else:
         payload['response'] = 'User Needs to be authenticated'
         return Response(data=payload, status=status.HTTP_401_UNAUTHORIZED)
+
+
+@api_view(['POST',])
+@permission_classes((IsAuthenticated,))
+def userRepostApi(request, id):
+    payload = {}
+    user = request.user
+    post_id = Post.objects.get(id=id)
+    user_post = post_id.user_post
+    if (post_id.file):
+        image = post_id.file
+        posted_by = post_id.user
+
+        print("okkkk----ok")
+        if user in post_id.repost_users.all():
+            payload = {
+                'msg': "Post has been reposted already",
+            }
+            return Response(data=payload, status=status.HTTP_200_OK)
+        else:
+            post_id.repost_users.add(user)
+            post = Post.objects.create(user=posted_by, user_post=user_post,
+                                       file=image, reposted_by=user)
+            post.repost_users.add(user)
+            serializer = PostSerializer(post, many=False)
+            payload = {
+                'msg': "Success",
+                'post': serializer.data
+            }
+            return Response(data=payload, status=status.HTTP_200_OK)
+    else:
+        posted_by = post_id.user
+        if user in post_id.repost_users.all():
+            payload = {
+                'msg': "Post has been reposted already",
+            }
+            return Response(data=payload, status=status.HTTP_200_OK)
+        else:
+            post_id.repost_users.add(user)
+            post = Post.objects.create(user=posted_by, user_post=user_post,
+                                       reposted_by=user)
+            post.repost_users.add(user)
+            serializer = PostSerializer(post, many=False)
+            payload = {
+                'msg': "Success",
+                'post': serializer.data
+            }
+            return Response(data=payload, status=status.HTTP_200_OK)

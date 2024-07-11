@@ -22,11 +22,13 @@ class Post(models.Model):
     date_post_update = models.DateTimeField(auto_now=True)
     user_like_post = models.ManyToManyField(
         settings.AUTH_USER_MODEL, blank=True)
-    posted_by = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True, related_name='posted_by')
+    reposted_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True, related_name='reposted_by')
+    repost_users = models.ManyToManyField(
+        settings.AUTH_USER_MODEL, blank=True, related_name="users_repost")
 
     def __str__(self):
-        return f"Post By {self.pk}"
+        return f"Post By {self.user.username}"
 
 
 class Comment(models.Model):
