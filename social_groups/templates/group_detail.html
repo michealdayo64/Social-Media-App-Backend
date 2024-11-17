@@ -196,7 +196,7 @@
 
     // Handle errors (ClientError)
     if (data.error) {
-      console.error(data.error + ": " + data.message)
+      console.log(data.error + ": " + data.message)
       showClientErrorModal(data.message)
       return;
     }

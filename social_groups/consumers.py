@@ -211,7 +211,7 @@ class GroupConsumer(AsyncJsonWebsocketConsumer):
         errorData['error'] = e.code
         if e.message:
             errorData['message'] = e.message
-        return
+        await self.send_json(errorData)
 
     async def display_progress_bar(self, is_displayed):
         '''

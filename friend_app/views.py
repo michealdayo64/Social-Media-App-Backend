@@ -277,10 +277,11 @@ def total_num_friends_api(request):
 def total_num_friend_request_api(request):
     data = {}
     user = request.user
-    num_request = FriendRequest.objects.filter(reciever=user, is_active=True)
-    data = {
-        'msg': int(num_request.count())
-    }
+    if user.is_authenticated:
+        num_request = FriendRequest.objects.filter(reciever=user, is_active=True)
+        data = {
+            'msg': int(num_request.count())
+        }
     return Response(data=data, status=status.HTTP_200_OK)
 
 
@@ -290,62 +291,63 @@ def total_num_friend_request_api(request):
 def get_all_user_api(request):
     data = {}
     user = request.user
-    all_user = Accounts.objects.exclude(username=user)
-    # print(all_user)
-    accounts = []
+    if user.is_authenticated:
+        all_user = Accounts.objects.exclude(username=user)
+        # print(all_user)
+        accounts = []
 
-    for account in all_user:
-        try:
-            auth_user_friend_list = FriendsList.objects.get(user=account)
-            friends = auth_user_friend_list.friends.all()
-        except FriendsList.DoesNotExist:
-            auth_user_friend_list = FriendsList(user=account)
-            auth_user_friend_list.save()
+        for account in all_user:
+            try:
+                auth_user_friend_list = FriendsList.objects.get(user=account)
+                friends = auth_user_friend_list.friends.all()
+            except FriendsList.DoesNotExist:
+                auth_user_friend_list = FriendsList(user=account)
+                auth_user_friend_list.save()
 
-        if friends.filter(pk=user.id):
-            is_friend = True
-        else:
-            is_friend = False
-        request_sent = FriendRequestStatus.NO_REQUEST_SENT.value
-        pending_friend_request_id = None
-
-        # CASE1: Request has been sent from THEM to YOU:
-        # FriendRequestStatus.THEM_SENT_TO_YOU
-        if get_friend_request_or_false(sender=account, reciever=user) != False:
-            request_sent = FriendRequestStatus.THEM_SENT_TO_YOU.value
-            pending_friend_request_id = get_friend_request_or_false(
-                sender=account, reciever=user
-            ).id
-
-        # CASE1: Request has been sent from YOU to THEM:
-        # FriendRequestStatus.YOU_SENT_TO_THEM
-        elif get_friend_request_or_false(sender=user, reciever=account) != False:
-            request_sent = FriendRequestStatus.YOU_SENT_TO_THEM.value
-
-        # CASE1: No Request has been sent. FriendRequestStatus.NO_REQUEST_SENT
-        else:
+            if friends.filter(pk=user.id):
+                is_friend = True
+            else:
+                is_friend = False
             request_sent = FriendRequestStatus.NO_REQUEST_SENT.value
+            pending_friend_request_id = None
 
-        payload = {
-            'pk': account.id,
-            'username': account.username,
-            'name': f'{account.first_name} {account.last_name}',
-            'pic': f'{settings.BASE_URL}{account.profile_image.url}',
-            'is_friend': is_friend,
-            'request_sent': request_sent,
-            'pending_friend_request_id': pending_friend_request_id
-        }
+            # CASE1: Request has been sent from THEM to YOU:
+            # FriendRequestStatus.THEM_SENT_TO_YOU
+            if get_friend_request_or_false(sender=account, reciever=user) != False:
+                request_sent = FriendRequestStatus.THEM_SENT_TO_YOU.value
+                pending_friend_request_id = get_friend_request_or_false(
+                    sender=account, reciever=user
+                ).id
 
-        accounts.append(payload
-                        )
-    if (accounts):
-        data = {
-            'msg': (accounts)
-        }
-        return JsonResponse(data=data, status=status.HTTP_200_OK)
+            # CASE1: Request has been sent from YOU to THEM:
+            # FriendRequestStatus.YOU_SENT_TO_THEM
+            elif get_friend_request_or_false(sender=user, reciever=account) != False:
+                request_sent = FriendRequestStatus.YOU_SENT_TO_THEM.value
+
+            # CASE1: No Request has been sent. FriendRequestStatus.NO_REQUEST_SENT
+            else:
+                request_sent = FriendRequestStatus.NO_REQUEST_SENT.value
+
+            payload = {
+                'pk': account.id,
+                'username': account.username,
+                'name': f'{account.first_name} {account.last_name}',
+                'pic': f'{settings.BASE_URL}{account.profile_image.url}',
+                'is_friend': is_friend,
+                'request_sent': request_sent,
+                'pending_friend_request_id': pending_friend_request_id
+            }
+
+            accounts.append(payload
+                            )
+        if (accounts):
+            data = {
+                'msg': (accounts)
+            }
+            return JsonResponse(data=data, status=status.HTTP_200_OK)
     else:
         data = {
-            "msg": "No data Found"
+            "msg": "User Not Authenticated"
         }
         return JsonResponse(data=data, status=status.HTTP_401_UNAUTHOrIZED)
 
