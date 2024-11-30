@@ -25,7 +25,7 @@ class PrivateChatRoom(models.Model):
     is_active = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"{self.user1}"
+        return f"{self.user1} - {self.user2}"
 
     def connect_user(self, user):
         """

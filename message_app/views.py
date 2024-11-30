@@ -21,16 +21,14 @@ def private_chat_room_view(request, *args, **kwargs):
     if room_id:
         try:
             room = PrivateChatRoom.objects.get(pk=room_id)
-            print(room)
             context['room'] = room
         except PrivateChatRoom.DoesNotExist:
             pass
 
     room1 = PrivateChatRoom.objects.filter(user1=user, is_active=True)
     room2 = PrivateChatRoom.objects.filter(user2=user, is_active=True)
-    print(room2)
     rooms = list(chain(room1, room2))
-    
+
     m_and_f = []
 
     for room in rooms:
@@ -42,6 +40,7 @@ def private_chat_room_view(request, *args, **kwargs):
             "message": "",
             "friend": friend
         })
+    print(m_and_f)
     context["m_and_f"] = m_and_f
     context['debug'] = DEBUG
     context['debug_mode'] = settings.DEBUG

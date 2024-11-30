@@ -278,7 +278,8 @@ def total_num_friend_request_api(request):
     data = {}
     user = request.user
     if user.is_authenticated:
-        num_request = FriendRequest.objects.filter(reciever=user, is_active=True)
+        num_request = FriendRequest.objects.filter(
+            reciever=user, is_active=True)
         data = {
             'msg': int(num_request.count())
         }
@@ -340,6 +341,7 @@ def get_all_user_api(request):
 
             accounts.append(payload
                             )
+        print(accounts)
         if (accounts):
             data = {
                 'msg': (accounts)
