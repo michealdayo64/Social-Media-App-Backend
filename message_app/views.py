@@ -6,6 +6,10 @@ import json
 from message_app.utils import find_or_create_private_chat
 from .models import PrivateChatRoom
 from account.models import Accounts
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.decorators import api_view, permission_classes  # type: ignore
+from rest_framework import status  # type: ignore
 # Create your views here.
 
 DEBUG = True
@@ -28,14 +32,15 @@ def private_chat_room_view(request, *args, **kwargs):
     room1 = PrivateChatRoom.objects.filter(user1=user, is_active=True)
     room2 = PrivateChatRoom.objects.filter(user2=user, is_active=True)
     rooms = list(chain(room1, room2))
-
     m_and_f = []
 
     for room in rooms:
         if room.user1 == user:
             friend = room.user2
+            print(friend)
         else:
             friend = room.user1
+            print(friend)
         m_and_f.append({
             "message": "",
             "friend": friend
@@ -66,3 +71,37 @@ def create_or_return_private_chat(request, *args, **kwargs):
     else:
         payload['response'] = "You can't start a chat if you are not authenticated."
     return HttpResponse(json.dumps(payload), content_type="application/json")
+
+
+"""
+Get ALL Chat Friends List 
+"""
+
+
+@api_view(['GET',])
+@permission_classes((IsAuthenticated,))
+def getFriendsChatList(request, *args, **kwargs):
+    data = {}
+    user = request.user
+    if user.is_authenticated:
+        room1 = PrivateChatRoom.objects.filter(user1=user, is_active=True)
+        room2 = PrivateChatRoom.objects.filter(user2=user, is_active=True)
+        rooms = list(chain(room1, room2))
+        m_and_f = []
+
+        for room in rooms:
+            if room.user1 == user:
+                friend = room.user2
+                print(friend)
+            else:
+                friend = room.user1
+                print(friend)
+            m_and_f.append({
+                "message": "",
+                "friend": friend
+            })
+        data["m_and_f"] = m_and_f
+        return Response(data=data, status=status.HTTP_200_OK)
+    else:
+        data["msg"] = "User not authenticated"
+        return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
