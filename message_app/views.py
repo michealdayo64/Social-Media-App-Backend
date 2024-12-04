@@ -1,8 +1,9 @@
 from itertools import chain
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
 from django.conf import settings
 import json
+from account.serializers import UserSerializer
 from message_app.utils import find_or_create_private_chat
 from .models import PrivateChatRoom
 from account.models import Accounts
@@ -10,6 +11,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes  # type: ignore
 from rest_framework import status  # type: ignore
+from django.core import serializers
 # Create your views here.
 
 DEBUG = True
@@ -45,7 +47,6 @@ def private_chat_room_view(request, *args, **kwargs):
             "message": "",
             "friend": friend
         })
-    print(m_and_f)
     context["m_and_f"] = m_and_f
     context['debug'] = DEBUG
     context['debug_mode'] = settings.DEBUG
@@ -80,28 +81,36 @@ Get ALL Chat Friends List
 
 @api_view(['GET',])
 @permission_classes((IsAuthenticated,))
-def getFriendsChatList(request, *args, **kwargs):
-    data = {}
+def getFriendsChatList(request):
+    payload = {}
     user = request.user
+    m_and_f = []
+    print(user)
     if user.is_authenticated:
+        # getUser = Accounts.objects.get(pk = user.id)
         room1 = PrivateChatRoom.objects.filter(user1=user, is_active=True)
         room2 = PrivateChatRoom.objects.filter(user2=user, is_active=True)
         rooms = list(chain(room1, room2))
+
         m_and_f = []
 
         for room in rooms:
             if room.user1 == user:
                 friend = room.user2
-                print(friend)
+                user_serializer = UserSerializer(friend).data
             else:
                 friend = room.user1
-                print(friend)
+                user_serializer = UserSerializer(friend).data
             m_and_f.append({
                 "message": "",
-                "friend": friend
+                "friend": user_serializer
             })
-        data["m_and_f"] = m_and_f
-        return Response(data=data, status=status.HTTP_200_OK)
+        # qs_json = serializers.serialize('json', m_and_f)
+        print(m_and_f)
+        payload = {
+            "m_and_f": m_and_f
+        }
+        return Response(data=payload, status=status.HTTP_200_OK)
     else:
-        data["msg"] = "User not authenticated"
-        return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
+        payload["msg"] = "User not authenticated"
+        return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)

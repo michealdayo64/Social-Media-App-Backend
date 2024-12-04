@@ -341,10 +341,9 @@ def get_all_user_api(request):
 
             accounts.append(payload
                             )
-        print(accounts)
         if (accounts):
             data = {
-                'msg': (accounts)
+                'msg': accounts
             }
             return JsonResponse(data=data, status=status.HTTP_200_OK)
     else:
