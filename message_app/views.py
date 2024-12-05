@@ -84,8 +84,6 @@ Get ALL Chat Friends List
 def getFriendsChatList(request):
     payload = {}
     user = request.user
-    m_and_f = []
-    print(user)
     if user.is_authenticated:
         # getUser = Accounts.objects.get(pk = user.id)
         room1 = PrivateChatRoom.objects.filter(user1=user, is_active=True)
@@ -105,8 +103,6 @@ def getFriendsChatList(request):
                 "message": "",
                 "friend": user_serializer
             })
-        # qs_json = serializers.serialize('json', m_and_f)
-        print(m_and_f)
         payload = {
             "m_and_f": m_and_f
         }

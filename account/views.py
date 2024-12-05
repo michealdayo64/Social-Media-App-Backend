@@ -135,7 +135,7 @@ def forgot_password(request):
 
             reset_url = f'http://{current_site.domain}{link}'
 
-            message = f"Hi {user[0].username}, Kindly click the link below to reset your password\n {reset_url}"
+            message = f"Hi {user[0].username}, Click the link below to reset your password\n {reset_url}"
             print(message)
 
             messages.success(
