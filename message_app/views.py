@@ -95,10 +95,10 @@ def getFriendsChatList(request):
         for room in rooms:
             if room.user1 == user:
                 friend = room.user2
-                user_serializer = UserSerializer(friend).data
+                user_serializer = UserSerializer(friend, context = {'request': request}).data
             else:
                 friend = room.user1
-                user_serializer = UserSerializer(friend).data
+                user_serializer = UserSerializer(friend, context = {'request': request}).data
             m_and_f.append({
                 "message": "",
                 "friend": user_serializer
