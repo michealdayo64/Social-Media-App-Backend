@@ -272,10 +272,10 @@
 
 	function setupWebSocket(room_id) {
 		//console.log("setupWebSocket: " + room_id)
-		roomId = room_id
+		roomId = room_id;
 
 		// close previous socket if one is open
-		closeWebsocket()
+		closeWebsocket();
 
 		var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
 		{% if debug_mode %}
