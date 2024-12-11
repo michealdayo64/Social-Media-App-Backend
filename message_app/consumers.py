@@ -82,8 +82,10 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         """
         # The logged-in user is in our scope thanks to the authentication ASGI middleware (AuthMiddlewareStack)
         print("ChatConsumer: join_room: " + str(room_id))
+        print(self.scope['user'])
         try:
             room = await get_room_or_error(room_id, self.scope['user'])
+            print(f"Room: {room}")
         except ClientError as e:
             return await self.handle_client_error(e)
 
@@ -292,6 +294,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
 
 @database_sync_to_async
 def get_room_or_error(room_id, user):
+    
     try:
         room = PrivateChatRoom.objects.get(pk=room_id)
     except PrivateChatRoom.DoesNotExist:

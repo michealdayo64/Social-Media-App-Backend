@@ -39,10 +39,8 @@ def private_chat_room_view(request, *args, **kwargs):
     for room in rooms:
         if room.user1 == user:
             friend = room.user2
-            print(friend)
         else:
             friend = room.user1
-            print(friend)
         m_and_f.append({
             "message": "",
             "friend": friend
@@ -79,6 +77,28 @@ Get ALL Chat Friends List
 """
 
 
+@api_view(['POST',])
+@permission_classes((IsAuthenticated,))
+def createOrReturnPrivateChatApi(request, *args, **kwargs):
+    user1 = request.user
+    payload = {}
+    if user1.is_authenticated:
+        if request.method == "POST":
+            user2_id = kwargs.get("user2_id")
+            try:
+                user2 = Accounts.objects.get(pk=user2_id)
+                chat = find_or_create_private_chat(user1, user2)
+                payload['msg'] = "Successfully got the chat"
+                payload['chatroom_id'] = chat.id
+                return Response(data=payload, status=status.HTTP_200_OK)
+            except Accounts.DoesNotExist:
+                payload['msg'] = "Unable to start a chat with that user."
+                return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
+    else:
+        payload['msg'] = "You can't start a chat if you are not authenticated."
+    return Response(data=payload, status=status.HTTP_401_UNAUTHORIZED)
+
+
 @api_view(['GET',])
 @permission_classes((IsAuthenticated,))
 def getFriendsChatList(request):
@@ -95,10 +115,12 @@ def getFriendsChatList(request):
         for room in rooms:
             if room.user1 == user:
                 friend = room.user2
-                user_serializer = UserSerializer(friend, context = {'request': request}).data
+                user_serializer = UserSerializer(
+                    friend, context={'request': request}).data
             else:
                 friend = room.user1
-                user_serializer = UserSerializer(friend, context = {'request': request}).data
+                user_serializer = UserSerializer(
+                    friend, context={'request': request}).data
             m_and_f.append({
                 "message": "",
                 "friend": user_serializer
