@@ -1,5 +1,5 @@
 from itertools import chain
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.conf import settings
 import json
@@ -11,7 +11,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes  # type: ignore
 from rest_framework import status  # type: ignore
-from django.core import serializers
+from account.views import get_tokens_for_user
 # Create your views here.
 
 DEBUG = True
@@ -30,6 +30,11 @@ def private_chat_room_view(request, *args, **kwargs):
             context['room'] = room
         except PrivateChatRoom.DoesNotExist:
             pass
+
+    token = get_tokens_for_user(user)
+    user_access_token = token['token']['access']
+    print(user_access_token)
+    context["user_access_token"] = user_access_token
 
     room1 = PrivateChatRoom.objects.filter(user1=user, is_active=True)
     room2 = PrivateChatRoom.objects.filter(user2=user, is_active=True)

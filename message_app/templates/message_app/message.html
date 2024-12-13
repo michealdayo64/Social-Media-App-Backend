@@ -236,20 +236,20 @@
 
 	function onstart() {
 		{% if room %}
-			if ("{{room.user1}}" == "{{request.user}}") {
-				onSelectFriend("{{room.user2.id}}")
-			}
-			else {
-				onSelectFriend("{{room.user1.id}}")
-			}
+		if ("{{room.user1}}" == "{{request.user}}") {
+			onSelectFriend("{{room.user2.id}}")
+		}
+		else {
+			onSelectFriend("{{room.user1.id}}")
+		}
 		{% else %}
-			{% if m_and_f %}
-				onSelectFriend("{{m_and_f.0.friend.id}}")
-			{% endif %}
+		{% if m_and_f %}
+		onSelectFriend("{{m_and_f.0.friend.id}}")
+		{% endif %}
 		{% endif %}
 
 		{% for x in m_and_f %}
-			preloadImage("{{ x.friend.profile_image.url|safe }}", "id_friend_img_{{x.friend.id}}")
+		preloadImage("{{ x.friend.profile_image.url|safe }}", "id_friend_img_{{x.friend.id}}")
 		{% endfor %}
 	}
 
@@ -283,7 +283,11 @@
 		{% else %}
 		var ws_path = ws_scheme + '://' + window.location.host + ":8001/chat" + roomId + "/"; // production
 		{% endif %}
-		chatSocket = new WebSocket(ws_path);
+		chatSocket = new WebSocket(ws_path, {
+			headers: {
+				Authorization: {{ user_access_token }}
+			}
+		});
 		//console.log(chatSocket)
 
 		// Handle incoming messages
