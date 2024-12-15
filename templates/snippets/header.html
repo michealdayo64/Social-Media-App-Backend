@@ -1,4 +1,5 @@
 {% load static %}
+
 <nav class="navbar fixed-top" style="background-color: rgb(1, 1, 41);">
     <div class="container d-flex flex-row justify-content-between" id="myheader">
         <div>
@@ -112,13 +113,16 @@
 
   <script>
     //setupChatDropdownHeader()
+    var u_token = {{ user_access_token }}
+  console.log(u_token)
     // Correctly decide between ws:// and wss://
 	var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
 	var ws_path = ws_scheme + '://' + window.location.host + "/"; // development
 	//var ws_path = ws_scheme + '://' + window.location.host + ":8001/public_chat/{{room_id}}/"; // production
-	var notificationSocket = new WebSocket(ws_path);
   
+	var notificationSocket = new WebSocket(`${ws_path}?Authorization=${u_token}`);
   
+  //user_access_token
 
   notificationSocket.onmessage = function(message){
     var data = JSON.parse(message.data);

@@ -210,11 +210,6 @@ def get_tokens_for_user(user):
         'token': {
             'refresh': str(refresh),
             'access': str(refresh.access_token),
-            "user": {
-                'username': user.username,
-                'name': f'{user.first_name} {user.last_name}'
-            },
-            "name": f'{user.first_name} {user.last_name}'
         },
         'msg': 'Login Successfully'
     }

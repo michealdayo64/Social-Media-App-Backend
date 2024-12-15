@@ -283,11 +283,7 @@
 		{% else %}
 		var ws_path = ws_scheme + '://' + window.location.host + ":8001/chat" + roomId + "/"; // production
 		{% endif %}
-		chatSocket = new WebSocket(ws_path, {
-			headers: {
-				Authorization: {{ user_access_token }}
-			}
-		});
+		chatSocket = new WebSocket(ws_path, ["Authorization", {{user_access_token}}]);
 		//console.log(chatSocket)
 
 		// Handle incoming messages
