@@ -148,8 +148,7 @@
 <script type="text/javascript">
   var sendBtn = document.getElementById("send-btn")
   let callBtn = document.getElementById("call-btn")
-
-
+  let access_token_social_group = document.getElementById("mynav").getAttribute("data-token")
 
   const handleCallBtn = async (e) => {
     e.preventDefault()
@@ -183,11 +182,10 @@
   var ws_path = ws_scheme + '://' + window.location.host + ":8001/group_chat/{{room_id}}/"; // production
   {% endif %}
 
-  var group_chat_socket = new WebSocket(ws_path);
+  var group_chat_socket = new WebSocket(`${ws_path}?token=${access_token_social_group}`);
 
   // Handle incoming messages
   group_chat_socket.onmessage = function (message) {
-    console.log(message.data)
     var data = JSON.parse(message.data);
 
     // display the progress bar?

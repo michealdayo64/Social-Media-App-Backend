@@ -1,14 +1,13 @@
 """Authentication classes for channels."""
 from urllib.parse import parse_qs
-
-from channels.auth import AuthMiddlewareStack
-from channels.db import database_sync_to_async
+from channels.auth import AuthMiddlewareStack # type: ignore
+from channels.db import database_sync_to_async # type: ignore
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AnonymousUser
 from django.db import close_old_connections
-from jwt import InvalidSignatureError, ExpiredSignatureError, DecodeError
-from jwt import decode as jwt_decode
+from jwt import InvalidSignatureError, ExpiredSignatureError, DecodeError # type: ignore
+from jwt import decode as jwt_decode # type: ignore
 
 
 User = get_user_model()
@@ -26,11 +25,8 @@ class JWTAuthMiddleware:
         try:
             # Decode the query string and get token parameter from it.
             token = parse_qs(scope["query_string"].decode("utf8")).get('token', None)[0]
-            print(token)
-            
             # Decode the token to get the user id from it.
             data = jwt_decode(token, settings.SECRET_KEY, algorithms=["HS256"])
-            print(data)
             
             # Get the user from database based on user id and add it to the scope.
             scope['user'] = await self.get_user(data['user_id'])

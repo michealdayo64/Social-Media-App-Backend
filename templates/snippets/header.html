@@ -1,23 +1,24 @@
 {% load static %}
 
-<nav class="navbar fixed-top" style="background-color: rgb(1, 1, 41);">
-    <div class="container d-flex flex-row justify-content-between" id="myheader">
-        <div>
-            <form class="d-flex" role="search">
-                <img src="{% static 'img/fb.jpeg' %}" alt="" srcset="" style="width: 40px; height: 40px; padding-right: 10px; border-radius: 10px;">
-                <input class="form-control me-2 w-100" type="search" placeholder="Search" aria-label="Search">
-                
-              </form>
-        </div>
-      <div class="d-flex flex-row align-items-center">
-        {% if request.user.is_authenticated %}
-        <a href="{% url 'profile-index' %}" class="anch">
+<nav class="navbar fixed-top" style="background-color: rgb(1, 1, 41);" id="mynav" data-token = "{{ user_access_token }}">
+  <div class="container d-flex flex-row justify-content-between" id="myheader">
+    <div>
+      <form class="d-flex" role="search">
+        <img src="{% static 'img/fb.jpeg' %}" alt="" srcset=""
+          style="width: 40px; height: 40px; padding-right: 10px; border-radius: 10px;">
+        <input class="form-control me-2 w-100" type="search" placeholder="Search" aria-label="Search">
+
+      </form>
+    </div>
+    <div class="d-flex flex-row align-items-center">
+      {% if request.user.is_authenticated %}
+      <a href="{% url 'profile-index' %}" class="anch">
         <img class="me-1 profile-pic" src="{{ request.user.profile_image.url }}" alt="">
       </a>
-        {% else %}
-        <img class="me-1 profile-pic" src="{% static 'img/profile_image.png' %}" alt="">
-        {% endif %}
-        <a href="{% url 'profile-index' %}" class="anch">
+      {% else %}
+      <img class="me-1 profile-pic" src="{% static 'img/profile_image.png' %}" alt="">
+      {% endif %}
+      <a href="{% url 'profile-index' %}" class="anch">
         <p class="me-4 mt-3 text-white">Welcome, {{ request.user.username }}</p>
       </a>
       <a href="{% url 'index' %}" class="anch">
@@ -33,9 +34,9 @@
         <i class="fa-brands fa-facebook-messenger me-4 text-white"></i>
       </a>
       <div class="overflow-auto notifi" id="id_chat_notifications_container">
-       
+
       </div>
-      
+
       <a class="anch" id="btn-notifi" onclick="setGeneralNotificationsAsRead()">
         <p id="mybadge">
           99
@@ -43,8 +44,8 @@
         <i class="fa-solid fa-bell me-4 text-white"></i>
       </a>
       <div class="overflow-auto notifi" id="id_general_notifications_container">
-       
-        </div>
+
+      </div>
       <a href="#" class="anch">
         <i class="fa-solid fa-circle-question me-4 text-white"></i>
       </a>
@@ -53,151 +54,148 @@
       </a>
       <div class="drop1" id="dropid">
         <a href="{% url 'logout' %}" class="btn btn-primay">
-        Logout
-      </a>
+          Logout
+        </a>
       </div>
-      </div>
-
     </div>
-  </nav>
 
-  {% include 'snippets/general_notifications.html' %}
-  {% include 'snippets/chat_notifications.html' %}
+  </div>
+</nav>
 
-  <script>
-    const dropId = document.getElementById("dropid")
-    const logoutBtn = document.getElementById("logout")
-    const btnNotifi = document.getElementById("btn-notifi")
-    const btnChatNotifi = document.getElementById("btn-chat-notifi")
-    const showChatNotifi = document.getElementById("id_chat_notifications_container")
-    const showNotifi = document.getElementById("id_general_notifications_container")
+{% include 'snippets/general_notifications.html' %}
+{% include 'snippets/chat_notifications.html' %}
 
-    btnChatNotifi.addEventListener('click', (e) =>{
-      e.preventDefault()
-      if(showChatNotifi.style.display === "block"){
-        showChatNotifi.style.display = "none"
-      }else{
-        showChatNotifi.style.display = "block"
-        showNotifi.style.display = "none"
-        dropId.style.display = "none"
-      }
-    })
+<script>
+  const dropId = document.getElementById("dropid")
+  const logoutBtn = document.getElementById("logout")
+  const btnNotifi = document.getElementById("btn-notifi")
+  const btnChatNotifi = document.getElementById("btn-chat-notifi")
+  const showChatNotifi = document.getElementById("id_chat_notifications_container")
+  const showNotifi = document.getElementById("id_general_notifications_container")
 
-    logoutBtn.addEventListener('click', (e) =>{
-      e.preventDefault()
-      if(dropId.style.display === "block"){
-        dropId.style.display = "none"
-        showNotifi.style.display = "none"
-      }else{
-        dropId.style.display = "block"
-        showNotifi.style.display = "none"
-        showChatNotifi.style.display = "none"
-      }
-      
-    })
+  btnChatNotifi.addEventListener('click', (e) => {
+    e.preventDefault()
+    if (showChatNotifi.style.display === "block") {
+      showChatNotifi.style.display = "none"
+    } else {
+      showChatNotifi.style.display = "block"
+      showNotifi.style.display = "none"
+      dropId.style.display = "none"
+    }
+  })
 
-    btnNotifi.addEventListener('click', (e) =>{
-      e.preventDefault()
-      if(showNotifi.style.display === "block"){
-        showNotifi.style.display = "none"
-        dropId.style.display = "none"
-      }else{
-        showNotifi.style.display = "block"
-        dropId.style.display = "none"
-        showChatNotifi.style.display = "none"
-      }
-    })
+  logoutBtn.addEventListener('click', (e) => {
+    e.preventDefault()
+    if (dropId.style.display === "block") {
+      dropId.style.display = "none"
+      showNotifi.style.display = "none"
+    } else {
+      dropId.style.display = "block"
+      showNotifi.style.display = "none"
+      showChatNotifi.style.display = "none"
+    }
 
-    //
-  </script>
+  })
 
-  <script>
-    //setupChatDropdownHeader()
-    var u_token = {{ user_access_token }}
-  console.log(u_token)
-    // Correctly decide between ws:// and wss://
-	var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
-	var ws_path = ws_scheme + '://' + window.location.host + "/"; // development
-	//var ws_path = ws_scheme + '://' + window.location.host + ":8001/public_chat/{{room_id}}/"; // production
+  btnNotifi.addEventListener('click', (e) => {
+    e.preventDefault()
+    if (showNotifi.style.display === "block") {
+      showNotifi.style.display = "none"
+      dropId.style.display = "none"
+    } else {
+      showNotifi.style.display = "block"
+      dropId.style.display = "none"
+      showChatNotifi.style.display = "none"
+    }
+  })
+
+  //
+</script>
+
+<script>
+  //setupChatDropdownHeader()
   
-	var notificationSocket = new WebSocket(`${ws_path}?Authorization=${u_token}`);
-  
-  //user_access_token
+ let access_token_notification = document.getElementById("mynav").getAttribute("data-token")
 
-  notificationSocket.onmessage = function(message){
+  // Correctly decide between ws:// and wss://
+  var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
+  var ws_path = ws_scheme + '://' + window.location.host + "/"; // development
+  var notificationSocket = new WebSocket(`${ws_path}?token=${access_token_notification}`);
+
+
+  notificationSocket.onmessage = function (message) {
     var data = JSON.parse(message.data);
-		//console.log("Got notification websocket message. " + data.general_msg_type);
 
     // "General" Pagination exhausted. No more results.
-		if(data.general_msg_type == 1){
-			setGeneralPaginationExhausted()
-		}
+    if (data.general_msg_type == 1) {
+      setGeneralPaginationExhausted()
+    }
 
 
     /*
-			GENERAL NOTIFICATIONS
-		*/
-		// new 'general' notifications data payload
-	if(data.general_msg_type == 0){
-			handleGeneralNotificationsData(data['notifications'], data['new_page_number'])
-		}
+      GENERAL NOTIFICATIONS
+    */
+    // new 'general' notifications data payload
+    if (data.general_msg_type == 0) {
+      handleGeneralNotificationsData(data['notifications'], data['new_page_number'])
+    }
 
     // Refresh [newest_timestamp >= NOTIFICATIONS >= oldest_timestamp]
-		if(data.general_msg_type == 2){
-			refreshGeneralNotificationsData(data['notifications'])
-		}
+    if (data.general_msg_type == 2) {
+      refreshGeneralNotificationsData(data['notifications'])
+    }
 
-    if(data.general_msg_type == 3){
-			handleNewGeneralNotificationsData(data['notifications'])
-		}
+    if (data.general_msg_type == 3) {
+      handleNewGeneralNotificationsData(data['notifications'])
+    }
 
-    if(data.general_msg_type == 4){
-			setUnreadGeneralNotificationsCount(data['count'])
-		}
+    if (data.general_msg_type == 4) {
+      setUnreadGeneralNotificationsCount(data['count'])
+    }
 
-    if(data.general_msg_type == 5){
-			updateGeneralNotificationDiv(data['notification'])
-		}
+    if (data.general_msg_type == 5) {
+      updateGeneralNotificationDiv(data['notification'])
+    }
 
     // new 'chat' notifications data payload
-		if(data.chat_msg_type == 10){
-			handleChatNotificationsData(data['notifications'], data['new_page_number'])
-		}
+    if (data.chat_msg_type == 10) {
+      handleChatNotificationsData(data['notifications'], data['new_page_number'])
+    }
 
     // refreshed chat notifications
-		if(data.chat_msg_type == 13){
-			handleNewChatNotificationsData(data['notifications'])
-		}
+    if (data.chat_msg_type == 13) {
+      handleNewChatNotificationsData(data['notifications'])
+    }
   }
 
 
-  notificationSocket.onclose = function(e) {
-		console.log('Notification Socket closed unexpectedly');
-	};
+  notificationSocket.onclose = function (e) {
+    console.log('Notification Socket closed unexpectedly');
+  };
 
-  notificationSocket.onopen = function(e){
-		//console.log("Notification Socket on open: " + e)
+  notificationSocket.onopen = function (e) {
+    //console.log("Notification Socket on open: " + e)
     setupGeneralNotificationsMenu()
-	  getFirstGeneralNotificationsPage()
+    getFirstGeneralNotificationsPage()
     setupChatNotificationsMenu()
     getFirstChatNotificationsPage()
-		//getUnreadGeneralNotificationsCount()
+    //getUnreadGeneralNotificationsCount()
   }
 
-  notificationSocket.onerror = function(e){
-		console.log('Notification Socket error', e)
-	}
+  notificationSocket.onerror = function (e) {
+    console.log('Notification Socket error', e)
+  }
 
-	if (notificationSocket.readyState == WebSocket.OPEN) {
-		console.log("Notification Socket OPEN complete.")
-	} 
-	else if (notificationSocket.readyState == WebSocket.CONNECTING){
-		console.log("Notification Socket connecting..")
-	}
+  if (notificationSocket.readyState == WebSocket.OPEN) {
+    console.log("Notification Socket OPEN complete.")
+  }
+  else if (notificationSocket.readyState == WebSocket.CONNECTING) {
+    console.log("Notification Socket connecting..")
+  }
 
 
   //setupChatDropdownHeader()
 
 
-  
-  </script>
+
+</script>

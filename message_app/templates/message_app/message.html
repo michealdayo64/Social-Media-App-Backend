@@ -231,6 +231,7 @@
 	var url = window.location.origin
 	var chatSocket = null
 	var roomId = null
+	let access_token_message = document.getElementById("mynav").getAttribute("data-token")
 
 	onstart()
 
@@ -283,13 +284,12 @@
 		{% else %}
 		var ws_path = ws_scheme + '://' + window.location.host + ":8001/chat" + roomId + "/"; // production
 		{% endif %}
-		chatSocket = new WebSocket(ws_path, ["Authorization", {{user_access_token}}]);
+		chatSocket = new WebSocket(`${ws_path}?token=${access_token_message}`);
 		//console.log(chatSocket)
 
 		// Handle incoming messages
 		chatSocket.onmessage = function (message) {
 			var data = JSON.parse(message.data);
-			console.log(data)
 
 			// display the progress bar?
 			displayChatroomLoadingSpinner(data.display_progress_bar)

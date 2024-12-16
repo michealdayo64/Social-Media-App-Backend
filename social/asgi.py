@@ -7,7 +7,7 @@ from django.urls import path
 from message_app.consumers import ChatConsumer
 from social_groups.consumers import GroupConsumer
 from notification_app.consumers import NotificationConsumer
-from .auth_middleware import JWTAuthMiddlewareStack
+from .jwt_auth_middleware import JWTAuthMiddlewareStack
 
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'social.settings')
