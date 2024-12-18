@@ -289,7 +289,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         errorData['error'] = e.code
         if e.message:
             errorData['message'] = e.message
-        return
+        return errorData
 
 
 @database_sync_to_async
