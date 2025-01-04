@@ -5,7 +5,7 @@ from django.conf import settings
 import json
 from account.serializers import UserSerializer
 from message_app.utils import find_or_create_private_chat
-from .models import PrivateChatRoom
+from .models import PrivateChatRoom, RoomChatMessage
 from account.models import Accounts
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -20,7 +20,7 @@ DEBUG = True
 def private_chat_room_view(request, *args, **kwargs):
     context = {}
     user = request.user
-    room_id = request.POST.get("room_id")
+    room_id = request.GET.get("room_id")
     if not user.is_authenticated:
         return HttpResponse("This user is not authenticated")
 
@@ -33,7 +33,7 @@ def private_chat_room_view(request, *args, **kwargs):
 
     token = get_tokens_for_user(user)
     user_access_token = token['token']['access']
-    print(user_access_token)
+    # print(user_access_token)
     context["user_access_token"] = user_access_token
 
     room1 = PrivateChatRoom.objects.filter(user1=user, is_active=True)
@@ -44,12 +44,19 @@ def private_chat_room_view(request, *args, **kwargs):
     for room in rooms:
         if room.user1 == user:
             friend = room.user2
+            #print(room.id)
+            message = RoomChatMessage.objects.filter(
+                room=room.id).order_by("-timestamp")
+            #print(message[0])
         else:
             friend = room.user1
+        #print(friend)
         m_and_f.append({
-            "message": "",
+            "message": f"",
             "friend": friend
         })
+
+    print(m_and_f)
     context["m_and_f"] = m_and_f
     context['debug'] = DEBUG
     context['debug_mode'] = settings.DEBUG
@@ -63,11 +70,9 @@ def create_or_return_private_chat(request, *args, **kwargs):
     if user1.is_authenticated:
         if request.method == "POST":
             user2_id = kwargs.get("user2_id")
-            print(user2_id)
             try:
                 user2 = Accounts.objects.get(pk=user2_id)
                 chat = find_or_create_private_chat(user1, user2)
-                print(chat.id)
                 payload['response'] = "Successfully got the chat"
                 payload['chatroom_id'] = chat.id
             except Accounts.DoesNotExist:

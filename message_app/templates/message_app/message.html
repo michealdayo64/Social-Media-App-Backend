@@ -320,8 +320,6 @@
 				handleMessagesPayload(data.messages, data.new_page_number)
 			}
 
-
-
 		}
 
 		chatSocket.onclose = function (e) {
@@ -390,7 +388,6 @@
 		messageInputDom.value = '';
 	};
 
-
 	function appendChatMessage(data, maintainPosition, isNewMessage) {
 		messageType = data['msg_type']
 		msg_id = data['msg_id']
@@ -427,8 +424,6 @@
 		}
 
 	}
-
-
 	/*
 		  Build a new ChatMessage element and append to the list
 	  */
