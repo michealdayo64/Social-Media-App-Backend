@@ -1,6 +1,53 @@
 {% load static %}
 
-<nav class="navbar fixed-top" style="background-color: rgb(1, 1, 41);" id="mynav" data-token = "{{ user_access_token }}">
+
+<div class="sidebar" id="sidebar-panel">
+  <div class="home-cancel">
+    <i class="fa-solid fa-x" id="close"></i>
+    <a href="/"><i class="fa-solid fa-house"></i></a>
+  </div>
+  <div class="sidebar-menu-container">
+    <div class="sidebar-menu-content">
+      <a href="{% url 'friend-index' %}" class="anch">
+        <div class="icon-text">
+          <i class="fa-solid fa-user-group me-4 text-white"></i>
+          <span>Friends</span>
+        </div>
+      </a>
+      <a href="{% url 'notification-index' %}" class="anch">
+        <div class="icon-text">
+          <i class="fa-solid fa-bell me-4 text-white"></i>
+          <span>Notification</span>
+        </div>
+      </a>
+      <a href="{% url 'private-chat-room' %}" class="anch">
+        <div class="icon-text">
+          <i class="fa-brands fa-facebook-messenger me-4 text-white"></i>
+          <span>Messages</span>
+        </div>
+      </a>
+      <a href="{% url 'profile-index' %}" class="anch">
+        <div class="icon-text">
+          <i class="fa-solid fa-user me-4 text-white"></i>
+          <span>Profile</span>
+        </div>
+      </a>
+      <a href="{% url 'group-list' %}" class="anch">
+        <div class="icon-text">
+          <i class="fa-solid fa-message me-4 text-white"></i>
+          <span>Groups</span>
+        </div>
+      </a>
+    </div>
+    <div class="logout-container">
+      <a href="{% url 'logout' %}" style="text-decoration: none;">
+        <span>Logout</span>
+        <i class="fa-solid fa-right-from-bracket"></i>
+      </a>
+    </div>
+  </div>
+</div>
+<nav class="navbar fixed-top top-navbar" id="mynav" data-token="{{ user_access_token }}">
   <div class="container d-flex flex-row justify-content-between" id="myheader">
     <div>
       <form class="d-flex" role="search">
@@ -10,7 +57,7 @@
 
       </form>
     </div>
-    <div class="d-flex flex-row align-items-center">
+    <div class="menu-left">
       {% if request.user.is_authenticated %}
       <a href="{% url 'profile-index' %}" class="anch">
         <img class="me-1 profile-pic" src="{{ request.user.profile_image.url }}" alt="">
@@ -59,6 +106,10 @@
       </div>
     </div>
 
+    <div class="third-menu" id="hamburger-btn">
+      <i class="fa-solid fa-bars"></i>
+    </div>
+
   </div>
 </nav>
 
@@ -66,12 +117,26 @@
 {% include 'snippets/chat_notifications.html' %}
 
 <script>
+  const hamburgerBtn = document.getElementById("hamburger-btn")
+  const closeBtn = document.getElementById("close")
+  let sidebarPanel = document.getElementById("sidebar-panel")
   const dropId = document.getElementById("dropid")
   const logoutBtn = document.getElementById("logout")
   const btnNotifi = document.getElementById("btn-notifi")
   const btnChatNotifi = document.getElementById("btn-chat-notifi")
   const showChatNotifi = document.getElementById("id_chat_notifications_container")
   const showNotifi = document.getElementById("id_general_notifications_container")
+
+
+  hamburgerBtn.addEventListener('click', (e) => {
+    e.preventDefault()
+    sidebarPanel.classList.toggle("active")
+  })
+
+  closeBtn.addEventListener('click', (e) => {
+    e.preventDefault()
+    sidebarPanel.classList.toggle("active")
+  })
 
   btnChatNotifi.addEventListener('click', (e) => {
     e.preventDefault()
@@ -114,8 +179,8 @@
 
 <script>
   //setupChatDropdownHeader()
-  
- let access_token_notification = document.getElementById("mynav").getAttribute("data-token")
+
+  let access_token_notification = document.getElementById("mynav").getAttribute("data-token")
 
   // Correctly decide between ws:// and wss://
   var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";

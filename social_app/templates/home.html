@@ -5,11 +5,11 @@
 {% block content %}
 {% load static %}
 <br>
-    <div class="row">
-      <div class="col-3">
+    <div class="row home-container">
+      <div class="col-sm-3 col-md-3 col-lg-3 col-xl-3 left-menu-container">
         {% include 'snippets/left-menu.html' %}
       </div>
-      <div class="col-6" id="postlistid">
+      <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6 mx-auto" id="postlistid">
         {% include 'home_main_content.html' %}
         
         {% for i in post_list %}
@@ -93,7 +93,7 @@
         </div>
         {% endfor %}
       </div>
-      <div class="col-3">
+      <div class="col-sm-3 col-md-3 col-lg-3 col-xl-3 right-menu-container ">
         {% include 'snippets/right-data.html' %}
       </div>
     </div>

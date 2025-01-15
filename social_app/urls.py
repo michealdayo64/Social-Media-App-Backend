@@ -4,7 +4,7 @@ from .views import (index, postList, like_post, get_like_count, user_comment,
 from django.views.decorators.csrf import csrf_exempt
 
 urlpatterns = [
-    path('home/', index, name="index"),
+    path('', index, name="index"),
     path('post-list/', postList, name='post-list'),
     path('like-post/<id>/', csrf_exempt(like_post), name='like-post'),
     path('get-like-count/<id>/', get_like_count, name="get-like-count"),

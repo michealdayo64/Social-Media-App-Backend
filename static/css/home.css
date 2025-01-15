@@ -1,242 +1,256 @@
-#public:hover{
-    background-color: grey;
-    width: 90px;
-    border-radius: 5px;
-    cursor: pointer;
+/**.home-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}**/
+
+#public:hover {
+  background-color: grey;
+  width: 90px;
+  border-radius: 5px;
+  cursor: pointer;
 }
 
-#public i{
-    font-size: 13px;
-    font-weight: bold;
+.main-home-container {
+  border: 4px solid red;
+  
 }
 
-#public span{
-    font-size: 13px;
-    font-weight: bold;
+#public i {
+  font-size: 13px;
+  font-weight: bold;
 }
 
-#postform{
-    height: 100px;
-    overflow-y: scroll;
+#public span {
+  font-size: 13px;
+  font-weight: bold;
 }
 
-#postform textarea{
-    width: 100%;
-    border: none;
+#postform {
+  height: 100px;
+  overflow-y: scroll;
 }
 
-#postform textarea:focus{
-    border: none;
+#postform textarea {
+  width: 100%;
+  border: none;
 }
 
-#inputpost:hover{
-    background-color: rgb(225, 222, 222);
+#postform textarea:focus {
+  border: none;
 }
 
-#assets{
-    width: 100%;
+#inputpost:hover {
+  background-color: rgb(225, 222, 222);
 }
 
-#assets i{
-    margin-right: 10px;
-    font-size: 20px;
+#assets {
+  width: 100%;
 }
 
-#assets p{
-    color: black;
-    margin-left: 10px;
-    margin-top: 10px;
-    font-weight: bold;
+#assets i {
+  margin-right: 10px;
+  font-size: 20px;
 }
 
-#videoid{
-    cursor: pointer;
-    padding: 5px;
-    border-radius: 5px;
+#assets p {
+  color: black;
+  margin-left: 10px;
+  margin-top: 10px;
+  font-weight: bold;
 }
 
-#videoid div{
-    margin: auto;
+#videoid {
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 5px;
 }
 
-#videoid:hover{
-    background-color: rgb(225, 222, 222);
-
+#videoid div {
+  margin: auto;
 }
 
-#videoid i{
-    color: red;
+#videoid:hover {
+  background-color: rgb(225, 222, 222);
 }
 
-#photoid{
-    cursor: pointer;
-    padding: 5px;
-    border-radius: 5px;
+#videoid i {
+  color: red;
 }
 
-#photoid div{
-    margin: auto;
+#photoid {
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 5px;
 }
 
-#photoid:hover{
-    background-color: rgb(225, 222, 222);
+#photoid div {
+  margin: auto;
 }
 
-#photoid i{
-    color: green;
+#photoid:hover {
+  background-color: rgb(225, 222, 222);
 }
 
-#emojiid{
-    cursor: pointer;
-    padding: 5px;
-    border-radius: 5px;
+#photoid i {
+  color: green;
 }
 
-#emoji div{
-    margin: auto;
+#emojiid {
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 5px;
 }
 
-#emojiid:hover{
-    background-color: rgb(225, 222, 222);
+#emoji div {
+  margin: auto;
 }
 
-#emojiid i{
-    color: yellow;
+#emojiid:hover {
+  background-color: rgb(225, 222, 222);
 }
 
-#mediaid i{
-    cursor: pointer;
-    padding: 2px;
+#emojiid i {
+  color: yellow;
 }
 
-#mediaid i:hover{
-    background-color: rgb(225, 222, 222);
-    border-radius: 100%;
+#mediaid i {
+  cursor: pointer;
+  padding: 2px;
 }
 
-#ImageContainer1{
-    width: 100%;
-    height: 200px;
-    padding: 5px;
-    border: 1px solid gray;
-    border-radius: 5px;
+#mediaid i:hover {
+  background-color: rgb(225, 222, 222);
+  border-radius: 100%;
+}
+
+#ImageContainer1 {
+  width: 100%;
+  height: 200px;
+  padding: 5px;
+  border: 1px solid gray;
+  border-radius: 5px;
+  display: none;
+}
+
+#ImageContainer2 {
+  width: 100%;
+  height: 200px;
+  padding: 5px;
+  border: 1px solid gray;
+  border-radius: 5px;
+  display: none;
+}
+
+#photoBtn1 {
+  background-color: rgb(225, 222, 222);
+  cursor: pointer;
+  padding: 5px;
+}
+
+#photoBtn1:hover {
+  background-color: rgb(225, 222, 222);
+}
+
+#post p {
+  text-align: justify;
+}
+
+.likecommentshare {
+  cursor: pointer;
+  padding: 2px;
+  border-radius: 5px;
+}
+
+.likecommentshare:hover {
+  background-color: rgb(225, 222, 222);
+}
+
+.likecommentshare a {
+  text-decoration: none;
+  color: black;
+}
+
+#commentinput {
+  width: 100%;
+  border-radius: 5px;
+  border: none;
+  background-color: rgb(225, 222, 222);
+  outline: none;
+  padding: 10px;
+}
+
+.commentcontainer {
+  display: none;
+}
+
+.likesstyle span {
+  text-decoration: none;
+  color: black;
+}
+
+.commentlist {
+  padding: 20px;
+  background-color: rgb(1, 28, 51);
+}
+
+.commentminute {
+  padding-left: 10px;
+}
+
+.commentminute span {
+  font-size: 12px;
+  color: rgb(112, 111, 111);
+}
+
+.mycardbg1 {
+  background-color: rgb(210, 210, 210);
+  border-radius: 5px;
+}
+
+.mycardbg2 {
+  background-color: rgb(210, 210, 210);
+  border-radius: 5px;
+  display: block;
+}
+
+#namestyle {
+  color: blue;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.imgstyle {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+}
+
+#video-container {
+  display: block;
+}
+
+#video-container #videoImageID {
+  display: block;
+}
+
+
+@media (max-width: 1050px) {
+  .left-menu-container {
+    border: 4px solid blue;
     display: none;
-    
-}
+  }
 
+  .main-home-container {
+    border: 4px solid red;
+    margin: auto;
 
-#ImageContainer2{
-    width: 100%;
-    height: 200px;
-    padding: 5px;
-    border: 1px solid gray;
-    border-radius: 5px;
+  }
+
+  .right-menu-container {
+    border: 4px solid blue;
     display: none;
-    
+  }
 }
-
-
-
-
-#photoBtn1{
-    background-color: rgb(225, 222, 222);
-    cursor: pointer;
-    padding: 5px;
-}
-
-#photoBtn1:hover{
-    background-color: rgb(225, 222, 222);
-}
-
-#post p{
-    text-align: justify;
-}
-
-.likecommentshare{
-    cursor: pointer;
-    padding: 2px;
-    border-radius: 5px;
-}
-
-.likecommentshare:hover{
-    background-color: rgb(225, 222, 222);
-}
-
-.likecommentshare a{
-    text-decoration: none;
-    color: black;
-}
-
-#commentinput{
-    width: 100%;
-    border-radius: 5px;
-    border: none;
-    background-color: rgb(225, 222, 222);
-    outline: none;
-    padding: 10px;
-}
-
-.commentcontainer{
-    display: none;
-}
-
-.likesstyle span{
-    text-decoration: none;
-    color: black;
-}
-
-.commentlist{
-    padding: 20px;
-    background-color: rgb(1, 28, 51);
-}
-
-.commentminute{
-    padding-left: 10px;
-}
-
-.commentminute span{
-    font-size: 12px;
-    color: rgb(112, 111, 111);
-}
-
-.mycardbg1{
-    background-color: rgb(210, 210, 210);
-    border-radius: 5px;
-}
-
-.mycardbg2{
-    background-color: rgb(210, 210, 210);
-    border-radius: 5px;
-    display: block;
-}
-
-#namestyle{
-    color: blue;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.imgstyle{
-    width: 30px; 
-    height: 30px; 
-    border-radius: 50%;
-}
-
-#   {
-    display: block;
-}
-
-#video-container{
-    display: block;
-}
-
-#video-container #videoImageID{
-    display: block;
-}
-
-
-
-
-
-
 
