@@ -65,3 +65,11 @@
     bottom: 15px;
     border-radius: 50%;
 }
+
+@media (max-width: 1050px) {
+    .friend-left-container{
+      border: 4px solid blue;
+      display: none;
+    }
+  
+  }

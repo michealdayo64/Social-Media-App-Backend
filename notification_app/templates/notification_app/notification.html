@@ -7,10 +7,10 @@
 {% block content %}
 <br>
     <div class="row">
-      <div class="col-3">
+      <div class="col-3 left-notification-container">
         {% include 'snippets/left-menu.html' %}
       </div>
-      <div class="col-6">
+      <div class="col-sm-12 col-md-6 mx-auto">
         <h1>Notifications</h1>
         {% for i in notifications %}
         <div class="card p-2">
@@ -24,7 +24,7 @@
         {% endfor %}
         
       </div>
-      <div class="col-3">
+      <div class="col-3 right-notification-container">
         <div class="card">
           {% include 'snippets/right-data.html' %}
         </div>

@@ -7,10 +7,10 @@
 {% block content %}
 <br>
     <div class="row">
-      <div class="col-3">
+      <div class="col-12 col-md-3 friend-left-container">
         {% include 'snippets/left-menu.html' %}
       </div>
-      <div class="col-9">
+      <div class="col-12 col-md-9 mx-auto">
         <div class="row">
             <div class="d-flex justify-content-between">
               <h2>Friends</h2>
@@ -19,7 +19,7 @@
         </div>
         <div class="row pb-2">
           {% for account in accounts %}
-          <div class="col-3">
+          <div class="col-6 col-sm-4 col-md-3">
             <div class="card">
               <div class="all-friend">
                 <a href="{% url 'friend-detail' account.0.pk %}"><img src="{{ account.0.profile_image.url }}" alt="" srcset=""></a>
