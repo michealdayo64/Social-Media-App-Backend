@@ -1,6 +1,6 @@
 from django.db import models
 from django.conf import settings
-from message_app.utils import find_or_create_private_chat
+from message_app.utils import find_or_create_private_chat, find_and_delete_private_chat
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.contrib.contenttypes.fields import GenericRelation
@@ -63,6 +63,8 @@ class FriendsList(models.Model):
         # Remove friend from removee friends list
         friends_list = FriendsList.objects.get(user=removee)
         friends_list.remove_friend(self.user)
+        find_and_delete_private_chat(self.user, removee)
+
 
         content_type = ContentType.objects.get_for_model(self)
 

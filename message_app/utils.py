@@ -16,6 +16,18 @@ def find_or_create_private_chat(user1, user2):
     return chat
 
 
+def find_and_delete_private_chat(user1, user2):
+    try:
+        chat = PrivateChatRoom.objects.get(user1 = user1, user2 = user2)
+        chat.delete()
+    except PrivateChatRoom.DoesNotExist:
+        try:
+            chat = PrivateChatRoom.objects.get(user1 = user2, user2 = user1)
+            chat.delete()
+        except PrivateChatRoom.DoesNotExist:
+            return False
+
+
 def calculate_timestamp(timestamp):
     #print(datetime.now())
     """
