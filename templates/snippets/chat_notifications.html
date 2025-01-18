@@ -152,7 +152,7 @@ setOnChatNotificationScrollListener()
 				"command": "get_chat_notifications",
 				"page_number": "1",
 			}));
-			//getUnreadChatNotificationsCount()
+			getUnreadChatNotificationsCount()
 		}
 	}
 
@@ -495,13 +495,17 @@ switch(notification['notification_type']) {
 		}
 	}
 
+	function getUnreadChatNotificationsCount(){
+		
+	}
+
 	/*
 		Start the functions that will be executed constantly
 	*/
 	function startChatNotificationService(){
 		if("{{request.user.is_authenticated}}" == "True"){
 			setInterval(getNewChatNotifications, CHAT_NOTIFICATION_INTERVAL)
-			//setInterval(getUnreadChatNotificationsCount, CHAT_NOTIFICATION_INTERVAL)
+			setInterval(getUnreadChatNotificationsCount, CHAT_NOTIFICATION_INTERVAL)
 		}
 	}
 
