@@ -234,6 +234,11 @@
     if (data.chat_msg_type == 13) {
       handleNewChatNotificationsData(data['notifications'])
     }
+
+    // refreshed chat notifications count
+    if(data.general_msg_type == 14){
+      setUnreadChatNotificationsCount(data['count'])
+    }
   }
 
 

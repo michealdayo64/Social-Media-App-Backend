@@ -20,3 +20,4 @@ GENERAL_MSG_TYPE_UPDATED_NOTIFICATION = 5 # Update a notification that has been 
 """
 CHAT_MSG_TYPE_NOTIFICATIONS_PAYLOAD = 10  # New 'chat' notifications data payload incoming
 CHAT_MSG_TYPE_GET_NEW_NOTIFICATIONS = 13  # Get any new chat notifications
+CHAT_MSG_TYPE_GET_UNREAD_NOTIFICATIONS_COUNT = 14 # Get chat notification count

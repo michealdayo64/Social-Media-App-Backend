@@ -152,7 +152,7 @@ setOnChatNotificationScrollListener()
 				"command": "get_chat_notifications",
 				"page_number": "1",
 			}));
-			getUnreadChatNotificationsCount()
+			//getUnreadChatNotificationsCount()
 		}
 	}
 
@@ -443,6 +443,20 @@ switch(notification['notification_type']) {
 		return card
 	}
 
+	/*
+		Set the number of unread notifications.
+	*/
+	function setUnreadChatNotificationsCount(count) {
+		var countElement = document.getElementById("mybadgechat")
+		if (count > 0) {
+			countElement.style.display = 'block'
+			countElement.innerHTML = count
+		}
+		else {
+			countElement.style.display = 'none'
+		}
+	}
+
 
 	/*
 		Timestamp at the bottom of each notification card
@@ -496,7 +510,11 @@ switch(notification['notification_type']) {
 	}
 
 	function getUnreadChatNotificationsCount(){
-		
+		if("{{request.user.is_authenticated}}"){
+			notificationSocket.send(JSON.stringify({
+				"command": "get_unread_chat_notifications_count"
+			}))
+		}
 	}
 
 	/*

@@ -480,18 +480,6 @@
 	}
 
 
-	/*
-			Sets all the chat notifications currently visible as "read"
-		*/
-function setChatNotificationAsRead(){
-	if ("{{request.user.is_authenticated}}") {
-			oldestTimestamp = document.getElementById("id_general_oldest_timestamp").innerHTML
-			notificationSocket.send(JSON.stringify({
-				"command": "mark_notifications_read",
-			}));
-			//getUnreadGeneralNotificationsCount()
-		}
-}
 
 	/*
 		Keep track of the 'general' oldest notification in view. 

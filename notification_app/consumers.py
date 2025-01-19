@@ -70,6 +70,11 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
                 if payload != None:
                     payload = json.loads(payload)
                     await self.send_unread_general_notification_count(payload['count'])
+            elif command == "get_unread_chat_notifications_count":
+                payload = await get_unread_chat_notifications_count(self.scope["user"])
+                if payload != None:
+                    payload = json.loads(payload)
+                    await self.send_unread_chat_notifications_count(payload['count'])
             elif command == "mark_notifications_read":
                 await mark_notifications_read(self.scope["user"])  
             elif command == "get_chat_notifications":
@@ -167,6 +172,17 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
                 "general_msg_type": GENERAL_MSG_TYPE_GET_UNREAD_NOTIFICATIONS_COUNT,
                 "count": count,
             },
+        )
+
+    async def send_unread_chat_notifications_count(self, count):
+        """
+        Send the number of unread "chat" notifications to the template
+        """
+        await self.send_json(
+            {
+                "general_msg_type": CHAT_MSG_TYPE_GET_UNREAD_NOTIFICATIONS_COUNT,
+                "count": count,
+            }
         )
 
     async def send_chat_notifications_payload(self, notifications, new_page_number):
@@ -335,6 +351,27 @@ def get_unread_general_notification_count(user):
 	else:
 		raise ClientError("AUTH_ERROR", "User must be authenticated to get notifications.")
 	return None
+
+@database_sync_to_async
+def get_unread_chat_notifications_count(user):
+    payload = {}
+    if user.is_authenticated:
+        message_ct = ContentType.objects.get_for_model(UnreadChatRoomMessages)
+        notifications = Notification.objects.filter(target=user, content_type__in=[message_ct])
+        #print(notifications)
+        unread_count = 0
+        if notifications:
+            for notification in notifications:
+                print(notification.read)
+                if notification.read == False:
+                    unread_count = unread_count + 1
+        payload['count'] = unread_count
+        print(unread_count)
+        return json.dumps(payload)
+    else:
+        raise ClientError("AUTH_ERROR", "User must be authenticated to get notifications.")
+    return None
+
 
 @database_sync_to_async
 def mark_notifications_read(user):
