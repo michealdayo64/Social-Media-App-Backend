@@ -12,7 +12,7 @@ class RegisterForm(UserCreationForm):
     
     class Meta:
         model = Accounts
-        fields = ('email', 'username', 'password1', 'password2',)
+        fields = ('first_name', 'last_name', 'email', 'username', 'password1', 'password2',)
 
     
     def clean_username(self):

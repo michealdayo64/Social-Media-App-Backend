@@ -45,7 +45,7 @@ def get_profile_image_filepath(self, filename):
 
 
 def get_default_profile_image():
-    return "default_pic/profile_image.png"
+    return "default_pic/profile_img_.png"
 
 
 '''

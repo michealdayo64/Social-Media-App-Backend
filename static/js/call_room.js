@@ -3,6 +3,7 @@ const TOKEN = sessionStorage.getItem("token");
 const CHANNEL = sessionStorage.getItem("room");
 let UID = Number(sessionStorage.getItem("UID"));
 let NAME = sessionStorage.getItem("name");
+let host = window.location.origin;
 
 const client = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" });
 
@@ -27,7 +28,7 @@ let joinAndDisplayLocalStream = async () => {
   localTracks = await AgoraRTC.createMicrophoneAndCameraTracks();
   let player = `<div  class="video-container" id="user-container-${UID}">
                      <div class="video-player" id="user-${UID}">${member.name}</div>
-                     <div class="username-wrapper"><span class="user-name">name:</span></div>
+                     <div class="username-wrapper"><span class="user-name"></span></div>
                   </div>`;
 
   document
@@ -80,7 +81,7 @@ let leaveAndRemoveLocalStream = async () => {
   }
   await client.leave();
   //await deleteMember();
-  window.open("http://127.0.0.1:8000/home/", "_self");
+  window.open(`${host}/`, "_self");
 };
 
 // USER ON AND OFF CAMERA
@@ -108,7 +109,7 @@ let toggleMic = async (e) => {
 };
 
 let createMember = async () => {
-  let host = window.location.origin;
+  
   let response = await fetch(`${host}/group/create-member/`, {
     method: "POST",
     headers: {
@@ -122,7 +123,6 @@ let createMember = async () => {
 };
 
 let getMember = async (user) => {
-  let host = window.location.origin;
   let response = await fetch(
     `${host}/group/get-member/?UID=${user.uid}&room_name=${CHANNEL}`
   );

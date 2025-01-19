@@ -362,11 +362,9 @@ def get_unread_chat_notifications_count(user):
         unread_count = 0
         if notifications:
             for notification in notifications:
-                print(notification.read)
                 if notification.read == False:
                     unread_count = unread_count + 1
         payload['count'] = unread_count
-        print(unread_count)
         return json.dumps(payload)
     else:
         raise ClientError("AUTH_ERROR", "User must be authenticated to get notifications.")
