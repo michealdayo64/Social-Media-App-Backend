@@ -37,7 +37,7 @@ def register_view(request):
     if request.user.is_authenticated:
         print("Your are already Logged In")
     context = {}
-
+    #print("hello")
     if request.POST:
 
         form = RegisterForm(request.POST or None)
