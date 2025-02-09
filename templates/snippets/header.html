@@ -50,10 +50,11 @@
 <nav class="navbar fixed-top top-navbar" id="mynav" data-token="{{ user_access_token }}">
   <div class="container d-flex flex-row justify-content-between" id="myheader">
     <div>
-      <form class="d-flex" role="search">
+      <form class="d-flex" onsubmit="return executeQuery();">
         <img src="{% static 'img/logoimage.webp' %}" alt="" srcset=""
           style="width: 40px; height: 40px; padding-right: 10px; border-radius: 10px;">
-        <input class="form-control me-2 w-100" type="search" placeholder="Search" aria-label="Search">
+        <input class="form-control me-2 w-100" type="search" id="input-data" name="input_post" placeholder="Search"
+          aria-label="Search">
 
       </form>
     </div>
@@ -129,6 +130,14 @@
   const btnChatNotifi = document.getElementById("btn-chat-notifi")
   const showChatNotifi = document.getElementById("id_chat_notifications_container")
   const showNotifi = document.getElementById("id_general_notifications_container")
+
+  function executeQuery() {
+    var query = document.getElementById("input-data").value
+    console.log(query)
+  
+      window.location.replace("{% url 'search' %}?input_post=" + query)
+    
+  }
 
 
   hamburgerBtn.addEventListener('click', (e) => {
@@ -236,7 +245,7 @@
     }
 
     // refreshed chat notifications count
-    if(data.general_msg_type == 14){
+    if (data.general_msg_type == 14) {
       setUnreadChatNotificationsCount(data['count'])
     }
   }
