@@ -134,8 +134,8 @@
   function executeQuery() {
     var query = document.getElementById("input-data").value
     console.log(query)
-  
-      window.location.replace("{% url 'search' %}?input_post=" + query)
+      var url = window.location.host
+    `${url}/search-post/?input_post=${query}`
     
   }
 
