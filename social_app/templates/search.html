@@ -1,23 +1,43 @@
-{% extends 'base.html' %}
+{% extends 'base.html' %} {% block title %}Home{% endblock %} {% block content
+%} {% load static %}
 
-{% block title %}Home{% endblock %}
-
-{% block content %}
-{% load static %}
-
-<br>
+<br />
 <div class="row home-container">
-    <div class="col-12 col-lg-3 col-xl-3 col-md-3 left-menu-container">
-        {% include 'snippets/left-menu.html' %}
-      </div>
+  <div class="col-12 col-lg-3 col-xl-3 col-md-3 left-menu-container">
+    {% include 'snippets/left-menu.html' %}
+  </div>
 
-      <div class="col-12 col-lg-6 col-xl-6 col-md-6 mx-auto" id="postlistid">
-        {% include 'home_main_content.html' %}
+  <div class="col-12 col-lg-6 col-xl-6 col-md-6 mx-auto" id="postlistid">
+    {% include 'home_main_content.html' %} {% if post_list %} {% for i in
+    post_list %}
+    <br />
+    <div class="card p-3">
+      <div class="d-flex flex-row justify-content-between align-items-center">
+        <div class="d-flex flex-row">
+          <img
+            class="pe-1 profile-pic"
+            src="{{ i.user.profile_image.url }}"
+            alt=""
+            srcset=""
+          />
+          <div class="d-flex flex-column">
+            <span style="font-size: 14px; font-weight: bold"
+              >{{ i.user.username }}</span
+            >
+            <span style="font-size: 11px; color: gray"
+              >{{ i.date_post }} Ago</span
+            >
+          </div>
+        </div>
+        <div class="d-flex flex-row"></div>
       </div>
+    </div>
+    {% endfor %} {% endif %}
+  </div>
 
-      <div class="col-12 col-lg-3 col-xl-3 col-md-3 right-menu-container ">
-        {% include 'snippets/right-data.html' %}
-      </div>
+  <div class="col-12 col-lg-3 col-xl-3 col-md-3 right-menu-container">
+    {% include 'snippets/right-data.html' %}
+  </div>
 </div>
 
 {% endblock %}
