@@ -1,1 +1,23 @@
-<h1>Searching page</h1>
+{% extends 'base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+{% load static %}
+
+<br>
+<div class="row home-container">
+    <div class="col-12 col-lg-3 col-xl-3 col-md-3 left-menu-container">
+        {% include 'snippets/left-menu.html' %}
+      </div>
+
+      <div class="col-12 col-lg-6 col-xl-6 col-md-6 mx-auto" id="postlistid">
+        {% include 'home_main_content.html' %}
+      </div>
+
+      <div class="col-12 col-lg-3 col-xl-3 col-md-3 right-menu-container ">
+        {% include 'snippets/right-data.html' %}
+      </div>
+</div>
+
+{% endblock %}

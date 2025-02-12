@@ -49,15 +49,16 @@
 </div>
 <nav class="navbar fixed-top top-navbar" id="mynav" data-token="{{ user_access_token }}">
   <div class="container d-flex flex-row justify-content-between" id="myheader">
+    
     <div>
-      <form class="d-flex" onsubmit="return executeQuery();">
+      <div class="d-flex">
         <img src="{% static 'img/logoimage.webp' %}" alt="" srcset=""
           style="width: 40px; height: 40px; padding-right: 10px; border-radius: 10px;">
-        <input class="form-control me-2 w-100" type="search" id="input-data" name="input_post" placeholder="Search"
+        <input class="form-control me-2 w-100" type="search" id="input-data" name="q" placeholder="Search"
           aria-label="Search">
-
-      </form>
+      </div>
     </div>
+    
     <div class="menu-left">
       {% if request.user.is_authenticated %}
       <a href="{% url 'profile-index' %}" class="anch">
@@ -131,13 +132,16 @@
   const showChatNotifi = document.getElementById("id_chat_notifications_container")
   const showNotifi = document.getElementById("id_general_notifications_container")
 
-  function executeQuery() {
-    var query = document.getElementById("input-data").value
-    console.log(query)
-      var url = window.location.host
-    `${url}/search-post/?input_post=${query}`
-    
-  }
+
+  var query = document.getElementById("input-data")
+  query.addEventListener("keyup", (e) =>{
+    e.preventDefault()
+    var dataInput = e.target.value
+    console.log(dataInput)
+    if(e.key === "Enter"){
+      window.location.replace(`{% url 'search' %}?q=${dataInput}`)
+    }
+  })
 
 
   hamburgerBtn.addEventListener('click', (e) => {

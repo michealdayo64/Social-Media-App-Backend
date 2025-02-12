@@ -50,14 +50,12 @@ def index(request):
 
 
 def search_post(request):
-    print("hello")
     context = {}
     user = request.user
     if user.is_authenticated:
-        input_search = request.GET.get("input_post")
+        input_search = request.GET.get("q")
         friend = FriendsList.objects.get(user=user)
         friends_list = friend.friends.all()
-        print(input_search)
         if len(input_search) > 0:
             post_list = Post.objects.filter(user_post__icontains = input_search).distinct()
             context["post_list"] = post_list
