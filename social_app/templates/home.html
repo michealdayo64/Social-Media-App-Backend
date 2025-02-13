@@ -1,13 +1,16 @@
-{% extends 'base.html' %} {% block title %}Home{% endblock %} {% block content
-%} {% load static %}
+{% extends 'base.html' %} 
+{% block title %}Home{% endblock %}
+ {% block content %}
+  {% load static %}
 <br />
 <div class="row home-container">
   <div class="col-12 col-lg-3 col-xl-3 col-md-3 left-menu-container">
     {% include 'snippets/left-menu.html' %}
   </div>
   <div class="col-12 col-lg-6 col-xl-6 col-md-6 mx-auto" id="postlistid">
-    {% include 'home_main_content.html' %} {% if post_list %} {% for i in
-    post_list %}
+    {% include 'home_main_content.html' %}
+     {% if post_list %} 
+    {% for i in post_list %}
     <br />
     <div class="card p-3">
       <div class="d-flex flex-row justify-content-between align-items-center">
@@ -36,14 +39,14 @@
         {% endif %}
       </div>
       <div id="postimage">
-        {% if i.file %} {% if i.file.url|slice:"-4:" == ".MP4" or
-        i.file.url|slice:"-4:" == ".mp4" %}
+        {% if i.file %} {% if i.file.url|slice:"-4:" == ".MP4" or i.file.url|slice:"-4:" == ".mp4" %}
         <video id="movie" class="w-100 h-100 rounded" controls>
           <source src="{{ i.file.url }}" type="video/mp4" />
         </video>
         {% else %}
         <img class="w-100" src="{{ i.file.url }}" alt="" srcset="" />
-        {% endif %} {% endif %}
+        {% endif %} 
+        {% endif %}
       </div>
       <hr />
       <div class="d-flex flex-row justify-content-between align-items-center">
@@ -123,7 +126,8 @@
       <br />
     </div>
 
-    {% endfor %} {% else %}
+    {% endfor %} 
+    {% else %}
     <br />
     <div class="card p-3">
       <div class="d-flex flex-row justify-content-center align-items-center">

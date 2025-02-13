@@ -6,6 +6,7 @@ body {
 .anch {
   text-decoration: none;
   cursor: pointer;
+  background-color: green;
 }
 
 .anch i {
@@ -22,6 +23,16 @@ body {
   width: 40px;
   height: 40px;
   border-radius: 100%;
+}
+
+.home{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 5px;
+  text-align: center;
+  margin-left: 5px;
+  margin-right: 5px;
 }
 
 #myheader {
@@ -105,6 +116,10 @@ body {
   display: flex;
   flex-direction: row;
   align-items: center;
+}
+
+.menu-left a{
+  text-decoration: none;
 }
 
 .third-menu {
@@ -202,11 +217,30 @@ body {
     height: 90%;
   }
 
+  .menu-notification{
+    background-color: white;
+   padding: 2px;
+    border-radius: 50%;
+    text-align: center;
+    width: 10px;
+    margin-left: 10px;
+    
+  }
+
+  .menu-notification span{
+    font-size: 10px;
+    color: red;
+    
+  }
+
+ 
+
   .sidebar-menu-content .icon-text {
     display: flex;
     align-items: center;
     justify-content: start;
     padding-bottom: 10px;
+  
   }
 
   .sidebar .home-cancel {
@@ -215,6 +249,7 @@ body {
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+    
   }
 
   .sidebar.active {

@@ -260,7 +260,7 @@ def userSharePost(request, id):
     image = post_id.file
     posted_by = post_id.user
     Post.objects.create(user=user, user_post=user_post,
-                        file=image, posted_by=posted_by)
+                        file=image, reposted_by=posted_by)
     return redirect('index')
 
 

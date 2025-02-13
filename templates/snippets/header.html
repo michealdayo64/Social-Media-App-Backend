@@ -1,6 +1,6 @@
 {% load static %}
 
-
+<!--MOBILE VIEW MENU-->
 <div class="sidebar" id="sidebar-panel">
   <div class="home-cancel">
     <i class="fa-solid fa-x" id="close"></i>
@@ -18,12 +18,18 @@
         <div class="icon-text">
           <i class="fa-solid fa-bell me-4 text-white"></i>
           <span>Notification</span>
+         <div class="menu-notification">
+          <span>1</span>
+         </div>
         </div>
       </a>
       <a href="{% url 'private-chat-room' %}" class="anch">
         <div class="icon-text">
           <i class="fa-brands fa-facebook-messenger me-4 text-white"></i>
           <span>Messages</span>
+          <div class="menu-notification">
+          <span>1</span>
+         </div>
         </div>
       </a>
       <a href="{% url 'profile-index' %}" class="anch">
@@ -47,6 +53,8 @@
     </div>
   </div>
 </div>
+
+<!--DESKTOP VIEW MENU-->
 <nav class="navbar fixed-top top-navbar" id="mynav" data-token="{{ user_access_token }}">
   <div class="container d-flex flex-row justify-content-between" id="myheader">
     
@@ -70,41 +78,43 @@
       <a href="{% url 'profile-index' %}" class="anch">
         <p class="me-4 mt-3 text-white">Welcome, {{ request.user.username }}</p>
       </a>
-      <a href="{% url 'index' %}" class="anch">
-        <p class="me-4 mt-3 text-white">Home</p>
+      <a href="{% url 'index' %}" class="home">
+        <span class="text-white">Home</span>
+        <i class="fa-solid fa-house text-white"></i>
       </a>
-      <a href="{% url 'friend-index' %}" class="anch">
-        <p class="me-4 mt-3 text-white">Find Friends</p>
+      <a href="{% url 'friend-index' %}" class="home">
+        <span class="text-white">Friends</span>
+        <i class="fa-solid fa-user-group text-white"></i>
       </a>
-      <a href="#" class="anch">
-        <i class="fa-solid fa-user-group me-4 text-white"></i>
+      <a href="{% url 'group-list' %}" class="home">
+        <span class="text-white">Groups</span>
+        <i class="fa-solid fa-group-arrows-rotate text-white"></i>
       </a>
-      <a class="anch" id="btn-chat-notifi">
+      <a class="home" id="btn-chat-notifi">
         <p id="mybadgechat">
           99
         </p>
+        <span class="text-white">Message</span>
         <i class="fa-brands fa-facebook-messenger me-4 text-white"></i>
       </a>
       <div class="overflow-auto notifi" id="id_chat_notifications_container">
 
       </div>
 
-      <a class="anch" id="btn-notifi" onclick="setGeneralNotificationsAsRead()">
+      <a class="home" id="btn-notifi" onclick="setGeneralNotificationsAsRead()">
         <p id="mybadge">
           99
         </p>
+        <span class="text-white">Notification</span>
         <i class="fa-solid fa-bell me-4 text-white"></i>
       </a>
       <div class="overflow-auto notifi" id="id_general_notifications_container">
 
       </div>
-      <a href="#" class="anch">
-        <i class="fa-solid fa-circle-question me-4 text-white"></i>
-      </a>
       <a href="#" id="logout">
         <i class="fa-solid fa-caret-down text-white"></i>
       </a>
-      <div class="drop1" id="dropid">
+      <div class="drop1 ms-3" id="dropid">
         <a href="{% url 'logout' %}" class="btn btn-primay">
           Logout
         </a>
