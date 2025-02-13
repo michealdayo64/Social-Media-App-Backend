@@ -14,22 +14,22 @@
           <span>Friends</span>
         </div>
       </a>
-      <a href="{% url 'notification-index' %}" class="anch" onclick="">
+      <a href="{% url 'notification-index' %}" class="anch" onclick="setGeneralNotificationsAsRead()">
         <div class="icon-text">
           <i class="fa-solid fa-bell me-4 text-white"></i>
           <span>Notification</span>
-         <span class="menu-notification" id="menu-notification-id">
-          1
-         </span>
+          <span class="menu-notification" id="menu-notification-id">
+            
+          </span>
         </div>
       </a>
-      <a href="{% url 'private-chat-room' %}" class="anch">
+      <a href="{% url 'private-chat-room' %}" class="anch" onclick="">
         <div class="icon-text">
           <i class="fa-brands fa-facebook-messenger me-4 text-white"></i>
           <span>Messages</span>
-          <div class="menu-notification" id="menu-notification-chat-id">
-          <span>1</span>
-         </div>
+          <span class="menu-notification" id="menu-notification-chat-id">
+            
+          </span>
         </div>
       </a>
       <a href="{% url 'profile-index' %}" class="anch">
@@ -55,18 +55,21 @@
 </div>
 
 <!--DESKTOP VIEW MENU-->
-<nav class="navbar fixed-top top-navbar" id="mynav" data-token="{{ user_access_token }}">
-  <div class="container d-flex flex-row justify-content-between" id="myheader">
-    
+<nav class="navbar fixed-top top-navbar" id="mynav" data-token="{{ user_access_token } }">
+  <div class="container d-flex flex-row justify -content-between" id="myheader">
+
     <div>
       <div class="d-flex">
-        <img src="{% static 'img/logoimage.webp' %}" alt="" srcset=""
-          style="width: 40px; height: 40px; padding-right: 10px; border-radius: 10px;">
+        <a href="/">
+          <img src="{% static 'img/logoimage.webp' %}" alt="" srcset=""
+            style="width: 40px; height: 40px; padding-right: 10px; border-radius: 10px;">
+        </a>
+
         <input class="form-control me-2 w-100" type="search" id="input-data" name="q" placeholder="Search"
           aria-label="Search">
       </div>
     </div>
-    
+
     <div class="menu-left">
       {% if request.user.is_authenticated %}
       <a href="{% url 'profile-index' %}" class="anch">
@@ -144,11 +147,11 @@
 
 
   var query = document.getElementById("input-data")
-  query.addEventListener("keyup", (e) =>{
+  query.addEventListener("keyup", (e) => {
     e.preventDefault()
     var dataInput = e.target.value
     console.log(dataInput)
-    if(e.key === "Enter"){
+    if (e.key === "Enter") {
       window.location.replace(`{% url 'search' %}?q=${dataInput}`)
     }
   })
@@ -294,4 +297,4 @@
 
 
 
-</script>
+</script>  
