@@ -219,22 +219,18 @@ body {
 
   .menu-notification{
     background-color: white;
-   padding: 2px;
+    display: none;
     border-radius: 50%;
     text-align: center;
-    width: 10px;
     margin-left: 10px;
-    
-  }
-
-  .menu-notification span{
     font-size: 10px;
     color: red;
+    padding: 2px;
     
   }
 
- 
 
+ 
   .sidebar-menu-content .icon-text {
     display: flex;
     align-items: center;

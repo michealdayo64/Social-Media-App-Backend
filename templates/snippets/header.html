@@ -14,20 +14,20 @@
           <span>Friends</span>
         </div>
       </a>
-      <a href="{% url 'notification-index' %}" class="anch">
+      <a href="{% url 'notification-index' %}" class="anch" onclick="">
         <div class="icon-text">
           <i class="fa-solid fa-bell me-4 text-white"></i>
           <span>Notification</span>
-         <div class="menu-notification">
-          <span>1</span>
-         </div>
+         <span class="menu-notification" id="menu-notification-id">
+          1
+         </span>
         </div>
       </a>
       <a href="{% url 'private-chat-room' %}" class="anch">
         <div class="icon-text">
           <i class="fa-brands fa-facebook-messenger me-4 text-white"></i>
           <span>Messages</span>
-          <div class="menu-notification">
+          <div class="menu-notification" id="menu-notification-chat-id">
           <span>1</span>
          </div>
         </div>

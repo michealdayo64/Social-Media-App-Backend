@@ -196,12 +196,18 @@
 	*/
 	function setUnreadGeneralNotificationsCount(count) {
 		var countElement = document.getElementById("mybadge")
+		var sidebarCountElement = document.getElementById("menu-notification-id")
 		if (count > 0) {
 			countElement.style.display = 'block'
 			countElement.innerHTML = count
+
+			sidebarCountElement.style.display = "block"
+			sidebarCountElement.innerHTML = count
+		
 		}
 		else {
 			countElement.style.display = 'none'
+			sidebarCountElement.style.display = "none"
 		}
 	}
 
