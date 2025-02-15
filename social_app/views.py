@@ -19,6 +19,7 @@ from django.conf import settings
 import base64
 from django.core import files
 from django.core.files.base import ContentFile
+import random
 
 # Create your views here.
 
@@ -41,8 +42,10 @@ def index(request):
         '''
         List of post according to User friend
         '''
-        post_list = Post.objects.filter(user__in=list(
-            friends_list) + [user,]).order_by('-date_post')
+        '''post_list = list(Post.objects.filter(user__in=list(
+            friends_list) + [user,]).order_by('-date_post'))'''
+        post_list = list(Post.objects.all())
+        random.shuffle(post_list)
         context['post_list'] = post_list
     else:
         return redirect('login')
