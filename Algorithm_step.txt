@@ -9,5 +9,6 @@
 9. comment list "Still pending"
 10. post list substring "Still pending"
 11. CSRF_TOKEN for json done
+12. first message. "Still Pending"
 
 

@@ -55,7 +55,7 @@
 </div>
 
 <!--DESKTOP VIEW MENU-->
-<nav class="navbar fixed-top top-navbar" id="mynav" data-token="{{ user_access_token } }">
+<nav class="navbar fixed-top top-navbar" id="mynav" data-token="{{ user_access_token }}">
   <div class="container d-flex flex-row justify -content-between" id="myheader">
 
     <div>
@@ -278,7 +278,7 @@
     getFirstGeneralNotificationsPage()
     setupChatNotificationsMenu()
     getFirstChatNotificationsPage()
-    //getUnreadGeneralNotificationsCount()
+    getUnreadGeneralNotificationsCount()
   }
 
   notificationSocket.onerror = function (e) {

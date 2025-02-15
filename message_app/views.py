@@ -44,19 +44,16 @@ def private_chat_room_view(request, *args, **kwargs):
     for room in rooms:
         if room.user1 == user:
             friend = room.user2
-            #print(room.id)
-            message = RoomChatMessage.objects.filter(
-                room=room.id).order_by("-timestamp")
-            #print(message[0])
+            
         else:
             friend = room.user1
-        #print(friend)
+            
         m_and_f.append({
             "message": f"",
             "friend": friend
         })
 
-    print(m_and_f)
+    #print(m_and_f)
     context["m_and_f"] = m_and_f
     context['debug'] = DEBUG
     context['debug_mode'] = settings.DEBUG
