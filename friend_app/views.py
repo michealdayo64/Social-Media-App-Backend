@@ -139,14 +139,16 @@ def send_friend_request(request, *args, **kwargs):
                 # If none is active, then create a new friend request
                 friend_request = FriendRequest(sender=user, reciever=reciever)
                 friend_request.save()
-                return redirect("friend-detail", user_id)
+                #return redirect("friend-detail", user_id)
+                return redirect("friend-index")
             except Exception as e:
                 return HttpResponse("You can't view someone elses friend requests")
         except FriendRequest.DoesNotExist:
             # If none is active, then create a new friend request
             friend_request = FriendRequest(sender=user, reciever=reciever)
             friend_request.save()
-            return redirect("friend-detail", user_id)
+            #return redirect("friend-detail", user_id)
+            return redirect("friend-index")
     else:
         print("User not authenticated")
         return redirect("friend-index")
