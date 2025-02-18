@@ -235,6 +235,24 @@ def user_comment(request, id):
     return JsonResponse((payload), content_type="application/json", safe=False)
 
 
+def post_detail(request, id):
+    user = request.user
+    if user.is_authenticated:
+        #get_post_id = kwargs.get('id')
+        post_id = Post.objects.get(id = id)
+        comment_list = Comment.objects.filter(post_id = post_id)
+        if request.method == 'POST':
+            comment_input = request.POST.get('comment_input')
+            if len(comment_input > 0):
+                comment = Comment.objects.create(user = user, post_id = post_id, comment = comment_input)
+                return redirect('post-detail', post_id)
+    context = {
+        'comment_list': comment_list,
+        'post_id': post_id
+    }
+    return render(request, 'post-detail.html', context)
+
+
 '''
 Comment Count for each post
 '''

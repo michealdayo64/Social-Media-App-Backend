@@ -66,9 +66,8 @@ class FriendsList(models.Model):
         find_and_delete_private_chat(self.user, removee)
 
 
-        content_type = ContentType.objects.get_for_model(self)
-
         # Create notification for removee
+        content_type = ContentType.objects.get_for_model(self)
         friends_list.notifications.create(
             target=removee,
             from_user=self.user,

@@ -222,11 +222,11 @@ def cancel_friend_request(request, *args, **kwargs):
             if len(friend_requests) > 1:
                 for request in friend_requests:
                     request.cancel()
-                return redirect("friend-detail", user_id)
+                return redirect("friend-index")
             else:
                 # found the request. Now cancel it.
                 friend_requests.first().cancel()
-                return redirect("friend-detail", user_id)
+                return redirect("friend-index")
         else:
             print("Unble to cancel friend request")
     else:

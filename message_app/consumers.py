@@ -388,8 +388,6 @@ def append_unread_msg_if_not_connected(room, user, connected_users, message):
     return
 
 # When a user connects, reset their unread message count to 0
-
-
 @database_sync_to_async
 def on_user_connected(room, user):
     # confirm they are in the connected users list

@@ -61,7 +61,7 @@
         </div>
         <div>
           <a
-            href="#"
+            href="{% url 'post-detail' i.id %}"
             class="commentinputclass_{{ i.pk }}"
             id="commentcountid"
             data-id="{{ i.id }}"
