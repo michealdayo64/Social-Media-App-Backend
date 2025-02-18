@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
- {% block title %}Home{% endblock %}
-  {% block content %} 
-  {% load static %}
+{% block title %}Home{% endblock %}
+{% block content %}
+{% load static %}
 
 <br />
 <div class="row home-container">
@@ -11,26 +11,17 @@
 
   <div class="col-12 col-md-6">
     <div class="card p-3">
-        <div class="d-flex flex-row justify-content-between align-items-center">
-            <div class="d-flex flex-row">
-              <img
-                class="pe-1 profile-pic"
-                src="{{ post_id.user.profile_image.url }}"
-                alt=""
-                srcset=""
-              />
-              <div class="d-flex flex-column">
-                <span style="font-size: 14px; font-weight: bold"
-                  >{{ post_id.user.username }}</span
-                >
-                <span style="font-size: 11px; color: gray"
-                  >{{ post_id.date_post }} Ago</span
-                >
-              </div>
-            </div>
-            <div class="d-flex flex-row"></div>
+      <div class="d-flex flex-row justify-content-between align-items-center">
+        <div class="d-flex flex-row">
+          <img class="pe-1 profile-pic" src="{{ post_id.user.profile_image.url }}" alt="" srcset="" />
+          <div class="d-flex flex-column">
+            <span style="font-size: 14px; font-weight: bold">{{ post_id.user.username }}</span>
+            <span style="font-size: 11px; color: gray">{{ post_id.date_post }} Ago</span>
           </div>
-          <br />
+        </div>
+        <div class="d-flex flex-row"></div>
+      </div>
+      <br />
       <div class="w-100" id="post">
         {% if post_id.user_post %}
         <p>{{ post_id.user_post }}</p>
@@ -43,59 +34,54 @@
         </video>
         {% else %}
         <img class="w-100" src="{{ post_id.file.url }}" alt="" srcset="" />
-        {% endif %} 
+        {% endif %}
         {% endif %}
       </div>
       <hr />
       <div class="d-flex flex-row justify-content-between align-items-center">
         <div class="d-flex flex-row align-items-center">
-          <a
-            href=""
-            class="likesstyle likecountclass_{{ post_id.id }}"
-            id="likecountid"
-            data-id="{{ post_id.id }}"
-            style="text-decoration: none;"
-          >
+          <a href="" class="likesstyle likecountclass_{{ post_id.id }}" id="likecountid" data-id="{{ post_id.id }}"
+            style="text-decoration: none;">
           </a>
         </div>
         <div>
-          <a
-            href=""
-            class="commentinputclass_{{ post_id.pk }}"
-            id="commentcountid"
-            data-id="{{ post_id.id }}"
-            style="text-decoration: none;"
-          >
+          <a href="" class="commentinputclass_{{ post_id.pk }}" id="commentcountid" data-id="{{ post_id.id }}"
+            style="text-decoration: none;">
           </a>
         </div>
       </div>
       <hr />
       <div class="d-flex flex-row justify-content-between">
-        <div
-          class="d-flex flex-row align-items-center justify-content-center w-50 likecommentshare"
-          id="likeidBtn"
-          data-id="{{ post_id.pk }}"
-        >
+        <div class="d-flex flex-row align-items-center justify-content-center w-50 likecommentshare" id="likeidBtn"
+          data-id="{{ post_id.pk }}">
           <i class="fa-solid fa-thumbs-up p-1"></i>
-          <span
-            class="likeunlike_{{ post_id.id }}"
-            id="likeunlikeid"
-            data-id="{{ post_id.id }}"
-            >Like</span
-          >
+          <span class="likeunlike_{{ post_id.id }}" id="likeunlikeid" data-id="{{ post_id.id }}">Like</span>
         </div>
-        <div
-          class="d-flex flex-row align-items-center justify-content-center w-50 likecommentshare"
-          id="commentidBtn"
-          data-id="{{ post_id.pk }}"
-        >
+        <div class="d-flex flex-row align-items-center justify-content-center w-50 likecommentshare" id="commentidBtn"
+          data-id="{{ post_id.pk }}">
           <i class="fa-regular fa-comment p-1"></i>
           <span>Comment</span>
         </div>
-        
+
+      </div>
+      <hr />
+      <div class="commentcontainer" id="commentcontainerid_{{ post_id.pk }}">
+        <img
+          class="pe-1 profile-pic"
+          src="{{ post_id.user.profile_image.url }}"
+          alt=""
+          srcset=""
+        />
+        <textarea
+          name=""
+          placeholder="Write a comment..."
+          class=""
+          id="commentinput"
+          data-pk="{{ post_id.pk }}"
+        ></textarea>
       </div>
     </div>
-      </div>
+  </div>
 
   <div class="col-12 col-lg-3 col-xl-3 col-md-3 right-menu-container">
     {% include 'snippets/right-data.html' %}
@@ -103,79 +89,99 @@
 </div>
 
 <script>
-    var url = window.location.origin;
-    const likecountId = document.querySelector("#likecountid");
-    const commentcountId = document.querySelector("#commentcountid");
+  var url = window.location.origin;
+  const likecountId = document.querySelector("#likecountid");
+  const commentcountId = document.querySelector("#commentcountid");
+  const commentidBtn = document.querySelector("#commentidBtn");
 
-      // <!-----------------  Script to get user like counts --------->
+  // ------------Script to display comment Input textarea ---------------->
+
+
+  commentidBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    var idNum = commentidBtn.getAttribute("data-id");
+    console.log(idNum)
+    var commentcontainerId = document.querySelector(
+      `#commentcontainerid_${idNum}`
+    );
+    console.log(commentcontainerId);
+    //commentcontainerId.classList.add("d-flex");
+    //commentcontainerId.classList.add("flow-row");
+  })
+
+
+  //--------------------------- END --------------------------------------- -->
+
+
+  // <!-----------------  Script to get user like counts --------->
 
   UserlikeCount();
   function UserlikeCount() {
-      var pkhdh = likecountId.getAttribute("data-id");
-      fetch(`${url}/get-like-count/${pkhdh}/`, {
-        body: null,
-        method: "GET",
-      })
-        .then((res) => res.json())
-        .then((data) => {
-            likecountId.innerHTML += `
+    var pkhdh = likecountId.getAttribute("data-id");
+    fetch(`${url}/get-like-count/${pkhdh}/`, {
+      body: null,
+      method: "GET",
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        likecountId.innerHTML += `
               <i class="fa-solid fa-thumbs-up text-white text-bg-primary p-1 rounded-pill"></i>
               <span class="ps-1" style="color: black; text-decoration-line: none;">${data["like_count"]}</span>
       `;
-        });
+      });
   }
 
   // --------------------------- END ------------------------------------------- -->
 
 
 
-   // <---------------------- Script to get user comments ------------------->
+  // <---------------------- Script to get user comments ------------------->
 
-   commentCount();
+  commentCount();
   function commentCount() {
-      var getId = commentcountId.getAttribute("data-id");
-      fetch(`${url}/comment-count/${getId}/`, {
-        body: null,
-        method: "GET",
-      })
-        .then((res) => res.json())
-        .then((data) => {
-            commentcountId.innerHTML += `<span class="text-secondary">${data["response"]} comments</span>`;
-        });
-    
+    var getId = commentcountId.getAttribute("data-id");
+    fetch(`${url}/comment-count/${getId}/`, {
+      body: null,
+      method: "GET",
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        commentcountId.innerHTML += `<span class="text-secondary">${data["response"]} comments</span>`;
+      });
+
   }
 
   // <------------------------ END ------------------------------------------->
 
 
-   // ---------------Script for user to like a post -------------------------------->
+  // ---------------Script for user to like a post -------------------------------->
 
-   
-   likeidBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-      var id = likeidBtn.getAttribute("data-id");
-      var likeclass = document.querySelector(`.likecountclass_${id}`);
-      var likeUnlike = document.querySelector(`.likeunlike_${id}`);
-      fetch(`${url}/like-post/${id}/`, {
-        body: null,
-        method: "POST",
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          likeclass.innerHTML = `
+
+  likeidBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    var id = likeidBtn.getAttribute("data-id");
+    var likeclass = document.querySelector(`.likecountclass_${id}`);
+    var likeUnlike = document.querySelector(`.likeunlike_${id}`);
+    fetch(`${url}/like-post/${id}/`, {
+      body: null,
+      method: "POST",
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        likeclass.innerHTML = `
               <i class="fa-solid fa-thumbs-up text-white text-bg-primary p-1 rounded-pill"></i>
               <span class="ps-1" style="color: black; text-decoration-line: none;">${data["like_count"]}</span>
         `;
 
-          // Like and Unlike Change UI
-          if (data["response"] === "Like User") {
-            likeUnlike.textContent = "Unlike";
-          } else {
-            likeUnlike.textContent = "Like";
-          }
-        });
-    })
-  
+        // Like and Unlike Change UI
+        if (data["response"] === "Like User") {
+          likeUnlike.textContent = "Unlike";
+        } else {
+          likeUnlike.textContent = "Like";
+        }
+      });
+  })
+
 
   //----------------------------- END ---------------------------------------------- -->
 </script>
