@@ -9,7 +9,7 @@
     {% include 'snippets/left-menu.html' %}
   </div>
 
-  <div class="col-12 col-md-6">
+  <div class="col-12 col-md-6 position-sticky">
     <div class="card p-3">
       <div class="d-flex flex-row justify-content-between align-items-center">
         <div class="d-flex flex-row">
@@ -80,6 +80,13 @@
           data-pk="{{ post_id.pk }}"
         ></textarea>
       </div>
+      <hr />
+      <div class="row flex-row align-items-center justify-content-start">
+        <img src="{% static 'img/fb.jpeg' %}" class="rounded" />
+        <div class="flex-column align-items-center">
+          <h4>Omotosho Micheal</h4>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -105,8 +112,8 @@
       `#commentcontainerid_${idNum}`
     );
     console.log(commentcontainerId);
-    //commentcontainerId.classList.add("d-flex");
-    //commentcontainerId.classList.add("flow-row");
+    commentcontainerId.classList.add("d-flex");
+    commentcontainerId.classList.add("flow-row");
   })
 
 
