@@ -49,6 +49,7 @@ def index(request):
         context['post_list'] = post_list
     else:
         return redirect('login')
+    context['user'] = user
     return render(request, 'home.html', context)
 
 
@@ -226,6 +227,7 @@ def user_comment(request, id):
                 payload['user'] = user.username
                 payload['comment'] = comment.comment
                 payload['date'] = str_time
+                payload['user_image'] = user.profile_image.url
 
             else:
                 payload['response'] = 'No Input value'
@@ -234,22 +236,43 @@ def user_comment(request, id):
 
     return JsonResponse((payload), content_type="application/json", safe=False)
 
+def get_post_comments(requset, id):
+    comment_list = []
+    payload = {}
+    post_id = Post.objects.get(id = id)
+    all_comment_list = Comment.objects.filter(post_id=post_id)
+    if all_comment_list:
+        for i in all_comment_list:
+            str_time = datetime.strftime(i.date_comment, "%I:%M %p")
+            str_time = str_time.strip("0")
+            comment_list.append({
+                'user': i.user.username,
+                'comment': i.comment,
+                'user_image': i.user.profile_image.url,
+                'date': str_time
+            })
+        payload['comment_list'] = comment_list
+    else:
+        payload['response'] = 'No Comment list yet'
+    return JsonResponse((payload), content_type="application/json", safe=False)
+
 
 def post_detail(request, id):
+    context = {}
     user = request.user
     if user.is_authenticated:
         #get_post_id = kwargs.get('id')
         post_id = Post.objects.get(id = id)
         comment_list = Comment.objects.filter(post_id = post_id)
+        context['post_id'] = post_id
         if request.method == 'POST':
             comment_input = request.POST.get('comment_input')
             if len(comment_input > 0):
                 comment = Comment.objects.create(user = user, post_id = post_id, comment = comment_input)
+                context['comment_list'] = comment_list
                 return redirect('post-detail', post_id)
-    context = {
-        'comment_list': comment_list,
-        'post_id': post_id
-    }
+    context['user'] = user
+
     return render(request, 'post-detail.html', context)
 
 

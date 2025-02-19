@@ -40,6 +40,10 @@ body {
   width: 100%;
 }
 
+.comment-img{
+  width: 10px;
+}
+
 .drop1 {
   width: 100px;
   height: 100px;

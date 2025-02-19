@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import (index, postList, like_post, get_like_count, user_comment, post_detail,
+from .views import (index, postList, like_post, get_like_count, user_comment, post_detail, get_post_comments,
                     comment_count, create_post, userSharePost, index_api, comment_api, user_like_post_api, userRepostApi, search_post)
 from django.views.decorators.csrf import csrf_exempt
 
@@ -14,6 +14,7 @@ urlpatterns = [
     path('create-post/', (create_post), name='create-post'),
     path('user-share-post/<id>/', userSharePost, name='user-share-post'),
     path('post-detail/<id>/', post_detail, name='post-detail'),
+    path('get-post-comments/<id>/', get_post_comments, name='get-post-comment'),
 
 
     # .................... API URL ................................

@@ -68,7 +68,7 @@
       <div class="commentcontainer" id="commentcontainerid_{{ post_id.pk }}">
         <img
           class="pe-1 profile-pic"
-          src="{{ post_id.user.profile_image.url }}"
+          src="{{ user.profile_image.url }}"
           alt=""
           srcset=""
         />
@@ -81,11 +81,9 @@
         ></textarea>
       </div>
       <hr />
-      <div class="row flex-row align-items-center justify-content-start">
-        <img src="{% static 'img/fb.jpeg' %}" class="rounded" />
-        <div class="flex-column align-items-center">
-          <h4>Omotosho Micheal</h4>
-        </div>
+      <div class="row comment-list_{{ post_id.pk }}">
+        <div class="col-1"></div>
+        <div class="col-11" id="cardcommentid_{{ post_id.pk }}"></div>
       </div>
     </div>
   </div>
@@ -100,6 +98,100 @@
   const likecountId = document.querySelector("#likecountid");
   const commentcountId = document.querySelector("#commentcountid");
   const commentidBtn = document.querySelector("#commentidBtn");
+  const commentInput = document.querySelector("#commentinput");
+  
+
+
+const postId = `{{ post_id.pk }}`
+console.log(postId)
+
+getPostComments(postId)
+
+function getPostComments(id){
+  fetch(`${url}/get-post-comments/${id}/`, {
+    body: null,
+    method: "GET"
+  }).then((res) => res.json()).then((data) =>{
+    console.log(data["comment_list"])
+    data['comment_list'].map((mk) =>{
+      var cardcommentid = document.querySelector(`#cardcommentid_${id}`);
+    console.log(cardcommentid)
+    createComment(mk['user_image'], mk["user"], mk["comment"], mk["date"], cardcommentid)
+ 
+    })
+    })
+}
+
+
+
+
+  commentInput.addEventListener("keyup", (e) => {
+      e.preventDefault();
+      var commentPk = commentInput.getAttribute("data-pk");
+      var commentinputclass = document.querySelector(
+        `.commentinputclass_${commentPk}`
+      );
+      var inputValue = e.target.value.trim();
+      if (e.key === "Enter") {
+        fetch(`${url}/user-comment/${commentPk}/`, {
+          body: JSON.stringify({
+            inputValue: inputValue,
+          }),
+          method: "POST",
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            var cardcommentid = document.querySelector(`#cardcommentid_${commentPk}`);
+            commentinputclass.innerHTML = `<span class="text-secondary">${data['comment_count']} comments</span>`;
+            createComment(data['user_image'], data["user"], data["comment"], data["date"], cardcommentid)
+          });
+          commentInput.value = "";
+      }
+    })
+
+    function createComment(userImage, user, comment, date, cardcommentid){
+            var secCardElement = document.createElement("div");
+            secCardElement.classList.add("mycardbg1");
+            var thirdCardElement = document.createElement("div");
+            thirdCardElement.classList.add("d-flex");
+            thirdCardElement.classList.add("p-2");
+            var img = document.createElement("img");
+            img.classList.add("imgstyle");
+            img.src = userImage;
+            thirdCardElement.appendChild(img);
+            var fourthCardElement = document.createElement("div");
+            fourthCardElement.classList.add("d-flex");
+            fourthCardElement.classList.add("flex-column");
+            var fifthCardElement = document.createElement("div");
+            fifthCardElement.classList.add("d-flex");
+            fifthCardElement.classList.add("ps-2");
+            var anchoruser = document.createElement("a");
+            anchoruser.id = "namestyle";
+            anchoruser.innerHTML = user;
+            var spancomment = document.createElement("span");
+            spancomment.classList.add("ps-2");
+            spancomment.classList.add("text-black");
+            spancomment.innerHTML = comment;
+            fifthCardElement.appendChild(anchoruser);
+            fifthCardElement.appendChild(spancomment);
+            var sixthCardElemet = document.createElement("div");
+            sixthCardElemet.classList.add("commentminute");
+            var spanminute = document.createElement("span");
+            spanminute.innerHTML = date;
+            sixthCardElemet.appendChild(spanminute);
+            fourthCardElement.appendChild(fifthCardElement);
+            fourthCardElement.appendChild(sixthCardElemet);
+            thirdCardElement.appendChild(fourthCardElement);
+            secCardElement.appendChild(thirdCardElement);
+            var brkElement = document.createElement("br");
+            cardcommentid.insertBefore(brkElement, cardcommentid.firstChild);
+            cardcommentid.insertBefore(secCardElement, cardcommentid.firstChild);
+    }
+  
+
+  // --------------------- END ------------------------------------------ -->
+
+
 
   // ------------Script to display comment Input textarea ---------------->
 

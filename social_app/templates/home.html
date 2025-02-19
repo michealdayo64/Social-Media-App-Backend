@@ -106,7 +106,7 @@
       <div class="commentcontainer" id="commentcontainerid_{{ i.pk }}">
         <img
           class="pe-1 profile-pic"
-          src="{{ i.user.profile_image.url }}"
+          src="{{ user.profile_image.url }}"
           alt=""
           srcset=""
         />
@@ -183,7 +183,7 @@
             thirdCardElement.classList.add("p-2");
             var img = document.createElement("img");
             img.classList.add("imgstyle");
-            img.src = "{% static 'img/profile_image.png' %}";
+            img.src = data['user_image'];
             thirdCardElement.appendChild(img);
             var fourthCardElement = document.createElement("div");
             fourthCardElement.classList.add("d-flex");
