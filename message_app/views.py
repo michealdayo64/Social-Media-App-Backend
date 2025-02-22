@@ -136,10 +136,10 @@ def get_recent_chatroom_messages(user):
         room_id = find_or_create_private_chat(user, user_id)
         countUnread = UnreadChatRoomMessages.objects.filter(room = room_id.id, user = user_id)
         for i in countUnread:
-            count = i.count'''
+            count = i.count
             
 
-        '''rooms1 = PrivateChatRoom.objects.filter(user1=user, is_active=True)
+        rooms1 = PrivateChatRoom.objects.filter(user1=user, is_active=True)
         rooms2 = PrivateChatRoom.objects.filter(user2=user, is_active=True)
 
         # 2. merge the lists
@@ -161,8 +161,8 @@ def get_recent_chatroom_messages(user):
                 for i in countUnread:
                     countR = i.count
                     print(countR)
-            count.append(countR)'''
-        '''print(count)
+            count.append(countR)
+        print(count)
         payload['counter'] = count
     return JsonResponse((payload), content_type="application/json", safe=False)'''
 
