@@ -195,6 +195,7 @@
 							<span class="username-span">{{x.friend.username}}</span>
 							<span class="friend-message-span">{{x.message|truncatechars:20}}</span>
 						</div>
+						<p id="count-id" data-id="{{x.friend.id}}">0</p>
 					</div>
 					{% endfor %}
 				</div>
@@ -252,6 +253,27 @@
 		{% for x in m_and_f %}
 		preloadImage("{{ x.friend.profile_image.url|safe }}", "id_friend_img_{{x.friend.id}}")
 		{% endfor %}
+
+		//getUnreadChatPayload()
+	}
+
+
+
+	/*function getUnreadChatPayload(){
+		const countID = [...document.querySelectorAll('#count-id')]
+		countID.map((coun) =>{
+			var count_id = coun.getAttribute("data-id")
+			fetch(`${url}/message/get-unread-count/${count_id}/`, {
+				body: null,
+				method: "GET",
+		}).then((res) => res.json()).then((data) =>{
+			console.log(`${data["counter"]}`)
+			//console.log(JSON.parse(data(["counter"])))
+			coun.innerHTML = data["counter"]
+			
+		})
+		})*/
+		
 	}
 
 	function onSelectFriend(userid) {

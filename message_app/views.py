@@ -1,11 +1,11 @@
 from itertools import chain
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
 from django.conf import settings
 import json
 from account.serializers import UserSerializer
 from message_app.utils import find_or_create_private_chat
-from .models import PrivateChatRoom, RoomChatMessage
+from .models import PrivateChatRoom, RoomChatMessage, UnreadChatRoomMessages
 from account.models import Accounts
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -84,9 +84,12 @@ def get_recent_chatroom_messages(user):
         # Figure out which user is the "other user" (aka friend)
         if room.user1 == user:
             friend = room.user2
+            room_id = room.id
+            #print(room)
         else:
             friend = room.user1
-
+            room_id = room.id
+            #print(room)
         # confirm you are even friends (in case chat is left active somehow)
         friend_list = FriendsList.objects.get(user=user)
         if not friend_list.is_mutual_friend(friend):
@@ -97,7 +100,6 @@ def get_recent_chatroom_messages(user):
             # find newest msg from that friend in the chat room
             try:
                 message = RoomChatMessage.objects.filter(room=room, user=friend).latest("timestamp")
-                print(message)
             except RoomChatMessage.DoesNotExist:
                 # create a dummy message with dummy timestamp
                 today = datetime(
@@ -115,13 +117,54 @@ def get_recent_chatroom_messages(user):
                     timestamp=today,
                     content="",
                 )
-                print(message)
             m_and_f.append({
                 'message': message,
-                'friend': friend
+                'friend': friend,
+                'room_id': room_id
             })
 
     return sorted(m_and_f, key=lambda x: x['message'].timestamp, reverse=True)
+
+
+'''def getUnreadChatCount(request, id):
+    user = request.user
+    payload = {}
+    count = 0
+    if user.is_authenticated:
+        user_id = Accounts.objects.get(id = id)
+        #user_acc = FriendsList.objects.get(user = user)
+        room_id = find_or_create_private_chat(user, user_id)
+        countUnread = UnreadChatRoomMessages.objects.filter(room = room_id.id, user = user_id)
+        for i in countUnread:
+            count = i.count'''
+            
+
+        '''rooms1 = PrivateChatRoom.objects.filter(user1=user, is_active=True)
+        rooms2 = PrivateChatRoom.objects.filter(user2=user, is_active=True)
+
+        # 2. merge the lists
+        rooms = list(chain(rooms1, rooms2))
+
+        for room in rooms:
+            # Figure out which user is the "other user" (aka friend)
+            if room.user1 == user:
+                friend = room.user2
+                room_id = room.id
+                countUnread = UnreadChatRoomMessages.objects.filter(room = room_id, user = friend)
+                for i in countUnread:
+                    countR = i.count
+                    print(countR)
+            else:
+                friend = room.user1
+                room_id = room.id
+                countUnread = UnreadChatRoomMessages.objects.filter(room = room_id, user = friend)
+                for i in countUnread:
+                    countR = i.count
+                    print(countR)
+            count.append(countR)'''
+        '''print(count)
+        payload['counter'] = count
+    return JsonResponse((payload), content_type="application/json", safe=False)'''
 
 
 def create_or_return_private_chat(request, *args, **kwargs):
