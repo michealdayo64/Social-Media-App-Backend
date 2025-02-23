@@ -176,6 +176,10 @@ body {
 }
 
 @media (max-width: 992px) {
+
+  .right-message-container{
+    display: none;
+  }
   
 
   .middle-message-container{
