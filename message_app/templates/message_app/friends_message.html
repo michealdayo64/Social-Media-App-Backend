@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %}Message{% endblock %}
+{% load static %}
+{% block content %}
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"
+	integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+
+    <br>
+    <div class="row">
+        <div class="col-3">
+
+        </div>
+
+        <div class="col-12 col-md-6 mx-auto middle-message-container">
+            <div class="card">
+                <div class="d-flex flex-row align-items-center card-header">
+                    <h3>Friends</h3>
+                </div>
+                <div class="card-body p-1">
+                    <div class="d-flex flex-column friends-list-container">
+                        {% for x in m_and_f %}
+                        <div class="d-flex flex-row p-2 friend-container flex-grow-1"
+                            onclick="onSelectFriend('{{x.friend.id}}')" id="id_friend_container_{{x.friend.id}}">
+                            <img class="profile-image rounded-circle img-fluid" id="id_friend_img_{{x.friend.id}}"
+                                src="{{ x.friend.profile_image.url }}">
+                            <div class="d-flex flex-column">
+                                <span class="username-span">{{x.friend.username}}</span>
+                                <span class="friend-message-span">{{x.message|truncatechars:20}}</span>
+                            </div>
+                            <p id="count-id" data-id="{{x.friend.id}}">0</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-3">
+
+        </div>
+</div>
+
+    
+
+
+{% endblock %}

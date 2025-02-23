@@ -154,6 +154,10 @@ body {
     display: none;
   }
 
+  .middle-message-container{
+    display: none;
+  }
+
   .left-profile-container{
     display: none;
   }
@@ -172,9 +176,10 @@ body {
 }
 
 @media (max-width: 992px) {
-  .right-message-container {
-    border: 4px solid blue;
-    display: none;
+  
+
+  .middle-message-container{
+    display: block;
   }
 
   #myheader {
@@ -261,6 +266,8 @@ body {
     cursor: pointer;
   }
 }
+
+
 
 @keyframes panel {
   from {

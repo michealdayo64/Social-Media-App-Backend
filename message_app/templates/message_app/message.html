@@ -142,7 +142,7 @@
 	<div class="col-3 left-message-contianer">
 		{% include 'snippets/left-menu.html' %}
 	</div>
-	<div class="col-12 col-md-6 mx-auto">
+	<div class="col-12 col-md-6 mx-auto middle-message-container">
 		<h1>My Messages</h1>
 		<div class="card">
 			<div class="d-flex flex-row align-items-center card-header" id="id_room_title">
@@ -179,13 +179,13 @@
 			</div>
 		</div>
 	</div>
-	<div class="col-3 right-message-container">
+	<div class="mx-auto col-3 right-message-container">
 		<div class="card">
 			<div class="d-flex flex-row align-items-center card-header">
 				<h3>Friends</h3>
 			</div>
 			<div class="card-body p-1">
-				<div class="d-flex flex-column friends-list-container ">
+				<div class="d-flex flex-column friends-list-container">
 					{% for x in m_and_f %}
 					<div class="d-flex flex-row p-2 friend-container flex-grow-1"
 						onclick="onSelectFriend('{{x.friend.id}}')" id="id_friend_container_{{x.friend.id}}">
@@ -268,18 +268,19 @@
 				method: "GET",
 		}).then((res) => res.json()).then((data) =>{
 			console.log(`${data["counter"]}`)
-			//console.log(JSON.parse(data(["counter"])))
+			//console.log(JSON.parse(data(["counter"]))) mjm
 			coun.innerHTML = data["counter"]
 			
 		})
-		})*/
+		})
 		
-	}
+	}*/
 
 	function onSelectFriend(userid) {
 		createOrReturnPrivateChat(userid)
 		clearHighlightedFriend()
 		highlightFriend(userid)
+		//gotToMessageOnMobile()
 	}
 
 	function closeWebsocket() {
@@ -640,6 +641,8 @@
 		// select new friend
 		document.getElementById("id_friend_container_" + userId).style.background = "#f2f2f2"
 	}
+
+	
 
 	function clearHighlightedFriend() {
 		{% if m_and_f %}

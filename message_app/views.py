@@ -39,32 +39,26 @@ def private_chat_room_view(request, *args, **kwargs):
     # print(user_access_token)
     context["user_access_token"] = user_access_token
 
-    room1 = PrivateChatRoom.objects.filter(user1=user, is_active=True)
-    room2 = PrivateChatRoom.objects.filter(user2=user, is_active=True)
-    rooms = list(chain(room1, room2))
-    '''m_and_f = []
-
-    for room in rooms:
-        if room.user1 == user:
-            friend = room.user2
-            message = RoomChatMessage.objects.filter(
-                room=room.id).order_by("-timestamp")[0]
-        else:
-            friend = room.user1
-            message = RoomChatMessage.objects.filter(
-                room=room.id).order_by("-timestamp")[0]
-        m_and_f.append({
-            "message": f"{message}",
-            "friend": friend
-        })
-
-    #print(m_and_f)'''
+    #room1 = PrivateChatRoom.objects.filter(user1=user, is_active=True)
+    #room2 = PrivateChatRoom.objects.filter(user2=user, is_active=True)
+    #rooms = list(chain(room1, room2))
+    
     m_and_f = get_recent_chatroom_messages(user)
     context["m_and_f"] = m_and_f
     context['debug'] = DEBUG
     context['debug_mode'] = settings.DEBUG
 
     return render(request, "message_app/message.html", context)
+
+
+def friendsWithMessage(request):
+    context = {}
+    user = request.user
+    if user.is_authenticated:
+        m_and_f = get_recent_chatroom_messages(user)
+    context["m_and_f"] = m_and_f
+
+    return render(request, 'message_app/friends_message.html', context)
 
 
 def get_recent_chatroom_messages(user):
