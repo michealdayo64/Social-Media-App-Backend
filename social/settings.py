@@ -257,17 +257,17 @@ DEFAULT_FROM_EMAIL = 'CodingWithMitch Team <noreply@codingwithmitch.com>'
 
 BASE_URL = "http://209.38.165.35"
 
-STATIC_URL = 'static/'
+'''STATIC_URL = 'static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
-]
+]'''
 
-MEDIA_URL = '/media/'
+#MEDIA_URL = '/media/'
 #BASE_URL = "http://127.0.0.1:8000"
 
-TEMP = os.path.join(BASE_DIR, 'media/temp')
-STATIC_ROOT = os.path.join(BASE_DIR, 'static_cdn')
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+#TEMP = os.path.join(BASE_DIR, 'media/temp')
+#STATIC_ROOT = os.path.join(BASE_DIR, 'static_cdn')
+#MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
