@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+
+{% block title %}Message{% endblock %}
+{% load static %}
+{% block content %}
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"
+	integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+
+<style type="text/css">
+    .friends-list-container {
+		max-height: 500px;
+		overflow-y: scroll;
+	}
+
+    .profile-image {
+		width: 33px;
+		height: 33px;
+		margin-top: 0px;
+		margin-bottom: auto;
+	}
+
+	.profile-image-small {
+		width: 25px;
+		height: 25px;
+		margin-top: 0px;
+		margin-bottom: auto;
+		margin-right: 5px;
+	}
+
+	.profile-image:hover {
+		cursor: pointer;
+	}
+
+	.profile-image-small:hover {
+		cursor: pointer;
+	}
+
+    .username-span {
+		font-weight: 600;
+		margin-top: 0px;
+		margin-bottom: auto;
+		margin-left: 5px;
+		margin-right: 5px;
+	}
+
+    .username-span:hover {
+		cursor: pointer;
+	}
+
+    .friend-message-span {
+		font-weight: 380;
+		margin-top: 0px;
+		margin-bottom: auto;
+		margin-left: 5px;
+		margin-right: 5px;
+		font-size: 0.6em;
+		color: blue
+	}
+
+</style>
+
+    <br>
+    <div class="row">
+        <div class="col-12 col-lg-3 col-xl-3 col-md-3 left-menu-container">
+            {% include 'snippets/left-menu.html' %}
+          </div>
+
+        <div class="col-12 col-md-6">
+            <div class="card">
+                <div class="d-flex flex-row align-items-center card-header">
+                    <h3>Friends</h3>
+                </div>
+                <div class="card-body p-1">
+                    <div class="d-flex flex-column friends-list-container">
+                        {% for x in m_and_f %}
+                        <div class="d-flex flex-row p-2 friend-container flex-grow-1"
+                            onclick="createOrReturnPrivateChat('{{x.friend.id}}')" id="id_friend_container_{{x.friend.id}}">
+                            <img class="profile-image rounded-circle img-fluid" id="id_friend_img_{{x.friend.id}}"
+                                src="{{ x.friend.profile_image.url }}">
+                            <div class="d-flex flex-column">
+                                <span class="username-span">{{x.friend.username}}</span>
+                                <span class="friend-message-span">{{x.message|truncatechars:20}}</span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-lg-3 col-xl-3 col-md-3 right-menu-container">
+            {% include 'snippets/right-data.html' %}
+          </div>
+</div>
+
+
+{% include './create_or_return_private_chat.html' %}
+    
+
+
+{% endblock %}
