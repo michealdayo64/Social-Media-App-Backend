@@ -10,7 +10,7 @@ from notification_app.consumers import NotificationConsumer
 from .jwt_auth_middleware import JWTAuthMiddlewareStack
 
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'social.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', f'social.settings')
 # Initialize Django ASGI application early to ensure the AppRegistry
 # is populated before importing code that may import ORM models.
 django_asgi_app = get_asgi_application()

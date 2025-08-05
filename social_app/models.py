@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from message_app.utils import calculate_timestamp
 
 # Create your models here.
 
@@ -29,6 +30,11 @@ class Post(models.Model):
 
     def __str__(self):
         return f"Post By {self.user.username}"
+    
+    @property
+    def date_format(self):
+        if self.date_post:
+            return calculate_timestamp(self.date_post)
 
 
 class Comment(models.Model):

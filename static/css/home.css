@@ -254,5 +254,11 @@
   }
 }
 
+@media (max-width: 450px){
+  .live-vid{
+    font-size: 15px;
+  }
+}
+
 
 
