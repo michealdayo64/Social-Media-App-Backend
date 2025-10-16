@@ -325,7 +325,7 @@ def index_api(request):
             friends_list) + [user,]).order_by('-date_post')
 
         user_serializer = UserSerializer(me, many=False)
-        print(user_serializer.data)
+        #print(user_serializer.data)
 
         serializer = PostSerializer(
             post_list, many=True, context={'request': request})

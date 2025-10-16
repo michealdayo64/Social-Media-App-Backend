@@ -4,7 +4,8 @@ from django.shortcuts import render, redirect
 from django.conf import settings
 import json
 from account.serializers import UserSerializer
-from message_app.utils import find_or_create_private_chat
+from message_app.serializers import RoomChatMessageSerializer
+from message_app.utils import calculate_timestamp, find_or_create_private_chat
 from .models import PrivateChatRoom, RoomChatMessage, UnreadChatRoomMessages
 from account.models import Accounts
 from rest_framework.permissions import IsAuthenticated
@@ -39,10 +40,10 @@ def private_chat_room_view(request, *args, **kwargs):
     # print(user_access_token)
     context["user_access_token"] = user_access_token
 
-    #room1 = PrivateChatRoom.objects.filter(user1=user, is_active=True)
-    #room2 = PrivateChatRoom.objects.filter(user2=user, is_active=True)
-    #rooms = list(chain(room1, room2))
-    
+    # room1 = PrivateChatRoom.objects.filter(user1=user, is_active=True)
+    # room2 = PrivateChatRoom.objects.filter(user2=user, is_active=True)
+    # rooms = list(chain(room1, room2))
+
     m_and_f = get_recent_chatroom_messages(user)
     context["m_and_f"] = m_and_f
     context['debug'] = DEBUG
@@ -63,9 +64,9 @@ def friendsWithMessage(request):
 
 def get_recent_chatroom_messages(user):
     """
-	sort in terms of most recent chats (users that you most recently had conversations with)
-	"""
-	# 1. Find all the rooms this user is a part of 
+        sort in terms of most recent chats (users that you most recently had conversations with)
+        """
+    # 1. Find all the rooms this user is a part of
     rooms1 = PrivateChatRoom.objects.filter(user1=user, is_active=True)
     rooms2 = PrivateChatRoom.objects.filter(user2=user, is_active=True)
 
@@ -79,27 +80,28 @@ def get_recent_chatroom_messages(user):
         if room.user1 == user:
             friend = room.user2
             room_id = room.id
-            #print(room)
+            # print(room)
         else:
             friend = room.user1
             room_id = room.id
-            #print(room)
+            # print(room)
         # confirm you are even friends (in case chat is left active somehow)
         friend_list = FriendsList.objects.get(user=user)
         if not friend_list.is_mutual_friend(friend):
             chat = find_or_create_private_chat(user, friend)
             chat.is_active = False
             chat.save()
-        else:	
+        else:
             # find newest msg from that friend in the chat room
             try:
-                message = RoomChatMessage.objects.filter(room=room, user=friend).latest("timestamp")
+                message = RoomChatMessage.objects.filter(
+                    room=room, user=friend).latest("timestamp")
             except RoomChatMessage.DoesNotExist:
                 # create a dummy message with dummy timestamp
                 today = datetime(
-                    year=1950, 
-                    month=1, 
-                    day=1, 
+                    year=1950,
+                    month=1,
+                    day=1,
                     hour=1,
                     minute=1,
                     second=1,
@@ -213,27 +215,21 @@ def getFriendsChatList(request):
     user = request.user
     if user.is_authenticated:
         # getUser = Accounts.objects.get(pk = user.id)
-        room1 = PrivateChatRoom.objects.filter(user1=user, is_active=True)
-        room2 = PrivateChatRoom.objects.filter(user2=user, is_active=True)
-        rooms = list(chain(room1, room2))
+        m_and_f = get_recent_chatroom_messages(user)
+        serializer_data = []
+        for item in m_and_f:
+            messages = RoomChatMessageSerializer(item['message']).data
+            friends = UserSerializer(item['friend']).data
+            time = item['message'].timestamp
 
-        m_and_f = []
-
-        for room in rooms:
-            if room.user1 == user:
-                friend = room.user2
-                user_serializer = UserSerializer(
-                    friend, context={'request': request}).data
-            else:
-                friend = room.user1
-                user_serializer = UserSerializer(
-                    friend, context={'request': request}).data
-            m_and_f.append({
-                "message": "",
-                "friend": user_serializer
+            serializer_data.append({
+                'message': messages,
+                'friend': friends,
+                'room': item['room_id'],
+                'time': calculate_timestamp(time)
             })
         payload = {
-            "m_and_f": m_and_f
+            "m_and_f": serializer_data
         }
         return Response(data=payload, status=status.HTTP_200_OK)
     else:
