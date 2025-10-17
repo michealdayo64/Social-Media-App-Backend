@@ -46,6 +46,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
                 await self.display_progress_bar(True)
                 room = await get_room_or_error(content['room_id'], self.scope["user"])
                 payload = await get_room_chat_messages(room, content['page_number'])
+                print(payload)
                 if payload != None:
                     payload = json.loads(payload)
                     await self.send_messages_payload(payload['messages'], payload['new_page_number'])
@@ -156,8 +157,10 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
 
         # Execute these functions asychronously
         await asyncio.gather(*[
-            append_unread_msg_if_not_connected(room, room.user1, connected_users, message),
-            append_unread_msg_if_not_connected(room, room.user2, connected_users, message),
+            append_unread_msg_if_not_connected(
+                room, room.user1, connected_users, message),
+            append_unread_msg_if_not_connected(
+                room, room.user2, connected_users, message),
             create_room_chat_message(room, self.scope["user"], message)
         ])
 
@@ -294,7 +297,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
 
 @database_sync_to_async
 def get_room_or_error(room_id, user):
-    
+
     try:
         room = PrivateChatRoom.objects.get(pk=room_id)
     except PrivateChatRoom.DoesNotExist:
@@ -334,6 +337,7 @@ def create_room_chat_message(room, user, message):
 @database_sync_to_async
 def get_room_chat_messages(room, page_number):
     # time.sleep(1)
+    print(f"pagenation{page_number}")
     try:
         qs = RoomChatMessage.objects.by_room(room)
         p = Paginator(qs, DEFAULT_ROOM_CHAT_MESSAGE_PAGE_SIZE)
@@ -388,6 +392,8 @@ def append_unread_msg_if_not_connected(room, user, connected_users, message):
     return
 
 # When a user connects, reset their unread message count to 0
+
+
 @database_sync_to_async
 def on_user_connected(room, user):
     # confirm they are in the connected users list

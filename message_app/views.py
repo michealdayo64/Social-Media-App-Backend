@@ -219,7 +219,8 @@ def getFriendsChatList(request):
         serializer_data = []
         for item in m_and_f:
             messages = RoomChatMessageSerializer(item['message']).data
-            friends = UserSerializer(item['friend']).data
+            friends = UserSerializer(item['friend'], context={
+                                     'request': request}).data
             time = item['message'].timestamp
 
             serializer_data.append({
