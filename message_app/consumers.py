@@ -46,7 +46,6 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
                 await self.display_progress_bar(True)
                 room = await get_room_or_error(content['room_id'], self.scope["user"])
                 payload = await get_room_chat_messages(room, content['page_number'])
-                print(payload)
                 if payload != None:
                     payload = json.loads(payload)
                     await self.send_messages_payload(payload['messages'], payload['new_page_number'])
