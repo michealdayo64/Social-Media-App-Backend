@@ -5,7 +5,7 @@ from django.conf import settings
 import json
 from account.serializers import UserSerializer
 from message_app.serializers import RoomChatMessageSerializer
-from message_app.utils import calculate_timestamp, find_or_create_private_chat
+from message_app.utils import LazyRoomChatMessageEncoder, calculate_timestamp, find_or_create_private_chat
 from .models import PrivateChatRoom, RoomChatMessage, UnreadChatRoomMessages
 from account.models import Accounts
 from rest_framework.permissions import IsAuthenticated
@@ -16,6 +16,8 @@ from account.views import get_tokens_for_user
 from friend_app.models import FriendsList
 from datetime import datetime
 import pytz
+from .constant import *
+from django.core.paginator import Paginator
 # Create your views here.
 
 DEBUG = True
@@ -222,7 +224,7 @@ def getFriendsChatList(request):
             friends = UserSerializer(item['friend'], context={
                                      'request': request}).data
             time = item['message'].timestamp
-
+            # print(messages['content'])
             serializer_data.append({
                 'message': messages,
                 'friend': friends,
@@ -236,3 +238,33 @@ def getFriendsChatList(request):
     else:
         payload["msg"] = "User not authenticated"
         return Response(data=payload, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET',])
+@permission_classes((IsAuthenticated,))
+def getRoomChatMessages(request, room_id):
+    
+    user = request.user
+    if not user.is_authenticated:
+        return HttpResponse("This user is not authenticated")
+    page_number = request.GET.get('page')
+
+    try:
+        payload = {}
+        room = PrivateChatRoom.objects.get(pk=room_id)
+        qs = RoomChatMessage.objects.by_room(room)
+        p = Paginator(qs, DEFAULT_ROOM_CHAT_MESSAGE_PAGE_SIZE)
+        new_page_number = int(page_number)
+        if new_page_number <= p.num_pages:
+            new_page_number = new_page_number + 1
+            s = LazyRoomChatMessageEncoder()
+            payload['messages'] = s.serialize(
+                p.page(page_number).object_list)
+        else:
+            payload['messages'] = "None"
+        payload['new_page_number'] = new_page_number
+        #print(payload)
+        return JsonResponse(payload, content_type="application/json", safe=False)
+    except Exception as e:
+        print("EXCEPTION: " + str(e))
+        return None
